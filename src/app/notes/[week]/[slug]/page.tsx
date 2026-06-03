@@ -5,7 +5,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllNotes, getNoteContent, getAllWeeks } from "@/lib/utils";
+import { getAllNotes, getNoteContent } from "@/lib/utils";
 
 interface Props {
   params: Promise<{ week: string; slug: string }>;
