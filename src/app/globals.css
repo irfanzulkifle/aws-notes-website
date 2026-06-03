@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: #020617;
+  --color-foreground: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #020617;
+  color: #e2e8f0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* ── Prose overrides for react-markdown ── */
+
+.prose {
+  --tw-prose-body: #e2e8f0;
+  --tw-prose-headings: #f1f5f9;
+  --tw-prose-lead: #cbd5e1;
+  --tw-prose-links: #60a5fa;
+  --tw-prose-bold: #f8fafc;
+  --tw-prose-counters: #94a3b8;
+  --tw-prose-bullets: #64748b;
+  --tw-prose-hr: #334155;
+  --tw-prose-quotes: #f1f5f9;
+  --tw-prose-quote-borders: #475569;
+  --tw-prose-captions: #94a3b8;
+  --tw-prose-code: #e2e8f0;
+  --tw-prose-pre-code: #e2e8f0;
+  --tw-prose-pre-bg: #0f172a;
+  --tw-prose-th-borders: #334155;
+  --tw-prose-td-borders: #1e293b;
+  --tw-prose-invert-body: #e2e8f0;
+  --tw-prose-invert-headings: #f8fafc;
+  --tw-prose-invert-links: #60a5fa;
+  --tw-prose-invert-bold: #f8fafc;
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  font-size: 0.875em;
+  font-weight: 400;
+}
+
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+
+.prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: transparent;
+  padding: 0;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* ── Table styles ── */
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.prose thead {
+  background: #1e293b;
+}
+
+.prose th {
+  padding: 0.625rem 0.875rem;
+  text-align: left;
+  font-weight: 600;
+  color: #f1f5f9;
+  border-bottom: 2px solid #334155;
+  white-space: nowrap;
+}
+
+.prose td {
+  padding: 0.5rem 0.875rem;
+  border-bottom: 1px solid #1e293b;
+  color: #cbd5e1;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: #0f172a;
+}
+
+.prose tbody tr:hover {
+  background: #1e293b;
+}
+
+/* ── TOC sidebar link active state ── */
+
+.toc-link {
+  color: #94a3b8;
+  transition: color 0.15s;
+}
+
+.toc-link:hover {
+  color: #e2e8f0;
+}
+
+.toc-link-active {
+  color: #60a5fa;
+}
+
+/* ── Syntax highlighting (rehype-highlight / highlight.js) ── */
+
+.hljs-keyword { color: #c792ea; }
+.hljs-string { color: #c3e88d; }
+.hljs-number { color: #f78c6c; }
+.hljs-comment { color: #546e7a; font-style: italic; }
+.hljs-function { color: #82aaff; }
+.hljs-title { color: #82aaff; }
+.hljs-params { color: #ffcb6b; }
+.hljs-built_in { color: #f78c6c; }
+.hljs-type { color: #ffcb6b; }
+.hljs-literal { color: #f78c6c; }
+.hljs-attr { color: #c792ea; }
+.hljs-variable { color: #e2e8f0; }
+.hljs-meta { color: #89ddff; }
+.hljs-symbol { color: #c3e88d; }
+.hljs-regexp { color: #c3e88d; }
+.hljs-selector-class { color: #ffcb6b; }
+.hljs-selector-tag { color: #f07178; }
+.hljs-name { color: #f07178; }
+.hljs-operator { color: #89ddff; }
+.hljs-punctuation { color: #89ddff; }

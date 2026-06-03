@@ -1,0 +1,468 @@
+# Lecture Notes — May 18, 2026
+**Program:** AWS re/Start — Cohort 3: Project CloudIgnite  
+**Duration:** ~190 minutes  
+**Topics Covered:** Python Modules & Libraries · File Handlers · Exception Handling · OS Module · JSON · PIP · GitHub & Git Basics
+
+---
+
+## Table of Contents
+1. [Python Modules & Libraries](#1-python-modules--libraries)
+2. [File Handlers](#2-file-handlers)
+3. [Exception Handling](#3-exception-handling)
+4. [Debugging in VS Code](#4-debugging-in-vs-code)
+5. [OS Module](#5-os-module)
+6. [JSON Module](#6-json-module)
+7. [PIP — Python Package Manager](#7-pip--python-package-manager)
+8. [GitHub & Git Basics (Lab)](#8-github--git-basics-lab)
+9. [AWS CLF-C02 Relevance](#9-aws-clf-c02-relevance)
+10. [Quick Reference Cheatsheet](#10-quick-reference-cheatsheet)
+
+---
+
+## 1. Python Modules & Libraries
+
+### Why Organise Code?
+- Large codebases become hard to read and maintain.
+- Even the original author may not understand their own code after 6 months.
+- Solution: organise code into **functions → modules → libraries**.
+
+### Hierarchy
+```
+Library
+└── one or more Modules
+        └── one or more Functions / Variables
+```
+
+| Term | Definition |
+|------|-----------|
+| **Function** | A reusable block of logic for a specific task |
+| **Module** | A single `.py` file containing functions/variables |
+| **Package** | A **folder** containing multiple modules (requires `__init__.py`) |
+| **Library** | A collection of one or more modules/packages |
+
+> **Note:** The terms *module* and *library* are often used interchangeably by developers — this is normal.
+
+### Standard Library vs External Libraries
+- **Standard Library** — shipped with Python, no installation needed (e.g., `random`, `math`, `time`, `os`, `sys`).
+- **External Libraries** — must be installed manually using `pip` (e.g., `numpy`, `matplotlib`).
+
+### Importing Modules
+
+```python
+# Import the full module
+import math
+print(math.pi)
+
+# Import a specific item from a module
+from math import pi, exp
+print(pi)
+print(exp(3))   # e^3
+```
+
+### Creating Your Own Module
+
+**`calci.py`** (your module):
+```python
+pi = 3.141592
+
+def add(a, b):
+    return a + b
+
+def sub(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+def divide(a, b):
+    if b == 0:
+        return None   # handle division by zero
+    return a / b
+```
+
+**`test.py`** (using the module):
+```python
+# Method 1: import specific function
+from calci import add
+print(add(100, 200))
+
+# Method 2: import whole module, use dot notation
+import calci
+print(calci.add(100, 200))
+print(calci.pi)
+```
+
+### Packages (Folders as Modules)
+- A folder becomes a **package** when it contains an `__init__.py` file.
+- Avoid naming your package the same as a standard library (e.g., don't name it `math`).
+
+```python
+# Folder structure: mymath/calci.py
+from mymath.calci import pi
+print(pi)
+```
+
+---
+
+## 2. File Handlers
+
+### Why?
+Reading and writing files (`.csv`, `.json`, `.txt`) is an everyday task in Python.
+
+### The `open()` Function
+
+```python
+file = open("filename.txt", mode)
+```
+
+| Mode | Symbol | Behaviour |
+|------|--------|-----------|
+| Read | `"r"` | Read-only; file must exist |
+| Write | `"w"` | Creates or overwrites existing content |
+| Append | `"a"` | Adds new content to the end; existing content preserved |
+
+### Basic Usage
+
+```python
+# Reading a file
+file1 = open("diary.txt", "r")
+print(file1.read())
+file1.close()   # Always close after use!
+
+# Writing to a file (overwrites)
+file2 = open("diary2.txt", "w")
+file2.write("New content here")
+file2.close()
+
+# Appending to a file
+file3 = open("diary2.txt", "a")
+file3.write("\nAppended line")
+file3.close()
+```
+
+> **Important:** Always call `.close()` after working with a file to free system resources.
+
+### Using `with` (Recommended)
+The `with` block automatically closes the file when the block ends — no need to call `.close()`.
+
+```python
+with open("diary.txt", "r") as file:
+    print(file.read())
+# File is automatically closed here
+```
+
+---
+
+## 3. Exception Handling
+
+### What is an Exception?
+An **exception** is unexpected/unplanned behaviour during program execution (a runtime error). Examples:
+- Dividing by zero
+- Trying to open a file that doesn't exist
+- Reading invalid input
+
+### Why Handle Exceptions?
+- Prevents the program from **crashing**.
+- Provides useful error feedback to the user.
+- Keeps the system stable.
+
+### `try / except` Syntax
+
+```python
+try:
+    file = open("missing_file.txt", "r")
+    print(file.read())
+    file.close()
+except FileNotFoundError:
+    print("File not found!")
+except Exception:
+    print("Something went wrong.")
+```
+
+### Common Exception Types
+
+| Exception | When it occurs |
+|-----------|---------------|
+| `FileNotFoundError` | File does not exist |
+| `ZeroDivisionError` | Dividing by zero |
+| `ValueError` | Invalid value/type conversion |
+| `Exception` | Catch-all for any other error |
+
+### Common Use Cases for Exception Handling
+- Opening a file that may not exist
+- Reading a file that may be corrupted
+- Writing to a disk that may be full
+- Processing input that may be invalid
+
+---
+
+## 4. Debugging in VS Code
+
+- Set a **red dot (breakpoint)** by clicking on the line number gutter.
+- Run in **debug mode** — execution pauses at each breakpoint.
+- Controls: **Continue**, **Step Over**, **Step Into**, **Restart**.
+- Useful for identifying exactly which line causes an error.
+
+---
+
+## 5. OS Module
+
+The `os` module lets Python interact with the operating system.
+
+```python
+import os
+
+# Run a terminal command (deprecated — use subprocess instead)
+os.system("whoami")
+
+# List directory contents
+os.listdir()
+
+# Create a new directory
+os.mkdir("new_folder")
+
+# Get current working directory
+os.getcwd()
+```
+
+> **Note:** `os.system()` is deprecated in newer Python versions (3.14+). Use the `subprocess` module instead.  
+> Linux commands work on Linux; Windows commands (e.g., `dir`, `icacls`) work on Windows.
+
+---
+
+## 6. JSON Module
+
+### What is JSON?
+**JavaScript Object Notation** — a text-based format for storing and transferring structured data between systems and programming languages.
+
+### Why Use JSON?
+- Converts mixed data types (int, float, bool, string) into a single string for network transfer.
+- Upon receiving, data can be converted back to its original Python types.
+- Widely used in APIs, web applications, and data storage.
+
+### Key Functions
+
+| Function | Purpose |
+|----------|---------|
+| `json.dumps(data)` | Convert Python object → JSON string (stringify) |
+| `json.loads(json_string)` | Convert JSON string → Python object (parse) |
+| `json.dump(data, file)` | Write Python object as JSON to a file |
+| `json.load(file)` | Read JSON from a file into a Python object |
+
+### Examples
+
+```python
+import json
+
+# Convert list to JSON string
+lst = [1, 2, 3, "a", "b", 10.5]
+json_out = json.dumps(lst)
+print(type(json_out))   # <class 'str'>
+
+# Convert JSON string back to Python list
+lst_back = json.loads(json_out)
+print(type(lst_back))   # <class 'list'>
+```
+
+### Reading a JSON File
+
+```python
+import json
+
+try:
+    with open("data.json", "r") as f:
+        data = json.load(f)
+        print(data["user"]["name"])
+except FileNotFoundError:
+    print("File not found.")
+except Exception:
+    print("Something went wrong.")
+```
+
+> **⚠️ Common Mistake:** Do NOT name your file `json.py` — it conflicts with Python's built-in `json` module.
+
+---
+
+## 7. PIP — Python Package Manager
+
+- `pip` installs Python libraries/packages that are **not** part of the standard library.
+- Similar to `apt` (Debian/Ubuntu), `yum`/`dnf` (RHEL), or `npm` (Node.js).
+
+```bash
+# Install a package
+pip install requests
+
+# Check installed packages
+pip list
+
+# Check Python version
+python3 --version
+```
+
+---
+
+## 8. GitHub & Git Basics (Lab)
+
+### Key Concepts
+
+| Term | Meaning |
+|------|---------|
+| **Repository (Repo)** | A project folder tracked by Git |
+| **Commit** | A saved version/snapshot of your code with a message |
+| **Branch** | An independent line of development within the same repo |
+| **Clone** | Download a repo from GitHub to your local machine |
+| **Push** | Upload local commits to GitHub |
+| **Pull** | Download latest changes from GitHub to local machine |
+| **Fetch** | Get remote branch info without merging |
+| **Merge / Pull Request** | Combine changes from one branch into another |
+
+### Creating a GitHub Repository
+1. Go to [github.com](https://github.com) and log in.
+2. Click **+** (top right) → **New Repository**.
+3. Name the repo (e.g., `aws-restart`).
+4. Set visibility to **Private**.
+5. Check **Add a README file**.
+6. Click **Create Repository**.
+
+### Essential Git Commands
+
+```bash
+# Configure Git identity (one-time setup)
+git config --global user.name "YourUsername"
+git config --global user.email "your@email.com"
+
+# Clone a repository
+git clone https://github.com/username/repo-name.git
+
+# Pull latest changes
+git pull
+
+# Fetch remote branch info
+git fetch
+
+# Stage files for commit
+git add filename.txt      # specific file
+git add .                 # all changes
+
+# Commit with a message
+git commit -m "Your commit message here"
+
+# Push to GitHub
+git push
+
+# View commit history
+git log
+
+# Reset to a previous commit (use with caution!)
+git reset --hard <commit-hash>
+
+# Switch to or create a branch
+git checkout branch-name
+```
+
+### Authentication — Personal Access Token
+GitHub no longer accepts passwords for `git push`. Use a **Personal Access Token (PAT)**:
+1. GitHub → Profile → **Settings** → **Developer Settings** → **Personal Access Tokens** → **Tokens (Classic)**.
+2. Generate new token → set expiry (e.g., 30 days) → grant repo read/write permissions.
+3. Use this token as your password when prompted.
+
+### Branching Workflow
+```bash
+# Create a new branch on GitHub or locally
+git fetch
+git checkout test-branch
+
+# Make changes, then:
+git add .
+git commit -m "Changes on test branch"
+git push
+
+# Merge: Go to GitHub → Compare & Pull Request → Create Pull Request → Merge
+```
+
+> **Cherry Pick:** `git cherry-pick <commit-hash>` — merge a *specific* commit from one branch into another, instead of merging the whole branch.
+
+### Uploading Local VS Code Files to Cloud9 via GitHub
+1. Upload files from VS Code → GitHub repo (Add File → Upload Files).
+2. In Cloud9 terminal: `git pull` inside your repo folder to get the latest files.
+
+---
+
+## 9. AWS CLF-C02 Relevance
+
+The following topics from today's lecture are **relevant to the AWS Certified Cloud Practitioner (CLF-C02)** exam:
+
+### ✅ Directly Relevant
+
+| Topic Covered in Lecture | CLF-C02 Domain |
+|--------------------------|---------------|
+| **Amazon EC2** — the Python challenge grading system runs on an EC2 instance with bash scripts | Domain 3: Cloud Technology & Services |
+| **AWS Lambda** — mentioned as the service used to schedule start/stop of EC2 instances (cost optimisation) | Domain 3: Cloud Technology & Services |
+| **AWS Cloud9** — browser-based IDE used in the lab | Domain 3: Cloud Technology & Services |
+| **AWS Management Console** — used to access Cloud9 and AWS resources | Domain 2: Security & Compliance / Domain 3 |
+
+### ℹ️ Indirectly Relevant (Background Knowledge)
+
+| Topic | Why It Matters for CLF-C02 |
+|-------|---------------------------|
+| **JSON** | AWS services (IAM policies, CloudFormation, API responses) are heavily JSON-based |
+| **PIP / Python scripting** | AWS CLI and SDK (Boto3) use Python; understanding package management helps with AWS automation |
+| **Git / GitHub** | AWS CodeCommit is AWS's managed Git repository service; understanding Git concepts helps understand CodeCommit and CI/CD pipelines (CodePipeline, CodeBuild) |
+| **Exception Handling** | Relevant when scripting with AWS SDK (Boto3) to handle API errors gracefully |
+| **OS Module / system commands** | AWS CLI commands follow the same pattern as OS-level commands |
+
+### CLF-C02 Key Services Mentioned
+- **Amazon EC2** — Elastic Compute Cloud (virtual servers in the cloud).
+- **AWS Lambda** — serverless compute; runs code in response to events (used here to auto-schedule EC2 start/stop).
+- **AWS Cloud9** — cloud-based IDE; no local setup required.
+
+> **Exam Tip:** For CLF-C02, know the *purpose* and *use case* of EC2, Lambda, and Cloud9 — you don't need to know how to code them, but understanding what they do and when to use them is essential.
+
+---
+
+## 10. Quick Reference Cheatsheet
+
+### File Modes
+| Mode | Symbol |
+|------|--------|
+| Read | `"r"` |
+| Write (overwrite) | `"w"` |
+| Append | `"a"` |
+
+### Import Styles
+```python
+import module_name                        # import whole module
+from module_name import function_name     # import specific item
+```
+
+### Exception Handling Template
+```python
+try:
+    # risky code
+except SpecificError:
+    # handle specific error
+except Exception:
+    # handle any other error
+```
+
+### JSON Workflow
+```python
+import json
+# Stringify: Python → JSON string
+json_str = json.dumps(my_data)
+# Parse: JSON string → Python
+my_data = json.loads(json_str)
+# Read from file
+with open("file.json") as f:
+    data = json.load(f)
+```
+
+### Git Workflow Summary
+```
+git clone → make changes → git add → git commit -m "msg" → git push
+```
+
+---
+
+*Notes compiled from lecture — May 18, 2026*  
+*AWS re/Start Program — Cohort 3: Project CloudIgnite*
