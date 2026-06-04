@@ -77,6 +77,18 @@ body {
   line-height: 1.5;
   overflow-x: auto;
   display: block;
+  position: relative;
+}
+
+.prose table::after {
+  content: "";
+  position: sticky;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2rem;
+  background: linear-gradient(to left, rgba(15, 23, 42, 0.8), transparent);
+  pointer-events: none;
 }
 
 .prose thead {

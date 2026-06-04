@@ -103,7 +103,7 @@ export default function TableOfContents({ headings }: Props) {
               <button
                 key={h.id}
                 onClick={() => handleClick(h.id)}
-                className={`block w-full text-left text-sm py-1.5 px-2 rounded transition-colors ${
+                className={`block w-full text-left text-sm py-1.5 px-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-slate-900 ${
                   h.level === 3 ? "pl-5" : ""
                 } ${
                   activeId === h.id
@@ -129,7 +129,7 @@ export default function TableOfContents({ headings }: Props) {
               <button
                 key={h.id}
                 onClick={() => handleClick(h.id)}
-                className={`block w-full text-left text-sm py-0.5 transition-colors ${
+                className={`block w-full text-left text-sm py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-slate-950 rounded ${
                   h.level === 3 ? "pl-3" : ""
                 } ${
                   activeId === h.id
