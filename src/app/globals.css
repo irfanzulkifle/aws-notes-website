@@ -75,6 +75,8 @@ body {
   margin: 1.5rem 0;
   font-size: 0.875rem;
   line-height: 1.5;
+  overflow-x: auto;
+  display: block;
 }
 
 .prose thead {

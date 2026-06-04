@@ -5,7 +5,8 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllNotes, getNoteContent } from "@/lib/utils";
+import { getAllNotes, getNoteContent, extractHeadings } from "@/lib/utils";
+import TableOfContents from "@/components/TableOfContents";
 
 interface Props {
   params: Promise<{ week: string; slug: string }>;
@@ -43,18 +44,7 @@ export default async function NotePage({ params }: Props) {
   const prevNote = currentIndex > 0 ? weekNotes[currentIndex - 1] : null;
   const nextNote = currentIndex < weekNotes.length - 1 ? weekNotes[currentIndex + 1] : null;
 
-  // Extract headings for TOC
-  const headingRegex = /^#{2,3}\s+(.+)$/gm;
-  const headings: { level: number; text: string; id: string }[] = [];
-  let match;
-  while ((match = headingRegex.exec(content)) !== null) {
-    const text = match[1].replace(/[#*`~_\[\]()]/g, "").trim();
-    const id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    headings.push({ level: match[0].startsWith("###") ? 3 : 2, text, id });
-  }
+  const headings = extractHeadings(content);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -70,11 +60,11 @@ export default async function NotePage({ params }: Props) {
             </svg>
             All Notes
           </Link>
-          <span className="text-sm text-slate-500">{meta.date}</span>
+          <span className="text-sm text-slate-400">{meta.date}</span>
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div id="main-content" className="max-w-6xl mx-auto px-4 py-8">
         {/* Week nav */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-800">
           <div>
@@ -89,10 +79,10 @@ export default async function NotePage({ params }: Props) {
                 {prevNote.date}
               </Link>
             ) : (
-              <span className="text-sm text-slate-600">First in {week}</span>
+              <span className="text-sm text-slate-500">First in {week}</span>
             )}
           </div>
-          <span className="text-xs font-mono text-slate-500 px-3 py-1 rounded bg-slate-800/50 border border-slate-700">
+          <span className="text-xs font-mono text-slate-400 px-3 py-1 rounded bg-slate-800/50 border border-slate-700">
             {week.replace("_", " ").toUpperCase()}
           </span>
           <div>
@@ -107,7 +97,7 @@ export default async function NotePage({ params }: Props) {
                 </svg>
               </Link>
             ) : (
-              <span className="text-sm text-slate-600">Last in {week}</span>
+              <span className="text-sm text-slate-500">Last in {week}</span>
             )}
           </div>
         </div>
@@ -175,29 +165,8 @@ export default async function NotePage({ params }: Props) {
             </div>
           </article>
 
-          {/* TOC sidebar */}
-          {headings.length > 0 && (
-            <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-20">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
-                  On this page
-                </h4>
-                <nav className="space-y-1.5 border-l border-slate-800 pl-4">
-                  {headings.map((h) => (
-                    <a
-                      key={h.id}
-                      href={`#${h.id}`}
-                      className={`block text-sm transition-colors hover:text-slate-200 ${
-                        h.level === 3 ? "pl-3" : ""
-                      } text-slate-400`}
-                    >
-                      {h.text}
-                    </a>
-                  ))}
-                </nav>
-              </div>
-            </aside>
-          )}
+          {/* TOC — desktop sidebar + mobile drawer */}
+          <TableOfContents headings={headings} />
         </div>
       </div>
     </div>

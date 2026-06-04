@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import matter from "gray-matter";
+import GithubSlugger from "github-slugger";
 
 const NOTES_DIR = path.join(process.cwd(), "content", "notes");
 
@@ -32,7 +33,7 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
   ) || "";
   const topicsRaw = topicsLine.replace(/^\*\*Topics?:\*\*\s*/, "").trim();
   const topics = topicsRaw
-    ? topicsRaw.split("·").map((t) => t.trim()).filter(Boolean)
+    ? topicsRaw.split(/,\s*(?![^()]*\))/).map((t) => t.trim()).filter(Boolean)
     : [];
 
   // Date from slug (YYYY-MM-DD)
@@ -85,4 +86,32 @@ export function getAllWeeks(): string[] {
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
     .sort();
+}
+
+export interface Heading {
+  level: number;
+  text: string;
+  id: string;
+}
+
+export function extractHeadings(content: string): Heading[] {
+  const slugger = new GithubSlugger();
+  const headingRegex = /^#{2,3}\s+(.+)$/gm;
+  const headings: Heading[] = [];
+  let match;
+
+  while ((match = headingRegex.exec(content)) !== null) {
+    const text = match[1]
+      .replace(/[#*`~_\[\]()]/g, "")
+      .replace(/\*\*/g, "")
+      .trim();
+    const id = slugger.slug(text);
+    headings.push({
+      level: match[0].startsWith("###") ? 3 : 2,
+      text,
+      id,
+    });
+  }
+
+  return headings;
 }
