@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllNotes } from "@/lib/utils";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://aws-restart-notes.vercel.app";
+  const baseUrl = "https://aws-notes-website.vercel.app";
   const allNotes = getAllNotes();
 
   const noteUrls: MetadataRoute.Sitemap = allNotes.map((note) => ({
