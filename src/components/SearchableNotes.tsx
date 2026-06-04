@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 interface Note {
@@ -18,7 +19,9 @@ interface Props {
 }
 
 export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
-  const [query, setQuery] = useState("");
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("search") || "";
+  const [query, setQuery] = useState(initialQuery);
 
   const notesByWeek = useMemo(() => {
     const map = new Map<string, Note[]>();
@@ -79,6 +82,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
             placeholder="Search notes by title, topic, or week..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search notes by title, topic, or week"
             className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors text-sm"
           />
           {query && (

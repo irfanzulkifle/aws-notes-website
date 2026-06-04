@@ -1,3 +1,4 @@
+import React from "react";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -5,8 +6,10 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllNotes, getNoteContent, extractHeadings } from "@/lib/utils";
+import { getAllNotes, getNoteContent, extractHeadings, readingTime } from "@/lib/utils";
+import { WEEK_LABELS } from "@/lib/constants";
 import TableOfContents from "@/components/TableOfContents";
+import CopyCodeButton from "@/components/CopyCodeButton";
 
 interface Props {
   params: Promise<{ week: string; slug: string }>;
@@ -45,9 +48,31 @@ export default async function NotePage({ params }: Props) {
   const nextNote = currentIndex < weekNotes.length - 1 ? weekNotes[currentIndex + 1] : null;
 
   const headings = extractHeadings(content);
+  const minutes = readingTime(content);
+
+  const relatedNotes = allNotes
+    .filter((n) => n.slug !== slug && n.topics.some((t) => meta.topics.includes(t)))
+    .slice(0, 3);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: meta.title,
+    datePublished: meta.date,
+    author: { "@type": "Person", name: "Irfan Zulkifle" },
+    publisher: { "@type": "Organization", name: "AWS re/Start Notes" },
+    description: `Lecture notes: ${meta.title}. Topics: ${meta.topics.join(", ")}`,
+    keywords: meta.topics.join(", "),
+    inLanguage: "en",
+  };
 
   return (
     <div className="min-h-screen bg-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Top nav bar */}
       <nav className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur border-b border-slate-800">
         <div className="max-w-6xl mx-auto px-4 h-12 flex items-center justify-between">
@@ -60,7 +85,9 @@ export default async function NotePage({ params }: Props) {
             </svg>
             All Notes
           </Link>
-          <span className="text-sm text-slate-400">{meta.date}</span>
+          <span className="text-sm text-slate-400">
+            {meta.date} · {minutes} min read
+          </span>
         </div>
       </nav>
 
@@ -83,7 +110,7 @@ export default async function NotePage({ params }: Props) {
             )}
           </div>
           <span className="text-xs font-mono text-slate-400 px-3 py-1 rounded bg-slate-800/50 border border-slate-700">
-            {week.replace("_", " ").toUpperCase()}
+            {WEEK_LABELS[week] || week.replace("_", " ").toUpperCase()}
           </span>
           <div>
             {nextNote ? (
@@ -113,12 +140,13 @@ export default async function NotePage({ params }: Props) {
               {meta.topics.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {meta.topics.map((t) => (
-                    <span
+                    <Link
                       key={t}
-                      className="px-2.5 py-1 text-xs rounded-full bg-blue-950/50 text-blue-300 border border-blue-900/40"
+                      href={`/?search=${encodeURIComponent(t)}`}
+                      className="px-2.5 py-1 text-xs rounded-full bg-blue-950/50 text-blue-300 border border-blue-900/40 hover:bg-blue-900/40 hover:text-blue-200 transition-colors"
                     >
                       {t}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -139,10 +167,49 @@ export default async function NotePage({ params }: Props) {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight, rehypeSlug]}
+                components={{
+                  pre({ children, ...props }) {
+                    const codeChild = React.Children.toArray(children).find(
+                      (child) => React.isValidElement(child) && child.type === "code"
+                    ) as React.ReactElement<{ className?: string; children?: React.ReactNode }> | undefined;
+                    const codeString = codeChild?.props?.children
+                      ? String(codeChild.props.children).replace(/\n$/, "")
+                      : "";
+                    return (
+                      <div className="relative group">
+                        <pre {...props}>{children}</pre>
+                        {codeString && <CopyCodeButton text={codeString} />}
+                      </div>
+                    );
+                  },
+                }}
               >
                 {content}
               </ReactMarkdown>
             </div>
+
+            {/* Related notes */}
+            {relatedNotes.length > 0 && (
+              <div className="mt-12 pt-6 border-t border-slate-800">
+                <h2 className="text-lg font-semibold text-slate-200 mb-4">
+                  Related notes
+                </h2>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {relatedNotes.map((note) => (
+                    <Link
+                      key={note.slug}
+                      href={`/notes/${note.week}/${note.slug}`}
+                      className="block p-4 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <p className="text-sm font-medium text-slate-200 mb-1 line-clamp-2">
+                        {note.title}
+                      </p>
+                      <p className="text-xs text-slate-500">{note.date}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Bottom nav */}
             <div className="flex items-center justify-between mt-12 pt-6 border-t border-slate-800">

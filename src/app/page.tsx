@@ -1,20 +1,10 @@
 import { getAllNotes, getAllWeeks } from "@/lib/utils";
+import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
 
 export default function HomePage() {
   const weeks = getAllWeeks();
   const allNotes = getAllNotes();
-
-  const weekLabels: Record<string, string> = {
-    week_03: "Week 3 — Linux & Shell",
-    week_04: "Week 4 — Bash & AWS CLI",
-    week_05: "Week 5 — Python Fundamentals",
-    week_06: "Week 6 — Python Advanced",
-    week_07: "Week 7 — Networking",
-    week_08: "Week 8 — Databases & SQL",
-    week_09: "Week 9 — AWS Cloud",
-    week_10: "Week 10 — SQL Advanced & Amazon RDS",
-  };
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -58,7 +48,7 @@ export default function HomePage() {
       </section>
 
       <div id="main-content">
-        <SearchableNotes notes={allNotes} weeks={weeks} weekLabels={weekLabels} />
+        <SearchableNotes notes={allNotes} weeks={weeks} weekLabels={WEEK_LABELS} />
       </div>
     </div>
   );
