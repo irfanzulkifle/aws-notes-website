@@ -1,0 +1,148 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+
+interface Heading {
+  level: number;
+  text: string;
+  id: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+export default function TableOfContents({ headings }: Props) {
+  const [activeId, setActiveId] = useState<string>("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const headingElements = headings
+      .map((h) => document.getElementById(h.id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (headingElements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-80px 0px -80% 0px", threshold: 0.1 }
+    );
+
+    for (const el of headingElements) {
+      observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, [headings]);
+
+  const handleClick = useCallback(
+    (id: string) => {
+      setMobileOpen(false);
+      const el = document.getElementById(id);
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 96;
+        window.scrollTo({ top: y, behavior: "smooth" });
+        history.replaceState(null, "", `#${id}`);
+      }
+    },
+    []
+  );
+
+  if (headings.length === 0) return null;
+
+  return (
+    <>
+      {/* Mobile TOC toggle */}
+      <div className="lg:hidden fixed bottom-4 right-4 z-50">
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-slate-100 hover:border-slate-600 shadow-lg transition-colors"
+          aria-label="Toggle table of contents"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h7"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile TOC drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-x-0 bottom-0 z-50 max-h-[60vh] bg-slate-900 border-t border-slate-700 rounded-t-2xl shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
+            <h4 className="text-sm font-semibold text-slate-300">
+              On this page
+            </h4>
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="text-slate-500 hover:text-slate-300 transition-colors p-1"
+              aria-label="Close table of contents"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <nav className="overflow-y-auto max-h-[calc(60vh-52px)] p-4 space-y-1">
+            {headings.map((h) => (
+              <button
+                key={h.id}
+                onClick={() => handleClick(h.id)}
+                className={`block w-full text-left text-sm py-1.5 px-2 rounded transition-colors ${
+                  h.level === 3 ? "pl-5" : ""
+                } ${
+                  activeId === h.id
+                    ? "text-blue-400 bg-blue-950/30"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                }`}
+              >
+                {h.text}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
+
+      {/* Desktop sidebar TOC */}
+      <aside className="hidden lg:block w-64 flex-shrink-0">
+        <div className="sticky top-20">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+            On this page
+          </h4>
+          <nav className="space-y-1 border-l border-slate-800 pl-4">
+            {headings.map((h) => (
+              <button
+                key={h.id}
+                onClick={() => handleClick(h.id)}
+                className={`block w-full text-left text-sm py-0.5 transition-colors ${
+                  h.level === 3 ? "pl-3" : ""
+                } ${
+                  activeId === h.id
+                    ? "text-blue-400 border-l-2 border-blue-400 -ml-[calc(1rem+1px)] pl-[calc(1rem-1px)]"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {h.text}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </aside>
+    </>
+  );
+}

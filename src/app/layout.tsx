@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AWS re/Start Notes — Irfan Zulkifle",
-  description:
-    "Comprehensive AWS re/Start learning journal by Irfan Zulkifle. 29 lectures covering Linux, Python, SQL, Networking, AWS Cloud, and more — with CLF-C02 exam relevance flags.",
+    description:
+      "Comprehensive AWS re/Start learning journal by Irfan Zulkifle. 30 lectures covering Linux, Python, SQL, Networking, AWS Cloud, and more — with CLF-C02 exam relevance flags.",
   openGraph: {
     title: "AWS re/Start Notes — Irfan Zulkifle",
     description:
@@ -35,6 +35,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-slate-950 text-slate-200">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-blue-600 focus:text-white focus:text-sm focus:outline-none"
+        >
+          Skip to content
+        </a>
         {children}
         <footer className="border-t border-slate-800 py-6 mt-auto">
           <div className="max-w-6xl mx-auto px-4 text-center text-sm text-slate-500">
