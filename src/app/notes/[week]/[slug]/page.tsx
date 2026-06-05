@@ -11,21 +11,9 @@ import { WEEK_LABELS } from "@/lib/constants";
 import TableOfContents from "@/components/TableOfContents";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import TrackView from "@/components/TrackView";
-import ExamCallout from "@/components/ExamCallout";
-import ReadingProgress from "@/components/ReadingProgress";
 
 interface Props {
   params: Promise<{ week: string; slug: string }>;
-}
-
-function extractBlockquoteText(children: React.ReactNode): string {
-  if (typeof children === "string") return children;
-  if (Array.isArray(children)) return children.map(extractBlockquoteText).join(" ");
-  if (React.isValidElement(children)) {
-    const props = children.props as { children?: React.ReactNode };
-    if (props.children) return extractBlockquoteText(props.children);
-  }
-  return "";
 }
 
 export async function generateStaticParams() {
@@ -55,10 +43,10 @@ export default async function NotePage({ params }: Props) {
 
   const { meta, content } = data;
   const allNotes = getAllNotes();
-  const sortedNotes = [...allNotes].sort((a, b) => a.slug.localeCompare(b.slug));
-  const currentIndex = sortedNotes.findIndex((n) => n.slug === slug && n.week === week);
-  const prevNote = currentIndex > 0 ? sortedNotes[currentIndex - 1] : null;
-  const nextNote = currentIndex < sortedNotes.length - 1 ? sortedNotes[currentIndex + 1] : null;
+  const weekNotes = allNotes.filter((n) => n.week === week).sort((a, b) => a.slug.localeCompare(b.slug));
+  const currentIndex = weekNotes.findIndex((n) => n.slug === slug);
+  const prevNote = currentIndex > 0 ? weekNotes[currentIndex - 1] : null;
+  const nextNote = currentIndex < weekNotes.length - 1 ? weekNotes[currentIndex + 1] : null;
 
   const headings = extractHeadings(content);
   const minutes = readingTime(content);
@@ -87,7 +75,6 @@ export default async function NotePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ReadingProgress />
       <TrackView week={week} slug={slug} title={meta.title} date={meta.date} />
 
       <div id="main-content" className="max-w-5xl mx-auto px-6 py-10">
@@ -99,9 +86,9 @@ export default async function NotePage({ params }: Props) {
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          <Link href={`/#week-${week}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            <span className="text-gray-500 dark:text-slate-400">
             {WEEK_LABELS[week] || week}
-          </Link>
+          </span>
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -116,15 +103,15 @@ export default async function NotePage({ params }: Props) {
             {prevNote ? (
               <Link
                 href={`/notes/${prevNote.week}/${prevNote.slug}`}
-                className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
-                <time dateTime={prevNote.date}>{prevNote.date}</time>
+                {prevNote.date}
               </Link>
             ) : (
-              <span className="text-xs text-gray-300 dark:text-slate-600">First note</span>
+              <span className="text-xs text-gray-300 dark:text-slate-600">First in {week}</span>
             )}
           </div>
           <span className="text-[10px] font-mono text-gray-400 dark:text-slate-500 tracking-wide">
@@ -134,15 +121,15 @@ export default async function NotePage({ params }: Props) {
             {nextNote ? (
               <Link
                 href={`/notes/${nextNote.week}/${nextNote.slug}`}
-                className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
               >
-                <time dateTime={nextNote.date}>{nextNote.date}</time>
+                {nextNote.date}
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
             ) : (
-              <span className="text-xs text-gray-300 dark:text-slate-600">Last note</span>
+              <span className="text-xs text-gray-300 dark:text-slate-600">Last in {week}</span>
             )}
           </div>
         </div>
@@ -152,8 +139,8 @@ export default async function NotePage({ params }: Props) {
           <article className="flex-1 min-w-0">
             {/* Title */}
             <header className="mb-10">
-              <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-400 mb-3">
-                <time dateTime={meta.date}>{meta.date}</time>
+              <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 mb-3">
+                <span>{meta.date}</span>
                 <span>·</span>
                 <span>{minutes} min read</span>
               </div>
@@ -181,14 +168,6 @@ export default async function NotePage({ params }: Props) {
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight, rehypeSlug]}
                 components={{
-                  blockquote({ children, ...props }) {
-                    const content = extractBlockquoteText(children);
-                    return (
-                      <ExamCallout content={content}>
-                        <blockquote {...props}>{children}</blockquote>
-                      </ExamCallout>
-                    );
-                  },
                   pre({ children, ...props }) {
                     const codeChild = React.Children.toArray(children).find(
                       (child) => React.isValidElement(child) && child.type === "code"
@@ -216,35 +195,18 @@ export default async function NotePage({ params }: Props) {
                   Related notes
                 </h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {relatedNotes.map((note) => {
-                    const sharedTopics = note.topics.filter(t => meta.topics.includes(t));
-                    return (
-                      <Link
-                        key={note.slug}
-                        href={`/notes/${note.week}/${note.slug}`}
-                        className="block p-4 rounded-xl border border-gray-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-all group/rel"
-                      >
-                        <p className="text-sm font-medium text-gray-700 dark:text-slate-300 group-hover/rel:text-indigo-600 dark:group-hover/rel:text-indigo-400 transition-colors mb-1 line-clamp-2">
-                          {note.title}
-                        </p>
-                        <p className="text-xs text-gray-400 dark:text-slate-500 mb-2">
-                          {WEEK_LABELS[note.week] || note.week} · <time dateTime={note.date}>{note.date}</time>
-                        </p>
-                        {sharedTopics.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {sharedTopics.slice(0, 3).map((t) => (
-                              <span
-                                key={t}
-                                className="px-1.5 py-0.5 text-[10px] rounded-md font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50"
-                              >
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </Link>
-                    );
-                  })}
+                  {relatedNotes.map((note) => (
+                    <Link
+                      key={note.slug}
+                      href={`/notes/${note.week}/${note.slug}`}
+                      className="block p-4 rounded-xl border border-gray-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-all group/rel"
+                    >
+                      <p className="text-sm font-medium text-gray-700 dark:text-slate-300 group-hover/rel:text-indigo-600 dark:group-hover/rel:text-indigo-400 transition-colors mb-1 line-clamp-2">
+                        {note.title}
+                      </p>
+                      <p className="text-xs text-gray-400 dark:text-slate-500">{note.date}</p>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}
@@ -254,17 +216,17 @@ export default async function NotePage({ params }: Props) {
               {prevNote ? (
                 <Link
                   href={`/notes/${prevNote.week}/${prevNote.slug}`}
-                  className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  ← <time dateTime={prevNote.date}>{prevNote.date}</time>
+                  ← {prevNote.date}
                 </Link>
               ) : <div />}
               {nextNote ? (
                 <Link
                   href={`/notes/${nextNote.week}/${nextNote.slug}`}
-                  className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  <time dateTime={nextNote.date}>{nextNote.date}</time> →
+                  {nextNote.date} →
                 </Link>
               ) : <div />}
             </div>
