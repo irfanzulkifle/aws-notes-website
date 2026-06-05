@@ -119,22 +119,22 @@ export default function TableOfContents({ headings }: Props) {
       )}
 
       {/* Desktop sidebar TOC */}
-      <aside className="hidden lg:block w-64 flex-shrink-0">
+      <aside className="hidden lg:block w-56 flex-shrink-0">
         <div className="sticky top-20">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
-            On this page
+          <h4 className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-700 mb-3">
+            Contents
           </h4>
-          <nav className="space-y-1 border-l border-slate-800 pl-4">
+          <nav className="space-y-0.5 border-l border-slate-800/60 pl-3">
             {headings.map((h) => (
               <button
                 key={h.id}
                 onClick={() => handleClick(h.id)}
-                className={`block w-full text-left text-sm py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-slate-950 rounded ${
+                className={`block w-full text-left text-xs leading-relaxed py-1 transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded ${
                   h.level === 3 ? "pl-3" : ""
                 } ${
                   activeId === h.id
-                    ? "text-blue-400 border-l-2 border-blue-400 -ml-[calc(1rem+1px)] pl-[calc(1rem-1px)]"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "text-blue-400"
+                    : "text-slate-600 hover:text-slate-400"
                 }`}
               >
                 {h.text}
