@@ -1,6 +1,7 @@
 import { getAllNotes, getAllWeeks } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import Link from "next/link";
 
 const HERO_TOPICS = [
@@ -23,38 +24,33 @@ export default async function HomePage({
   const allNotes = getAllNotes();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#0B0F1A]">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/80 via-white to-white pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(ellipse,rgba(79,70,229,0.12),transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/80 via-white to-white dark:from-indigo-950/30 dark:via-[#0B0F1A] dark:to-[#0B0F1A] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(ellipse,rgba(79,70,229,0.12),transparent_70%)] dark:bg-[radial-gradient(ellipse,rgba(99,102,241,0.15),transparent_70%)] pointer-events-none" />
 
         <div className="relative max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-          {/* Badge */}
-          <div className="animate-fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm mb-8">
+          <div className="animate-fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm mb-8">
             <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-xs font-medium text-gray-600">
+            <span className="text-xs font-medium text-gray-600 dark:text-slate-400">
               AWS re/Start · Cohort 3 · {allNotes.length} notes published
             </span>
           </div>
 
-          {/* Headline */}
-          <h1 className="animate-fade-up-delay-1 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6 leading-[1.1]">
+          <h1 className="animate-fade-up-delay-1 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-[1.1]">
             Cloud computing
             <br />
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
               learning journal
             </span>
           </h1>
 
-          {/* Subheadline */}
-          <p className="animate-fade-up-delay-2 text-lg text-gray-500 max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="animate-fade-up-delay-2 text-lg text-gray-500 dark:text-slate-400 max-w-xl mx-auto mb-10 leading-relaxed">
             {weeks.length} weeks of structured notes covering Linux, Python, SQL,
             networking, and AWS — with CLF-C02 exam relevance flags.
           </p>
 
-          {/* CTAs */}
           <div className="animate-fade-up-delay-3 flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
             <a href="#main-content" className="btn-primary">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,13 +71,12 @@ export default async function HomePage({
             </a>
           </div>
 
-          {/* Topic pills */}
           <div className="animate-fade-up-delay-3 flex flex-wrap justify-center gap-2">
             {HERO_TOPICS.map((t) => (
               <Link
                 key={t}
                 href={`/?search=${encodeURIComponent(t)}#main-content`}
-                className="px-3 py-1 rounded-full text-xs font-medium text-gray-500 bg-white border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                className="px-3 py-1 rounded-full text-xs font-medium text-gray-500 dark:text-slate-400 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-all duration-200"
               >
                 {t}
               </Link>
@@ -91,7 +86,7 @@ export default async function HomePage({
       </section>
 
       {/* Stats */}
-      <section className="border-y border-gray-100 bg-gray-50/50">
+      <section className="border-y border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/30">
         <div className="max-w-4xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {[
@@ -101,10 +96,10 @@ export default async function HomePage({
               { value: "CLF-C02", label: "Exam aligned" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
                   {stat.value}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+                <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -113,6 +108,7 @@ export default async function HomePage({
 
       {/* Content */}
       <div id="main-content">
+        <RecentlyViewed />
         <SearchableNotes
           key={search || "_"}
           notes={allNotes}
