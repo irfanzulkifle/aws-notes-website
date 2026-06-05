@@ -11,9 +11,20 @@ import { WEEK_LABELS } from "@/lib/constants";
 import TableOfContents from "@/components/TableOfContents";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import TrackView from "@/components/TrackView";
+import ExamCallout from "@/components/ExamCallout";
 
 interface Props {
   params: Promise<{ week: string; slug: string }>;
+}
+
+function extractBlockquoteText(children: React.ReactNode): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) return children.map(extractBlockquoteText).join(" ");
+  if (React.isValidElement(children)) {
+    const props = children.props as { children?: React.ReactNode };
+    if (props.children) return extractBlockquoteText(props.children);
+  }
+  return "";
 }
 
 export async function generateStaticParams() {
@@ -168,6 +179,14 @@ export default async function NotePage({ params }: Props) {
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight, rehypeSlug]}
                 components={{
+                  blockquote({ children, ...props }) {
+                    const content = extractBlockquoteText(children);
+                    return (
+                      <ExamCallout content={content}>
+                        <blockquote {...props}>{children}</blockquote>
+                      </ExamCallout>
+                    );
+                  },
                   pre({ children, ...props }) {
                     const codeChild = React.Children.toArray(children).find(
                       (child) => React.isValidElement(child) && child.type === "code"
