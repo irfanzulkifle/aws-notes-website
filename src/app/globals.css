@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
@@ -443,4 +445,163 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9CA3AF;
+}
+
+/* ── Dark mode ── */
+
+.dark body,
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background: #0B0F1A;
+  color: #E2E8F0;
+}
+
+.dark .glass {
+  background: rgba(11, 15, 26, 0.85);
+  border-color: rgba(51, 65, 85, 0.5);
+}
+
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(51, 65, 85, 0.6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark .glass-card:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.dark .btn-primary {
+  background: #6366F1;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.4);
+}
+
+.dark .btn-primary:hover {
+  background: #818CF8;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+}
+
+.dark .btn-secondary {
+  background: #1E293B;
+  color: #CBD5E1;
+  border-color: #334155;
+}
+
+.dark .btn-secondary:hover {
+  background: #334155;
+  border-color: #475569;
+}
+
+.dark .prose {
+  color: #94A3B8;
+}
+
+.dark .prose strong {
+  color: #E2E8F0;
+}
+
+.dark .prose a {
+  color: #818CF8;
+  text-decoration-color: rgba(129, 140, 248, 0.3);
+}
+
+.dark .prose a:hover {
+  text-decoration-color: #818CF8;
+}
+
+.dark .prose hr {
+  border-color: #1E293B;
+}
+
+.dark .prose blockquote {
+  background: rgba(99, 102, 241, 0.08);
+  border-left-color: #6366F1;
+  color: #94A3B8;
+}
+
+.dark .prose blockquote p {
+  color: #94A3B8;
+}
+
+.dark .prose blockquote strong {
+  color: #E2E8F0;
+}
+
+.dark .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: rgba(30, 41, 59, 0.8);
+  color: #CBD5E1;
+  border-color: #334155;
+}
+
+.dark .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: #0C1222;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dark .prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: #CDD6F4;
+}
+
+.dark .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: #F1F5F9;
+  border-bottom-color: #1E293B;
+}
+
+.dark .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: #E2E8F0;
+}
+
+.dark .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: #CBD5E1;
+}
+
+.dark .prose :where(h5):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: #64748B;
+}
+
+.dark .prose li::marker {
+  color: #475569;
+}
+
+.dark .prose ol > li::marker {
+  color: #64748B;
+}
+
+.dark .prose table {
+  border-color: #1E293B;
+}
+
+.dark .prose thead {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.dark .prose th {
+  color: #94A3B8;
+  border-bottom-color: #1E293B;
+}
+
+.dark .prose td {
+  color: #94A3B8;
+  border-bottom-color: #1E293B;
+}
+
+.dark .prose tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.dark ::selection {
+  background: rgba(99, 102, 241, 0.25);
+  color: #E2E8F0;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
