@@ -41,6 +41,15 @@ export default function TableOfContents({ headings }: Props) {
     return () => observer.disconnect();
   }, [headings]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [mobileOpen]);
+
   const handleClick = useCallback(
     (id: string) => {
       setMobileOpen(false);
