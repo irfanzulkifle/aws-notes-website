@@ -155,14 +155,7 @@ export default async function NotePage({ params }: Props) {
             </header>
 
             {/* Markdown content */}
-            <div className="prose prose-invert prose-slate max-w-none
-              prose-p:text-slate-300 prose-p:leading-relaxed
-              prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-slate-200
-              prose-li:text-slate-300
-              prose-blockquote:border-l-blue-500 prose-blockquote:bg-slate-900/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r
-              prose-hr:border-slate-800
-            ">
+            <div className="prose">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight, rehypeSlug]}
