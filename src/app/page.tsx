@@ -56,7 +56,7 @@ export default async function HomePage({
 
           {/* CTAs */}
           <div className="animate-fade-up-delay-3 flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
-            <a href="#notes" className="btn-primary">
+            <a href="#main-content" className="btn-primary">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -80,7 +80,7 @@ export default async function HomePage({
             {HERO_TOPICS.map((t) => (
               <Link
                 key={t}
-                href={`/?search=${encodeURIComponent(t)}`}
+                href={`/?search=${encodeURIComponent(t)}#main-content`}
                 className="px-3 py-1 rounded-full text-xs font-medium text-gray-500 bg-white border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
               >
                 {t}
