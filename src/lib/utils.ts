@@ -12,6 +12,7 @@ export interface NoteMeta {
   date: string;
   topics: string[];
   path: string; // relative path from content/notes
+  readingTime: number;
 }
 
 export interface NoteContent {
@@ -40,8 +41,10 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
   const date = slug;
 
   const relativePath = path.join(week, `${slug}.md`);
+  const words = raw.replace(/[#*`~_\[\]()]/g, "").split(/\s+/).length;
+  const readingTime = Math.max(1, Math.round(words / 200));
 
-  return { week, slug, title, date, topics, path: relativePath };
+  return { week, slug, title, date, topics, path: relativePath, readingTime };
 }
 
 export function getAllNotes(): NoteMeta[] {

@@ -1,10 +1,25 @@
 import { getAllNotes, getAllWeeks } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
+import Link from "next/link";
+
+const HERO_TOPICS = [
+  { emoji: "🐧", label: "Linux" },
+  { emoji: "🐍", label: "Python" },
+  { emoji: "🗄️", label: "SQL" },
+  { emoji: "🌐", label: "Networking" },
+  { emoji: "☁️", label: "AWS Cloud" },
+  { emoji: "🔒", label: "Security" },
+  { emoji: "🗄️", label: "Databases" },
+];
 
 export default function HomePage() {
   const weeks = getAllWeeks();
   const allNotes = getAllNotes();
+  const lastUpdated = allNotes.reduce(
+    (max, n) => (n.date > max ? n.date : max),
+    allNotes[0]?.date ?? ""
+  );
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -21,28 +36,25 @@ export default function HomePage() {
             Personal lecture notes from the AWS re/Start program. Cohort 3: Project
             CloudIgnite — a structured journey through cloud computing fundamentals.
           </p>
-          <div className="flex flex-wrap justify-center gap-3 mt-6 text-sm text-slate-400">
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+          <p className="text-sm text-slate-500 mt-2">
+            Last updated: {lastUpdated}
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mt-6 text-sm">
+            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400">
               📄 {allNotes.length} notes
             </span>
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400">
               📅 {weeks.length} weeks
             </span>
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
-              🐧 Linux
-            </span>
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
-              🐍 Python
-            </span>
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
-              🗄️ SQL
-            </span>
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
-              🌐 Networking
-            </span>
-            <span className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
-              ☁️ AWS Cloud
-            </span>
+            {HERO_TOPICS.map((t) => (
+              <Link
+                key={t.label}
+                href={`/?search=${encodeURIComponent(t.label)}`}
+                className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-slate-200 hover:border-slate-600 transition-colors"
+              >
+                {t.emoji} {t.label}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
