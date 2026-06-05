@@ -106,10 +106,10 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
         </svg>
         <input
           type="text"
-          placeholder="Filter by title, topic, or week..."
+          placeholder="Search notes by keyword, topic, or content..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Search notes by title, topic, or week"
+          aria-label="Search notes by keyword, topic, or content"
           className="w-full pl-11 pr-10 py-3 rounded-xl bg-white border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-all shadow-sm"
         />
         {query && (
