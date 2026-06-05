@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemeToggle from "@/components/ThemeToggle";
+import FindInPage from "@/components/FindInPage";
 import "./globals.css";
 
 const inter = Inter({
@@ -101,6 +102,7 @@ export default function RootLayout({
         </nav>
 
         <main className="flex-1">{children}</main>
+        <FindInPage />
 
         {/* Footer */}
         <footer className="border-t border-gray-100 dark:border-slate-800 py-12">
