@@ -21,8 +21,8 @@ interface Props {
 
 export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("search") || "";
-  const [query, setQuery] = useState(initialQuery);
+  const urlQuery = searchParams.get("search") || "";
+  const [query, setQuery] = useState(urlQuery);
   const [allExpanded, setAllExpanded] = useState(false);
   const detailsRefs = useRef<(HTMLDetailsElement | null)[]>([]);
 
@@ -71,68 +71,62 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
   };
 
   return (
-    <>
+    <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Search */}
-      <div className="max-w-5xl mx-auto px-4 -mt-6 mb-4 relative z-10">
-        <div className="relative">
-          <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search notes by title, topic, or week..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search notes by title, topic, or week"
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors text-sm"
+      <div className="mb-6 relative">
+        <svg
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-              aria-label="Clear search"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-        </div>
+        </svg>
+        <input
+          type="text"
+          placeholder="Filter by title, topic, or week..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search notes by title, topic, or week"
+          className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80 text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus:border-slate-700 focus:bg-slate-900 transition-all"
+        />
+        {query && (
+          <button
+            onClick={() => setQuery("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
+            aria-label="Clear search"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
 
-      {/* Expand/collapse toggle */}
-      <div className="max-w-5xl mx-auto px-4 mb-6 flex justify-end">
+      {/* Controls */}
+      <div className="mb-6 flex items-center justify-between">
+        <span className="text-xs text-slate-600">
+          {query ? `${filteredWeeks.reduce((sum, w) => sum + filteredNotes(w).length, 0)} results` : `${notes.length} notes`}
+        </span>
         <button
           onClick={toggleAll}
-          className="text-xs text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1.5"
+          className="text-xs text-slate-600 hover:text-slate-400 transition-colors"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {allExpanded ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            )}
-          </svg>
           {allExpanded ? "Collapse all" : "Expand all"}
         </button>
       </div>
 
       {/* Week cards */}
-      <section className="max-w-5xl mx-auto px-4 pb-12 space-y-8">
+      <div className="space-y-6">
         {filteredWeeks.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-slate-500 text-sm">
-              No notes found matching &ldquo;{query}&rdquo;
+          <div className="text-center py-20">
+            <p className="text-slate-600 text-sm">
+              No notes found for &ldquo;{query}&rdquo;
             </p>
           </div>
         )}
@@ -143,63 +137,58 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
             <details
               key={week}
               ref={(el) => { detailsRefs.current[i] = el; }}
-              className="week-card group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden"
+              className="group bg-white/[0.02] border border-slate-800/60 rounded-xl overflow-hidden"
               open={i === 0 || allExpanded}
             >
               <summary
-                className="cursor-pointer px-6 py-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors list-none"
+                className="cursor-pointer px-5 py-3.5 flex items-center justify-between hover:bg-white/[0.02] transition-colors list-none"
                 role="button"
                 aria-label={`${weekLabels[week] || week}, ${weekNotes.length} notes`}
               >
-                <h3 className="text-lg font-semibold text-slate-200">
+                <h3 className="text-sm font-medium text-slate-300">
                   {weekLabels[week] || week}
                 </h3>
-                <div className="flex items-center gap-3 text-sm text-slate-400">
+                <div className="flex items-center gap-2.5 text-xs text-slate-600">
                   <span>{weekNotes.length} notes</span>
                   <svg
-                    className="w-4 h-4 transition-transform group-open:rotate-180"
+                    className="w-3.5 h-3.5 transition-transform group-open:rotate-180"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </summary>
-              <div className="week-card-content border-t border-slate-800 divide-y divide-slate-800/60">
+              <div className="week-card-content border-t border-slate-800/40 divide-y divide-slate-800/30">
                 {weekNotes.map((note) => (
                   <Link
                     key={note.slug}
                     href={`/notes/${note.week}/${note.slug}`}
-                    className="block px-6 py-3.5 hover:bg-slate-800/40 transition-colors"
+                    className="block px-5 py-3 hover:bg-white/[0.02] transition-colors group/note"
                   >
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h4 className="text-sm font-medium text-slate-200">
+                        <h4 className="text-sm text-slate-400 group-hover/note:text-slate-200 transition-colors">
                           {note.title}
                         </h4>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {note.date} · {note.readingTime} min read
+                        <p className="text-xs text-slate-600 mt-0.5">
+                          {note.date} · {note.readingTime} min
                         </p>
                       </div>
                       {note.topics.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 max-w-[60%] sm:max-w-md justify-end shrink-0">
+                        <div className="flex flex-wrap gap-1 shrink-0 max-w-[50%] justify-end">
                           {note.topics.slice(0, 2).map((t) => (
                             <span
                               key={t}
-                              className="px-2 py-0.5 text-[11px] rounded-full bg-blue-950/60 text-blue-300 border border-blue-900/50 whitespace-nowrap"
+                              className="px-1.5 py-0.5 text-[10px] rounded text-slate-600 bg-slate-800/50 whitespace-nowrap"
                             >
-                              {t.length > 24 ? t.slice(0, 24) + "\u2026" : t}
+                              {t.length > 20 ? t.slice(0, 20) + "\u2026" : t}
                             </span>
                           ))}
                           {note.topics.length > 2 && (
-                            <span className="text-[11px] text-slate-500 hidden sm:inline">
-                              +{note.topics.length - 2} more
+                            <span className="text-[10px] text-slate-700 hidden sm:inline">
+                              +{note.topics.length - 2}
                             </span>
                           )}
                         </div>
@@ -211,7 +200,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
             </details>
           );
         })}
-      </section>
-    </>
+      </div>
+    </div>
   );
 }
