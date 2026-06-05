@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
@@ -53,6 +54,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        <Analytics />
 
         {/* Navbar */}
         <nav className="sticky top-0 z-50 glass border-b border-gray-200/50 dark:border-slate-700/50">
