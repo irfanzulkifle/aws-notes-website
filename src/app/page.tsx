@@ -4,6 +4,18 @@ import SearchableNotes from "@/components/SearchableNotes";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import HomeSidebar from "@/components/HomeSidebar";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://aws-notes-website.vercel.app"),
+  title: "AWS re/Start Notes — Irfan Zulkifle",
+  description: "Comprehensive AWS re/Start learning journal by Irfan Zulkifle. 30 lectures covering Linux, Python, SQL, Networking, AWS Cloud, and more — with CLF-C02 exam relevance flags.",
+  openGraph: {
+    title: "AWS re/Start Notes — Irfan Zulkifle",
+    description: "Comprehensive AWS re/Start learning journal covering Linux, Python, SQL, Networking, AWS Cloud, and more.",
+    type: "website",
+  },
+};
 
 const HERO_TOPICS = [
   "Linux",
@@ -33,6 +45,24 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B0F1A]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "AWS re/Start Notes",
+          description: "Comprehensive AWS re/Start learning journal covering Linux, Python, SQL, Networking, AWS Cloud, and more.",
+          url: "https://aws-notes-website.vercel.app",
+          author: { "@type": "Person", name: "Irfan Zulkifle" },
+          publisher: { "@type": "Organization", name: "AWS re/Start" },
+          inLanguage: "en",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://aws-notes-website.vercel.app/?search={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }) }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-gray-100 dark:border-slate-800">
         <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/60 via-white to-white dark:from-indigo-950/20 dark:via-[#0B0F1A] dark:to-[#0B0F1A] pointer-events-none" />
