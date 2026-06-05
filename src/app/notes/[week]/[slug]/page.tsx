@@ -103,12 +103,12 @@ export default async function NotePage({ params }: Props) {
             {prevNote ? (
               <Link
                 href={`/notes/${prevNote.week}/${prevNote.slug}`}
-                className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
-                {prevNote.date}
+                <time dateTime={prevNote.date}>{prevNote.date}</time>
               </Link>
             ) : (
               <span className="text-xs text-gray-300 dark:text-slate-600">First in {week}</span>
@@ -121,9 +121,9 @@ export default async function NotePage({ params }: Props) {
             {nextNote ? (
               <Link
                 href={`/notes/${nextNote.week}/${nextNote.slug}`}
-                className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
               >
-                {nextNote.date}
+                <time dateTime={nextNote.date}>{nextNote.date}</time>
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                 </svg>
@@ -139,8 +139,8 @@ export default async function NotePage({ params }: Props) {
           <article className="flex-1 min-w-0">
             {/* Title */}
             <header className="mb-10">
-              <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 mb-3">
-                <span>{meta.date}</span>
+              <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-400 mb-3">
+                <time dateTime={meta.date}>{meta.date}</time>
                 <span>·</span>
                 <span>{minutes} min read</span>
               </div>
@@ -216,17 +216,17 @@ export default async function NotePage({ params }: Props) {
               {prevNote ? (
                 <Link
                   href={`/notes/${prevNote.week}/${prevNote.slug}`}
-                  className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  ← {prevNote.date}
+                  ← <time dateTime={prevNote.date}>{prevNote.date}</time>
                 </Link>
               ) : <div />}
               {nextNote ? (
                 <Link
                   href={`/notes/${nextNote.week}/${nextNote.slug}`}
-                  className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="text-xs text-gray-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  {nextNote.date} →
+                  <time dateTime={nextNote.date}>{nextNote.date}</time> →
                 </Link>
               ) : <div />}
             </div>
