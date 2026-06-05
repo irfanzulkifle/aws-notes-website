@@ -69,38 +69,39 @@ export default async function NotePage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Top nav bar */}
-      <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/60">
-        <div className="max-w-4xl mx-auto px-4 h-11 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1.5"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-            </svg>
+      <div id="main-content" className="max-w-5xl mx-auto px-6 py-10">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link href="/" className="hover:text-indigo-600 transition-colors">
             All Notes
           </Link>
-          <span className="text-xs text-slate-600">
-            {meta.date} · {minutes} min read
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+          <span className="text-gray-500">
+            {WEEK_LABELS[week] || week}
+          </span>
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+          <span className="text-gray-600 font-medium truncate max-w-xs">
+            {meta.title}
           </span>
         </div>
-      </nav>
 
-      <div id="main-content" className="max-w-4xl mx-auto px-4 py-10">
-        {/* Week nav */}
-        <div className="flex items-center justify-between mb-10 pb-3 border-b border-slate-800/60">
+        {/* Prev/Next nav */}
+        <div className="flex items-center justify-between mb-10 pb-4 border-b border-gray-100">
           <div>
             {prevNote ? (
               <Link
                 href={`/notes/${prevNote.week}/${prevNote.slug}`}
-                className="text-xs text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-400 hover:text-indigo-600 transition-colors flex items-center gap-1"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
@@ -108,17 +109,17 @@ export default async function NotePage({ params }: Props) {
                 {prevNote.date}
               </Link>
             ) : (
-              <span className="text-xs text-slate-700">First in {week}</span>
+              <span className="text-xs text-gray-300">First in {week}</span>
             )}
           </div>
-          <span className="text-[10px] font-mono text-slate-600 tracking-wide">
+          <span className="text-[10px] font-mono text-gray-400 tracking-wide">
             {WEEK_LABELS[week] || week.replace("_", " ").toUpperCase()}
           </span>
           <div>
             {nextNote ? (
               <Link
                 href={`/notes/${nextNote.week}/${nextNote.slug}`}
-                className="text-xs text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-400 hover:text-indigo-600 transition-colors flex items-center gap-1"
               >
                 {nextNote.date}
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,17 +127,22 @@ export default async function NotePage({ params }: Props) {
                 </svg>
               </Link>
             ) : (
-              <span className="text-xs text-slate-700">Last in {week}</span>
+              <span className="text-xs text-gray-300">Last in {week}</span>
             )}
           </div>
         </div>
 
-        <div className="flex gap-10">
+        <div className="flex gap-12">
           {/* Main content */}
           <article className="flex-1 min-w-0">
             {/* Title */}
             <header className="mb-10">
-              <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-3 tracking-tight">
+              <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                <span>{meta.date}</span>
+                <span>·</span>
+                <span>{minutes} min read</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight leading-tight">
                 {meta.title}
               </h1>
               {meta.topics.length > 0 && (
@@ -145,7 +151,7 @@ export default async function NotePage({ params }: Props) {
                     <Link
                       key={t}
                       href={`/?search=${encodeURIComponent(t)}`}
-                      className="px-2 py-0.5 text-[11px] rounded border border-slate-800 text-slate-500 hover:text-slate-300 hover:border-slate-600 transition-colors"
+                      className="px-2.5 py-1 text-xs rounded-lg font-medium border border-gray-200 text-gray-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all"
                     >
                       {t}
                     </Link>
@@ -182,21 +188,21 @@ export default async function NotePage({ params }: Props) {
 
             {/* Related notes */}
             {relatedNotes.length > 0 && (
-              <div className="mt-14 pt-6 border-t border-slate-800/60">
-                <h2 className="text-xs font-medium uppercase tracking-wider text-slate-600 mb-4">
-                  Related
+              <div className="mt-16 pt-8 border-t border-gray-100">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">
+                  Related notes
                 </h2>
-                <div className="space-y-2">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {relatedNotes.map((note) => (
                     <Link
                       key={note.slug}
                       href={`/notes/${note.week}/${note.slug}`}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.02] transition-colors group/rel"
+                      className="block p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group/rel"
                     >
-                      <p className="text-sm text-slate-500 group-hover/rel:text-slate-300 transition-colors">
+                      <p className="text-sm font-medium text-gray-700 group-hover/rel:text-indigo-600 transition-colors mb-1 line-clamp-2">
                         {note.title}
                       </p>
-                      <span className="text-xs text-slate-700 shrink-0 ml-4">{note.date}</span>
+                      <p className="text-xs text-gray-400">{note.date}</p>
                     </Link>
                   ))}
                 </div>
@@ -204,11 +210,11 @@ export default async function NotePage({ params }: Props) {
             )}
 
             {/* Bottom nav */}
-            <div className="flex items-center justify-between mt-14 pt-6 border-t border-slate-800/60">
+            <div className="flex items-center justify-between mt-16 pt-8 border-t border-gray-100">
               {prevNote ? (
                 <Link
                   href={`/notes/${prevNote.week}/${prevNote.slug}`}
-                  className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                  className="text-xs text-gray-400 hover:text-indigo-600 transition-colors"
                 >
                   ← {prevNote.date}
                 </Link>
@@ -216,7 +222,7 @@ export default async function NotePage({ params }: Props) {
               {nextNote ? (
                 <Link
                   href={`/notes/${nextNote.week}/${nextNote.slug}`}
-                  className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                  className="text-xs text-gray-400 hover:text-indigo-600 transition-colors"
                 >
                   {nextNote.date} →
                 </Link>

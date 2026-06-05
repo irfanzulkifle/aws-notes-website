@@ -59,38 +59,28 @@ export default function TableOfContents({ headings }: Props) {
   return (
     <>
       {/* Mobile TOC toggle */}
-      <div className="lg:hidden fixed bottom-4 right-4 z-50">
+      <div className="lg:hidden fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-slate-100 hover:border-slate-600 shadow-lg transition-colors"
+          className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:text-indigo-600 hover:border-indigo-200 shadow-lg shadow-gray-200/50 transition-all"
           aria-label="Toggle table of contents"
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h7"
-            />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h7" />
           </svg>
         </button>
       </div>
 
       {/* Mobile TOC drawer */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-x-0 bottom-0 z-50 max-h-[60vh] bg-slate-900 border-t border-slate-700 rounded-t-2xl shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
-            <h4 className="text-sm font-semibold text-slate-300">
+        <div className="lg:hidden fixed inset-x-0 bottom-0 z-50 max-h-[60vh] bg-white border-t border-gray-200 rounded-t-3xl shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h4 className="text-sm font-semibold text-gray-900">
               On this page
             </h4>
             <button
               onClick={() => setMobileOpen(false)}
-              className="text-slate-500 hover:text-slate-300 transition-colors p-1"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
               aria-label="Close table of contents"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,17 +88,17 @@ export default function TableOfContents({ headings }: Props) {
               </svg>
             </button>
           </div>
-          <nav className="overflow-y-auto max-h-[calc(60vh-52px)] p-4 space-y-1">
+          <nav className="overflow-y-auto max-h-[calc(60vh-64px)] p-4 space-y-0.5">
             {headings.map((h) => (
               <button
                 key={h.id}
                 onClick={() => handleClick(h.id)}
-                className={`block w-full text-left text-sm py-1.5 px-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-slate-900 ${
-                  h.level === 3 ? "pl-5" : ""
+                className={`block w-full text-left text-sm py-2 px-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${
+                  h.level === 3 ? "pl-6" : ""
                 } ${
                   activeId === h.id
-                    ? "text-blue-400 bg-blue-950/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                    ? "text-indigo-600 bg-indigo-50 font-medium"
+                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                 }`}
               >
                 {h.text}
@@ -121,20 +111,20 @@ export default function TableOfContents({ headings }: Props) {
       {/* Desktop sidebar TOC */}
       <aside className="hidden lg:block w-56 flex-shrink-0">
         <div className="sticky top-20">
-          <h4 className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-700 mb-3">
+          <h4 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400 mb-3">
             Contents
           </h4>
-          <nav className="space-y-0.5 border-l border-slate-800/60 pl-3">
+          <nav className="space-y-0.5 border-l border-gray-100 pl-3">
             {headings.map((h) => (
               <button
                 key={h.id}
                 onClick={() => handleClick(h.id)}
-                className={`block w-full text-left text-xs leading-relaxed py-1 transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded ${
+                className={`block w-full text-left text-xs leading-relaxed py-1 transition-colors focus:outline-none focus:ring-1 focus:ring-indigo-500/50 rounded ${
                   h.level === 3 ? "pl-3" : ""
                 } ${
                   activeId === h.id
-                    ? "text-blue-400"
-                    : "text-slate-600 hover:text-slate-400"
+                    ? "text-indigo-600 font-medium"
+                    : "text-gray-400 hover:text-gray-600"
                 }`}
               >
                 {h.text}
