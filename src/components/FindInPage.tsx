@@ -137,6 +137,16 @@ export default function FindInPage() {
         return;
       }
 
+      if (modKey && e.key === "k") {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[aria-label*="Search"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
+
       if (e.key === "Escape" && open) {
         e.preventDefault();
         close();
