@@ -2,20 +2,7 @@ import { getAllNotes, getAllWeeks } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
 import RecentlyViewed from "@/components/RecentlyViewed";
-import HomeSidebar from "@/components/HomeSidebar";
 import Link from "next/link";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  metadataBase: new URL("https://aws-notes-website.vercel.app"),
-  title: "AWS re/Start Notes — Irfan Zulkifle",
-  description: "Comprehensive AWS re/Start learning journal by Irfan Zulkifle. 30 lectures covering Linux, Python, SQL, Networking, AWS Cloud, and more — with CLF-C02 exam relevance flags.",
-  openGraph: {
-    title: "AWS re/Start Notes — Irfan Zulkifle",
-    description: "Comprehensive AWS re/Start learning journal covering Linux, Python, SQL, Networking, AWS Cloud, and more.",
-    type: "website",
-  },
-};
 
 const HERO_TOPICS = [
   "Linux",
@@ -36,33 +23,8 @@ export default async function HomePage({
   const weeks = getAllWeeks();
   const allNotes = getAllNotes();
 
-  const notesByWeek = new Map<string, typeof allNotes>();
-  for (const note of allNotes) {
-    const existing = notesByWeek.get(note.week) || [];
-    existing.push(note);
-    notesByWeek.set(note.week, existing);
-  }
-
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B0F1A]">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "AWS re/Start Notes",
-          description: "Comprehensive AWS re/Start learning journal covering Linux, Python, SQL, Networking, AWS Cloud, and more.",
-          url: "https://aws-notes-website.vercel.app",
-          author: { "@type": "Person", name: "Irfan Zulkifle" },
-          publisher: { "@type": "Organization", name: "AWS re/Start" },
-          inLanguage: "en",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: "https://aws-notes-website.vercel.app/?search={search_term_string}",
-            "query-input": "required name=search_term_string",
-          },
-        }) }}
-      />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/80 via-white to-white dark:from-indigo-950/30 dark:via-[#0B0F1A] dark:to-[#0B0F1A] pointer-events-none" />
@@ -146,27 +108,13 @@ export default async function HomePage({
 
       {/* Content */}
       <div id="main-content">
-        <div className="flex max-w-6xl mx-auto px-6 py-8 gap-8">
-          <HomeSidebar
-            weeks={weeks.map(w => ({
-              key: w,
-              label: WEEK_LABELS[w] || w,
-              count: (notesByWeek.get(w) || []).length,
-            }))}
-            activeWeek={weeks[0] || ""}
-            onWeekClick={() => {}}
-            notesCount={allNotes.length}
-          />
-          <div className="flex-1 min-w-0">
-            <RecentlyViewed />
-            <SearchableNotes
-              key={search || "_"}
-              notes={allNotes}
-              weeks={weeks}
-              weekLabels={WEEK_LABELS}
-            />
-          </div>
-        </div>
+        <RecentlyViewed />
+        <SearchableNotes
+          key={search || "_"}
+          notes={allNotes}
+          weeks={weeks}
+          weekLabels={WEEK_LABELS}
+        />
       </div>
     </div>
   );
