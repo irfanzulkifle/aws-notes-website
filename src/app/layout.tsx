@@ -79,6 +79,12 @@ export default function RootLayout({
               >
                 All Notes
               </Link>
+              <Link
+                href="/about"
+                className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 transition-colors hidden sm:block"
+              >
+                About
+              </Link>
               <a
                 href="https://github.com/irfanzulkifle/aws_restart_note"
                 target="_blank"
@@ -128,9 +134,15 @@ export default function RootLayout({
                   rel="noopener noreferrer"
                   className="hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
                 >
-                  CC BY 4.0
+                  <span>CC BY 4.0</span>
                 </a>
                 <span>·</span>
+                <Link
+                  href="/about"
+                  className="hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+                >
+                  About
+                </Link>
                 <span>Cohort 3: Project CloudIgnite</span>
               </div>
             </div>
