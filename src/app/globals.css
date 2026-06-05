@@ -81,14 +81,32 @@ body {
 }
 
 .prose blockquote {
-  border-left-color: #1e293b;
-  color: #64748b;
+  border-left: 3px solid #334155;
+  background: rgba(15, 23, 42, 0.4);
+  color: #94a3b8;
   font-style: normal;
-  padding-left: 1rem;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 0.375rem 0.375rem 0;
 }
 
 .prose blockquote p {
-  color: #64748b;
+  color: #94a3b8;
+  margin-bottom: 0.75em;
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.prose blockquote strong {
+  color: #cbd5e1;
+}
+
+.prose blockquote ul,
+.prose blockquote ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 /* ── Prose: inline code ── */
