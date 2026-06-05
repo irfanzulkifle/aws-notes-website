@@ -11,6 +11,7 @@ interface Note {
   date: string;
   topics: string[];
   readingTime: number;
+  body: string;
 }
 
 interface Props {
@@ -45,7 +46,8 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
         (note) =>
           note.title.toLowerCase().includes(q) ||
           note.topics.some((t) => t.toLowerCase().includes(q)) ||
-          (weekLabels[week] || week).toLowerCase().includes(q)
+          (weekLabels[week] || week).toLowerCase().includes(q) ||
+          note.body.toLowerCase().includes(q)
       );
     });
   }, [query, weeks, notesByWeek, weekLabels]);
@@ -58,7 +60,8 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
       (note) =>
         note.title.toLowerCase().includes(q) ||
         note.topics.some((t) => t.toLowerCase().includes(q)) ||
-        (weekLabels[week] || week).toLowerCase().includes(q)
+        (weekLabels[week] || week).toLowerCase().includes(q) ||
+        note.body.toLowerCase().includes(q)
     );
   };
 
