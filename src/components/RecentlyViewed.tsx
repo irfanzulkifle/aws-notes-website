@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 
 interface ViewedNote {
@@ -11,8 +11,7 @@ interface ViewedNote {
   viewedAt: number;
 }
 
-function getRecent(): ViewedNote[] {
-  if (typeof window === "undefined") return [];
+function readRecent(): ViewedNote[] {
   try {
     const stored = localStorage.getItem("recentlyViewed");
     return stored ? JSON.parse(stored).slice(0, 5) : [];
@@ -21,8 +20,27 @@ function getRecent(): ViewedNote[] {
   }
 }
 
+const EMPTY: ViewedNote[] = [];
+
+function subscribe(cb: () => void) {
+  window.addEventListener("recentlyViewedUpdate", cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener("recentlyViewedUpdate", cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+
+function getSnapshot(): ViewedNote[] {
+  return readRecent();
+}
+
+function getServerSnapshot(): ViewedNote[] {
+  return EMPTY;
+}
+
 export default function RecentlyViewed() {
-  const [recent] = useState<ViewedNote[]>(getRecent);
+  const recent = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   if (recent.length === 0) return null;
 
@@ -34,7 +52,7 @@ export default function RecentlyViewed() {
       <div className="flex gap-2 overflow-x-auto pb-1">
         {recent.map((note) => (
           <Link
-            key={note.slug}
+            key={`${note.slug}-${note.viewedAt}`}
             href={`/notes/${note.week}/${note.slug}`}
             className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-slate-400 bg-gray-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors whitespace-nowrap"
           >

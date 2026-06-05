@@ -4,6 +4,21 @@ import { useState, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
+function getSnippet(body: string, q: string): string {
+  const lower = body.toLowerCase();
+  const idx = lower.indexOf(q.toLowerCase());
+  if (idx === -1) return "";
+  const start = Math.max(0, idx - 60);
+  const end = Math.min(body.length, idx + q.length + 60);
+  const snippet = (start > 0 ? "\u2026" : "") + body.slice(start, end) + (end < body.length ? "\u2026" : "");
+  const escaped = snippet.replace(/[&<>"]/g, (ch) => {
+    const map: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
+    return map[ch];
+  });
+  const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+  return escaped.replace(regex, (m) => `<mark class="search-snippet-highlight">${m}</mark>`);
+}
+
 interface Note {
   week: string;
   slug: string;
@@ -204,13 +219,19 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                     className="block px-6 py-3.5 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors group/note"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h4 className="text-sm text-gray-700 dark:text-slate-300 group-hover/note:text-indigo-600 dark:group-hover/note:text-indigo-400 transition-colors font-medium">
                           {note.title}
                         </h4>
                         <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
                           {note.date} · {note.readingTime} min read
                         </p>
+                        {query.trim() && getSnippet(note.body, query.trim()) && (
+                          <p
+                            className="text-xs text-gray-500 dark:text-slate-500 mt-1.5 line-clamp-2 leading-relaxed [&_mark]:bg-yellow-200 [&_mark]:dark:bg-yellow-900/60 [&_mark]:dark:text-yellow-200 [&_mark]:rounded-sm [&_mark]:px-0.5 [&_mark]:font-medium"
+                            dangerouslySetInnerHTML={{ __html: getSnippet(note.body, query.trim()) }}
+                          />
+                        )}
                       </div>
                       {note.topics.length > 0 && (
                         <div className="flex flex-wrap gap-1 shrink-0 max-w-[50%] justify-end">
