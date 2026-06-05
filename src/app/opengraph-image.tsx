@@ -10,7 +10,7 @@ export default function OGImage() {
     (
       <div
         style={{
-          background: "#020617",
+          background: "#ffffff",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -22,43 +22,76 @@ export default function OGImage() {
       >
         <div
           style={{
-            fontSize: 56,
-            fontWeight: 700,
-            background: "linear-gradient(90deg, #60a5fa, #22d3ee, #2dd4bf)",
-            backgroundClip: "text",
-            color: "transparent",
-            marginBottom: 16,
-          }}
-        >
-          AWS re/Start Notes
-        </div>
-        <div
-          style={{
-            fontSize: 24,
-            color: "#94a3b8",
-            textAlign: "center",
-            maxWidth: "800px",
-          }}
-        >
-          A structured learning journal covering cloud computing fundamentals
-        </div>
-        <div
-          style={{
             display: "flex",
+            alignItems: "center",
             gap: 12,
-            marginTop: 32,
+            marginBottom: 24,
           }}
         >
-          {["Linux", "Python", "SQL", "Networking", "AWS Cloud"].map((tag) => (
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              background: "linear-gradient(135deg, #4F46E5, #7C3AED)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span
+              style={{
+                color: "white",
+                fontSize: 18,
+                fontWeight: 700,
+              }}
+            >
+              A
+            </span>
+          </div>
+          <span
+            style={{
+              fontSize: 18,
+              fontWeight: 600,
+              color: "#6B7280",
+            }}
+          >
+            AWS re/Start Notes
+          </span>
+        </div>
+        <div
+          style={{
+            fontSize: 48,
+            fontWeight: 700,
+            color: "#111827",
+            letterSpacing: "-0.025em",
+            textAlign: "center",
+          }}
+        >
+          Learning Journal
+        </div>
+        <div
+          style={{
+            fontSize: 20,
+            color: "#6B7280",
+            textAlign: "center",
+            marginTop: 16,
+          }}
+        >
+          30 lecture notes across 8 weeks of cloud computing
+        </div>
+        <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+          {["Linux", "Python", "SQL", "AWS Cloud", "Security"].map((tag) => (
             <span
               key={tag}
               style={{
                 padding: "6px 16px",
-                borderRadius: 9999,
-                border: "1px solid #334155",
-                background: "#1e293b",
-                color: "#94a3b8",
-                fontSize: 16,
+                borderRadius: 8,
+                border: "1px solid #E5E7EB",
+                background: "#F9FAFB",
+                color: "#6B7280",
+                fontSize: 14,
+                fontWeight: 500,
               }}
             >
               {tag}
