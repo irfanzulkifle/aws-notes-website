@@ -17,6 +17,7 @@ export default function TrackView({ week, slug, title, date }: Props) {
       const filtered = list.filter((n) => n.slug !== slug);
       filtered.unshift({ week, slug, title, date, viewedAt: Date.now() });
       localStorage.setItem("recentlyViewed", JSON.stringify(filtered.slice(0, 10)));
+      window.dispatchEvent(new Event("recentlyViewedUpdate"));
     } catch {
       // ignore
     }

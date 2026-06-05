@@ -156,7 +156,7 @@ body {
 .prose {
   font-size: 16px;
   line-height: 1.75;
-  color: #374151;
+  color: #1F2937;
   max-width: 72ch;
 }
 
@@ -520,7 +520,7 @@ body {
 }
 
 .dark .prose {
-  color: #94A3B8;
+  color: #CBD5E1;
 }
 
 .dark .prose strong {
@@ -562,6 +562,7 @@ body {
 
 .dark .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   background: #0C1222;
+  border: 1px solid #1E293B;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
