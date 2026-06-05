@@ -156,11 +156,6 @@ export default async function NotePage({ params }: Props) {
 
             {/* Markdown content */}
             <div className="prose prose-invert prose-slate max-w-none
-              prose-headings:text-slate-100 prose-headings:font-semibold prose-headings:scroll-mt-24
-              prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-5 prose-h2:pb-2 prose-h2:border-b prose-h2:border-slate-800
-              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-              prose-h4:text-lg prose-h4:mt-6 prose-h4:mb-2
-              prose-h5:text-base prose-h5:mt-4 prose-h5:mb-1
               prose-p:text-slate-300 prose-p:leading-relaxed
               prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
               prose-strong:text-slate-200
