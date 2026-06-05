@@ -13,6 +13,7 @@ export interface NoteMeta {
   topics: string[];
   path: string; // relative path from content/notes
   readingTime: number;
+  body: string; // plain text content for search
 }
 
 export interface NoteContent {
@@ -44,7 +45,24 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
   const words = raw.replace(/[#*`~_\[\]()]/g, "").split(/\s+/).length;
   const readingTime = Math.max(1, Math.round(words / 200));
 
-  return { week, slug, title, date, topics, path: relativePath, readingTime };
+  // Extract plain text for search (strip markdown syntax, limit length)
+  const body = raw
+    .replace(/^#{1,6}\s+.+$/gm, "") // headings
+    .replace(/\*\*|__/g, "")         // bold
+    .replace(/\*|_/g, "")            // italic
+    .replace(/`{1,3}[^`]*`{1,3}/g, "") // inline/code blocks
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1") // links/images
+    .replace(/^[-*+]\s+/gm, "")      // list markers
+    .replace(/^\d+\.\s+/gm, "")      // ordered list markers
+    .replace(/^>\s?/gm, "")          // blockquotes
+    .replace(/^\|.*\|$/gm, "")       // table rows
+    .replace(/^[-*_]{3,}$/gm, "")    // horizontal rules
+    .replace(/\n{2,}/g, " ")         // collapse newlines
+    .replace(/\s+/g, " ")            // collapse whitespace
+    .trim()
+    .slice(0, 2000);
+
+  return { week, slug, title, date, topics, path: relativePath, readingTime, body };
 }
 
 export function getAllNotes(): NoteMeta[] {
