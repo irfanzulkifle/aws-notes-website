@@ -543,11 +543,11 @@ body {
 .dark .prose blockquote {
   background: rgba(99, 102, 241, 0.08);
   border-left-color: #6366F1;
-  color: #94A3B8;
+  color: #CBD5E1;
 }
 
 .dark .prose blockquote p {
-  color: #94A3B8;
+  color: #CBD5E1;
 }
 
 .dark .prose blockquote strong {
@@ -608,7 +608,7 @@ body {
 }
 
 .dark .prose td {
-  color: #94A3B8;
+  color: #CBD5E1;
   border-bottom-color: #1E293B;
 }
 
