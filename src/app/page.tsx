@@ -2,6 +2,7 @@ import { getAllNotes, getAllWeeks } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import HomeSidebar from "@/components/HomeSidebar";
 import Link from "next/link";
 
 const HERO_TOPICS = [
@@ -22,6 +23,13 @@ export default async function HomePage({
   const { search } = await searchParams;
   const weeks = getAllWeeks();
   const allNotes = getAllNotes();
+
+  const notesByWeek = new Map<string, typeof allNotes>();
+  for (const note of allNotes) {
+    const existing = notesByWeek.get(note.week) || [];
+    existing.push(note);
+    notesByWeek.set(note.week, existing);
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B0F1A]">
@@ -85,13 +93,27 @@ export default async function HomePage({
 
       {/* Content */}
       <div id="main-content">
-        <RecentlyViewed />
-        <SearchableNotes
-          key={search || "_"}
-          notes={allNotes}
-          weeks={weeks}
-          weekLabels={WEEK_LABELS}
-        />
+        <div className="flex max-w-6xl mx-auto px-6 py-8 gap-8">
+          <HomeSidebar
+            weeks={weeks.map(w => ({
+              key: w,
+              label: WEEK_LABELS[w] || w,
+              count: (notesByWeek.get(w) || []).length,
+            }))}
+            activeWeek={weeks[0] || ""}
+            onWeekClick={() => {}}
+            notesCount={allNotes.length}
+          />
+          <div className="flex-1 min-w-0">
+            <RecentlyViewed />
+            <SearchableNotes
+              key={search || "_"}
+              notes={allNotes}
+              weeks={weeks}
+              weekLabels={WEEK_LABELS}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

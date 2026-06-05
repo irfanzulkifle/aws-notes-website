@@ -43,10 +43,10 @@ export default async function NotePage({ params }: Props) {
 
   const { meta, content } = data;
   const allNotes = getAllNotes();
-  const weekNotes = allNotes.filter((n) => n.week === week).sort((a, b) => a.slug.localeCompare(b.slug));
-  const currentIndex = weekNotes.findIndex((n) => n.slug === slug);
-  const prevNote = currentIndex > 0 ? weekNotes[currentIndex - 1] : null;
-  const nextNote = currentIndex < weekNotes.length - 1 ? weekNotes[currentIndex + 1] : null;
+  const sortedNotes = [...allNotes].sort((a, b) => a.slug.localeCompare(b.slug));
+  const currentIndex = sortedNotes.findIndex((n) => n.slug === slug && n.week === week);
+  const prevNote = currentIndex > 0 ? sortedNotes[currentIndex - 1] : null;
+  const nextNote = currentIndex < sortedNotes.length - 1 ? sortedNotes[currentIndex + 1] : null;
 
   const headings = extractHeadings(content);
   const minutes = readingTime(content);
@@ -86,9 +86,9 @@ export default async function NotePage({ params }: Props) {
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-            <span className="text-gray-500 dark:text-slate-400">
+          <Link href={`/#week-${week}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
             {WEEK_LABELS[week] || week}
-          </span>
+          </Link>
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -111,7 +111,7 @@ export default async function NotePage({ params }: Props) {
                 <time dateTime={prevNote.date}>{prevNote.date}</time>
               </Link>
             ) : (
-              <span className="text-xs text-gray-300 dark:text-slate-600">First in {week}</span>
+              <span className="text-xs text-gray-300 dark:text-slate-600">First note</span>
             )}
           </div>
           <span className="text-[10px] font-mono text-gray-400 dark:text-slate-500 tracking-wide">
@@ -129,7 +129,7 @@ export default async function NotePage({ params }: Props) {
                 </svg>
               </Link>
             ) : (
-              <span className="text-xs text-gray-300 dark:text-slate-600">Last in {week}</span>
+              <span className="text-xs text-gray-300 dark:text-slate-600">Last note</span>
             )}
           </div>
         </div>

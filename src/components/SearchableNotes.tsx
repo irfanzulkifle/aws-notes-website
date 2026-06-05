@@ -173,10 +173,11 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
           return (
             <details
               key={week}
+              id={`week-${week}`}
               ref={(el) => {
                 detailsRefs.current[i] = el;
               }}
-              className="group glass-card overflow-hidden"
+              className="group glass-card overflow-hidden scroll-mt-24"
               open={i === 0 || allExpanded}
             >
               <summary
