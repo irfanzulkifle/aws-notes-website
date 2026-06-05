@@ -106,7 +106,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
         </svg>
         <input
           type="text"
-          placeholder="Search notes by keyword, topic, or content..."
+          placeholder="Search notes by keyword, topic, or content... (⌘K / Ctrl+K)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search notes by keyword, topic, or content"
@@ -127,8 +127,8 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
 
       {/* Controls */}
       <div className="mb-6 flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-400 dark:text-slate-500">
-          {query ? `${resultCount} results` : `${notes.length} notes`}
+        <span className="text-xs font-medium text-gray-400 dark:text-slate-500" aria-live="polite" aria-atomic="true">
+          {query ? `${resultCount} result${resultCount === 1 ? "" : "s"}` : `${notes.length} notes`}
         </span>
         <button
           onClick={toggleAll}
@@ -158,15 +158,15 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
           return (
             <details
               key={week}
+              id={`week-${week}`}
               ref={(el) => {
                 detailsRefs.current[i] = el;
               }}
-              className="group glass-card overflow-hidden"
+              className="group glass-card overflow-hidden scroll-mt-24"
               open={i === 0 || allExpanded}
             >
               <summary
                 className="cursor-pointer px-6 py-4 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors list-none"
-                role="button"
                 aria-label={`${weekLabels[week] || week}, ${weekNotes.length} notes`}
               >
                 <div className="flex items-center gap-3">
@@ -180,7 +180,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                   </h3>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-gray-400 dark:text-slate-500">
-                  <span>{weekNotes.length} notes</span>
+                  <span>{weekNotes.length} {weekNotes.length === 1 ? "note" : "notes"}</span>
                   <svg
                     className="w-4 h-4 transition-transform group-open:rotate-180 text-gray-300 dark:text-slate-600"
                     fill="none"
@@ -201,7 +201,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                   <Link
                     key={note.slug}
                     href={`/notes/${note.week}/${note.slug}`}
-                    className="block px-6 py-3.5 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors group/note"
+                    className="block px-6 py-3.5 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors group/note focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none rounded-lg"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -209,7 +209,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                           {note.title}
                         </h4>
                         <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
-                          {note.date} · {note.readingTime} min read
+                          <time dateTime={note.date}>{note.date}</time> · {note.readingTime} min read
                         </p>
                       </div>
                       {note.topics.length > 0 && (
