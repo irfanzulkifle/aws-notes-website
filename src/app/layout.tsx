@@ -43,24 +43,16 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
-        <footer className="border-t border-slate-800 py-6 mt-auto">
-          <div className="max-w-6xl mx-auto px-4 text-center text-sm text-slate-500">
-            <a
-              href="https://creativecommons.org/licenses/by/4.0/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-slate-300 transition-colors"
-            >
-              CC BY 4.0
-            </a>
-            {" · "}
+        <footer className="border-t border-slate-800/60 py-8 mt-auto">
+          <div className="max-w-4xl mx-auto px-4 flex items-center justify-between text-xs text-slate-600">
+            <span>Irfan Zulkifle · CC BY 4.0</span>
             <a
               href="https://github.com/irfanzulkifle/aws_restart_note"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-slate-300 transition-colors"
+              className="hover:text-slate-400 transition-colors"
             >
-              View on GitHub
+              GitHub
             </a>
           </div>
         </footer>
