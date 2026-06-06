@@ -122,9 +122,9 @@ export function getNoteContent(week: string, slug: string): NoteContent | null {
       // If linkPath contains week_ prefix, extract the week
       const weekMatch = linkPath.match(/^(week_\d+)\//);
       if (weekMatch) {
-        return `](/notes/${weekMatch[1]}/${linkSlug.replace(weekMatch[0], "")}`;
+        return `](/notes/${weekMatch[1]}/${linkSlug.replace(weekMatch[0], "")})`;
       }
-      return `](/notes/${week}/${linkSlug}`;
+      return `](/notes/${week}/${linkSlug})`;
     }
   );
 
@@ -156,7 +156,7 @@ export function getWeeklySummaryIndex(): string | null {
     (_match: string, linkPath: string) => {
       const weekMatch = linkPath.match(/^(week_\d+)\/weekly_summary\.md$/);
       if (weekMatch) return `](/notes/${weekMatch[1]}/weekly_summary)`;
-      return `](/notes/${linkPath.replace(/\.md$/, "")}`;
+      return `](/notes/${linkPath.replace(/\.md$/, "")})`;
     }
   );
 }
