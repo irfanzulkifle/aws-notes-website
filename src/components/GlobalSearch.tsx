@@ -193,6 +193,12 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   }, [fuse, query]);
 
   useEffect(() => {
+    const handleOpen = () => openModal();
+    window.addEventListener("openGlobalSearch", handleOpen);
+    return () => window.removeEventListener("openGlobalSearch", handleOpen);
+  }, [openModal]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
 
