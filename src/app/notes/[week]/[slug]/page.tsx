@@ -6,7 +6,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllNotes, getNoteContent, extractHeadings, readingTime } from "@/lib/utils";
+import { getAllNotes, getNoteContent, extractHeadings, readingTime, getWeeksWithSummary } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import TableOfContents from "@/components/TableOfContents";
 import CopyCodeButton from "@/components/CopyCodeButton";
@@ -18,10 +18,11 @@ interface Props {
 
 export async function generateStaticParams() {
   const notes = getAllNotes();
-  return notes.map((note) => ({
-    week: note.week,
-    slug: note.slug,
+  const weeklySummaryParams = getWeeksWithSummary().map((week) => ({
+    week,
+    slug: "weekly_summary",
   }));
+  return [...notes.map((note) => ({ week: note.week, slug: note.slug })), ...weeklySummaryParams];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

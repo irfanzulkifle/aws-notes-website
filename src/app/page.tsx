@@ -1,4 +1,4 @@
-import { getAllNotes, getAllWeeks } from "@/lib/utils";
+import { getAllNotes, getAllWeeks, getWeeksWithSummary } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
 import RecentlyViewed from "@/components/RecentlyViewed";
@@ -22,6 +22,7 @@ export default async function HomePage({
   const { search } = await searchParams;
   const weeks = getAllWeeks();
   const allNotes = getAllNotes();
+  const summaryCount = getWeeksWithSummary().length;
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B0F1A]">
@@ -58,6 +59,17 @@ export default async function HomePage({
               </svg>
               Explore notes
             </a>
+            {summaryCount > 0 && (
+              <Link
+                href="/notes/weekly-summary"
+                className="btn-secondary"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Weekly summaries
+              </Link>
+            )}
             <a
               href="https://github.com/irfanzulkifle/aws_restart_note"
               target="_blank"
