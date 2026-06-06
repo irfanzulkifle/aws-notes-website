@@ -7,40 +7,25 @@ export default function ScrollToHash() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const scrollToHash = () => {
-      const hash = window.location.hash;
-      if (!hash) return;
-      const id = hash.replace("#", "");
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    };
+    const stored = sessionStorage.getItem("scrollToHeading");
+    if (!stored) return;
 
-    const tryScroll = () => {
-      const hash = window.location.hash;
-      if (!hash) return;
-      const id = hash.replace("#", "");
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-        return true;
-      }
-      return false;
-    };
+    sessionStorage.removeItem("scrollToHeading");
 
-    // Initial scroll on route change
-    if (!tryScroll()) {
-      const t1 = setTimeout(() => {
-        if (!tryScroll()) {
-          setTimeout(tryScroll, 300);
+    const retry = (attempts: number) => {
+      if (attempts <= 0) return;
+      const elements = document.querySelectorAll<HTMLElement>(".prose h2, .prose h3");
+      for (const el of elements) {
+        const text = el.textContent?.trim() ?? "";
+        if (text === stored || text.startsWith(stored) || stored.startsWith(text)) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
         }
-      }, 150);
-      return () => clearTimeout(t1);
-    }
+      }
+      setTimeout(() => retry(attempts - 1), 200);
+    };
 
-    window.addEventListener("hashchange", scrollToHash);
-    return () => window.removeEventListener("hashchange", scrollToHash);
+    retry(10);
   }, [pathname]);
 
   return null;
