@@ -5,11 +5,14 @@ import GithubSlugger from "github-slugger";
 
 const NOTES_DIR = path.join(process.cwd(), "content", "notes");
 
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
+
 export interface NoteMeta {
   week: string;
   slug: string;
   title: string;
   date: string;
+  day: string;
   topics: string[];
   path: string; // relative path from content/notes
   readingTime: number;
@@ -40,6 +43,9 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
 
   // Date from slug (YYYY-MM-DD)
   const date = slug;
+  const [y, m, d] = slug.split("-").map(Number);
+  const dayOfWeek = new Date(y, m - 1, d).getDay();
+  const day = DAYS[dayOfWeek];
 
   const relativePath = path.join(week, `${slug}.md`);
   const words = raw.replace(/[#*`~_\[\]()]/g, "").split(/\s+/).length;
@@ -62,7 +68,7 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
     .trim()
     .slice(0, 2000);
 
-  return { week, slug, title, date, topics, path: relativePath, readingTime, body };
+  return { week, slug, title, date, day, topics, path: relativePath, readingTime, body };
 }
 
 export function getAllNotes(): NoteMeta[] {

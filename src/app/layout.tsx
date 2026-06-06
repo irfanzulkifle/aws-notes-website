@@ -5,6 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemeToggle from "@/components/ThemeToggle";
 import FindInPage from "@/components/FindInPage";
+import GlobalSearch from "@/components/GlobalSearch";
+import SearchTrigger from "@/components/SearchTrigger";
 import "./globals.css";
 
 const inter = Inter({
@@ -71,6 +73,7 @@ export default function RootLayout({
               </span>
             </Link>
             <div className="flex items-center gap-4">
+              <SearchTrigger />
               <Link
                 href="/"
                 className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 transition-colors hidden sm:block"
@@ -103,6 +106,7 @@ export default function RootLayout({
 
         <main className="flex-1">{children}</main>
         <FindInPage />
+        <GlobalSearch />
 
         {/* Footer */}
         <footer className="border-t border-gray-100 dark:border-slate-800 py-12">
