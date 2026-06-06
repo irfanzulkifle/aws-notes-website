@@ -65,9 +65,9 @@ export default function SearchHighlighter() {
       window.scrollTo({ top: y, behavior: "smooth" });
       
       // Flash animation on the first match
-      matchEl.classList.add("ring-2", "ring-indigo-400", "dark:ring-indigo-500", "rounded");
+      matchEl.classList.add("ring-2", "ring-blue-400", "dark:ring-blue-500", "rounded");
       const timeoutId = setTimeout(() => {
-        matchEl.classList.remove("ring-2", "ring-indigo-400", "dark:ring-indigo-500");
+        matchEl.classList.remove("ring-2", "ring-blue-400", "dark:ring-blue-500");
       }, 2000);
 
       // Cleanup timeout on unmount or re-run
