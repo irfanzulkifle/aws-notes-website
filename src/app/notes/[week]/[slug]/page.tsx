@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -120,7 +120,9 @@ export default async function NotePage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <TrackView week={week} slug={slug} title={meta.title} date={meta.date} />
-      <SearchHighlighter />
+      <Suspense fallback={null}>
+        <SearchHighlighter />
+      </Suspense>
 
       <nav className="flex items-center gap-1.5 text-[12px] text-zinc-400 dark:text-zinc-500 mb-6" aria-label="Breadcrumb">
         <Link href="/" className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">

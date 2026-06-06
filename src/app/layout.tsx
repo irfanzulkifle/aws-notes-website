@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
@@ -88,7 +89,9 @@ export default function RootLayout({
         </nav>
 
         <main className="flex-1">{children}</main>
-        <ScrollToHash />
+        <Suspense fallback={null}>
+          <ScrollToHash />
+        </Suspense>
         <GlobalSearch />
 
         <footer className="border-t border-zinc-100 dark:border-zinc-800 py-6">
