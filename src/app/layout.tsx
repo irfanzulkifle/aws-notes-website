@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemeToggle from "@/components/ThemeToggle";
 import GlobalSearch from "@/components/GlobalSearch";
 import SearchTrigger from "@/components/SearchTrigger";
+import ScrollToHash from "@/components/ScrollToHash";
 import "./globals.css";
 
 const inter = Inter({
@@ -104,6 +105,7 @@ export default function RootLayout({
         </nav>
 
         <main className="flex-1">{children}</main>
+        <ScrollToHash />
         <GlobalSearch />
 
         {/* Footer */}
