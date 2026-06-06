@@ -108,7 +108,7 @@ function getSnippet(doc: SearchDocument, query: string): string {
 }
 
 function findMatchingSectionSlug(doc: SearchDocument, query: string): string {
-  if (!query.trim() || !doc.sections.length) return "";
+  if (!query.trim() || !doc.sections || doc.sections.length === 0) return "";
   const qLower = query.toLowerCase();
 
   // First pass: exact match in heading text
@@ -120,7 +120,7 @@ function findMatchingSectionSlug(doc: SearchDocument, query: string): string {
 
   // Second pass: match in section content (pick first section containing query)
   for (const section of doc.sections) {
-    if (section.content.toLowerCase().includes(qLower)) {
+    if (section.content && section.content.toLowerCase().includes(qLower)) {
       return section.slug;
     }
   }
@@ -294,9 +294,10 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
           const selected = results[selectedIdx];
           if (selected) {
             saveRecentSearch(query.trim());
-            closeModal();
             const sectionSlug = findMatchingSectionSlug(selected, query);
-            router.push(sectionSlug ? `${selected.url}#${sectionSlug}` : selected.url);
+            const url = sectionSlug ? `${selected.url}#${sectionSlug}` : selected.url;
+            closeModal();
+            router.push(url);
           }
         } else if (!query.trim() && recentSearches.length > 0 && selectedIdx < recentSearches.length) {
           const term = recentSearches[selectedIdx];
@@ -326,9 +327,10 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   const handleResultClick = useCallback(
     (doc: SearchDocument) => {
       saveRecentSearch(query.trim() || doc.title);
-      closeModal();
       const sectionSlug = findMatchingSectionSlug(doc, query);
-      router.push(sectionSlug ? `${doc.url}#${sectionSlug}` : doc.url);
+      const url = sectionSlug ? `${doc.url}#${sectionSlug}` : doc.url;
+      closeModal();
+      router.push(url);
     },
     [query, closeModal, router]
   );

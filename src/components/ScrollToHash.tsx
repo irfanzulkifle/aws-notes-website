@@ -7,10 +7,19 @@ export default function ScrollToHash() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const hash = window.location.hash;
-    if (!hash) return;
+    const scrollToHash = () => {
+      const hash = window.location.hash;
+      if (!hash) return;
+      const id = hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
 
     const tryScroll = () => {
+      const hash = window.location.hash;
+      if (!hash) return;
       const id = hash.replace("#", "");
       const el = document.getElementById(id);
       if (el) {
@@ -20,15 +29,18 @@ export default function ScrollToHash() {
       return false;
     };
 
+    // Initial scroll on route change
     if (!tryScroll()) {
-      const timer = setTimeout(() => {
+      const t1 = setTimeout(() => {
         if (!tryScroll()) {
-          const retry = setTimeout(tryScroll, 200);
-          return () => clearTimeout(retry);
+          setTimeout(tryScroll, 300);
         }
-      }, 100);
-      return () => clearTimeout(timer);
+      }, 150);
+      return () => clearTimeout(t1);
     }
+
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
   }, [pathname]);
 
   return null;
