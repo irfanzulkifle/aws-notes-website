@@ -30,6 +30,11 @@ export default function SearchHighlighter() {
     while ((node = walker.nextNode())) {
       const textNode = node as Text;
       if (textNode.nodeValue && regex.test(textNode.nodeValue)) {
+        const parentEl = textNode.parentElement;
+        if (parentEl?.closest("pre, code, script, style")) {
+          regex.lastIndex = 0;
+          continue;
+        }
         const parts = textNode.nodeValue.split(regex);
         const matches = parts.map((part, i) => ({
           text: part,

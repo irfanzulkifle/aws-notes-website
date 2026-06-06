@@ -1,4 +1,4 @@
-import { getAllNotes, getAllWeeks, getWeeksWithSummary, getWeeklySummaryIndex } from "@/lib/utils";
+import { getAllNotes, getAllWeeks, getWeeksWithSummary, getWeeklySummaryIndex, buildNotesByWeek } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -26,13 +26,7 @@ export default async function WeeklySummaryIndexPage() {
   const allNotes = getAllNotes();
   const allWeeks = getAllWeeks();
   const weeksWithSummary = getWeeksWithSummary();
-  
-  const notesByWeek: Record<string, { week: string; slug: string; title: string; date: string; day: string }[]> = {};
-  allWeeks.forEach((w) => {
-    notesByWeek[w] = allNotes
-      .filter((n) => n.week === w)
-      .sort((a, b) => a.slug.localeCompare(b.slug));
-  });
+  const notesByWeek = buildNotesByWeek(allNotes, allWeeks);
 
   return (
     <DocLayout

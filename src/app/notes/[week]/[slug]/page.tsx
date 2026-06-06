@@ -6,7 +6,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllNotes, getNoteContent, extractHeadings, readingTime, getWeeksWithSummary, getAllWeeks } from "@/lib/utils";
+import { getAllNotes, getNoteContent, extractHeadings, readingTime, getWeeksWithSummary, getAllWeeks, buildNotesByWeek } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import TableOfContents from "@/components/TableOfContents";
 import CopyCodeButton from "@/components/CopyCodeButton";
@@ -39,8 +39,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function parseCallout(content: string): { type: CalloutType; title?: string; body: string } | null {
-  const lines = content.split("\n");
+function extractTextFromReactNode(node: React.ReactNode): string {
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (!node || typeof node !== "object") return "";
+  if (React.isValidElement(node)) {
+    const props = node.props as { children?: React.ReactNode };
+    return React.Children.toArray(props.children).map(extractTextFromReactNode).join("");
+  }
+  if (Array.isArray(node)) return node.map(extractTextFromReactNode).join("");
+  return "";
+}
+
+function parseCallout(fullText: string): { type: CalloutType; title?: string; body: string } | null {
+  const lines = fullText.split("\n");
   const firstLine = lines[0]?.trim();
   if (!firstLine) return null;
 
@@ -72,13 +84,7 @@ export default async function NotePage({ params }: Props) {
   const allNotes = getAllNotes();
   const allWeeks = getAllWeeks();
   const weeksWithSummary = getWeeksWithSummary();
-  
-  const notesByWeek: Record<string, { week: string; slug: string; title: string; date: string; day: string }[]> = {};
-  allWeeks.forEach((w) => {
-    notesByWeek[w] = allNotes
-      .filter((n) => n.week === w)
-      .sort((a, b) => a.slug.localeCompare(b.slug));
-  });
+  const notesByWeek = buildNotesByWeek(allNotes, allWeeks);
 
   const weekNotes = allNotes.filter((n) => n.week === week).sort((a, b) => a.slug.localeCompare(b.slug));
   const currentIndex = weekNotes.findIndex((n) => n.slug === slug);
@@ -207,7 +213,7 @@ export default async function NotePage({ params }: Props) {
           components={{
             blockquote({ children, ...props }) {
               const textContent = React.Children.toArray(children)
-                .map((child) => (typeof child === "string" ? child : ""))
+                .map(extractTextFromReactNode)
                 .join("");
               
               const callout = parseCallout(textContent);

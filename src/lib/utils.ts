@@ -137,6 +137,24 @@ export function getAllWeeks(): string[] {
     .sort();
 }
 
+export interface SidebarNote {
+  week: string;
+  slug: string;
+  title: string;
+  date: string;
+  day: string;
+}
+
+export function buildNotesByWeek(allNotes: NoteMeta[], allWeeks: string[]): Record<string, SidebarNote[]> {
+  const map: Record<string, SidebarNote[]> = {};
+  allWeeks.forEach((w) => {
+    map[w] = allNotes
+      .filter((n) => n.week === w)
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+  });
+  return map;
+}
+
 export function getWeeksWithSummary(): string[] {
   return fs.readdirSync(NOTES_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory())
