@@ -122,78 +122,65 @@ export default async function NotePage({ params }: Props) {
       <TrackView week={week} slug={slug} title={meta.title} date={meta.date} />
       <SearchHighlighter />
 
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 mb-8">
-        <Link href="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-          All Notes
+      <nav className="flex items-center gap-1.5 text-[12px] text-zinc-400 dark:text-zinc-500 mb-6" aria-label="Breadcrumb">
+        <Link href="/" className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+          Notes
         </Link>
         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
-        <span className="text-gray-500 dark:text-slate-400">
+        <span className="text-zinc-500 dark:text-zinc-400">
           {WEEK_LABELS[week] || week}
         </span>
         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
-        <span className="text-gray-600 dark:text-slate-300 font-medium truncate max-w-xs">
+        <span className="text-zinc-700 dark:text-zinc-300 font-medium truncate max-w-[200px]">
           {meta.title}
         </span>
-      </div>
+      </nav>
 
-      {/* Prev/Next nav */}
-      <div className="flex items-center justify-between mb-10 pb-4 border-b border-gray-100 dark:border-slate-800">
+      <nav className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-100 dark:border-zinc-800" aria-label="Pagination">
         <div>
           {prevNote ? (
             <Link
               href={`/notes/${prevNote.week}/${prevNote.slug}`}
-              className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
+              className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
               </svg>
-              {prevNote.date} ({prevNote.day})
+              {prevNote.date}
             </Link>
           ) : (
-            <span className="text-xs text-gray-300 dark:text-slate-600">First in {week}</span>
+            <span className="text-[12px] text-zinc-300 dark:text-zinc-600">First</span>
           )}
         </div>
-        <span className="text-[10px] font-mono text-gray-400 dark:text-slate-500 tracking-wide hidden sm:block">
-          {WEEK_LABELS[week] || week.replace("_", " ").toUpperCase()}
-        </span>
+        <span />
         <div>
           {nextNote ? (
             <Link
               href={`/notes/${nextNote.week}/${nextNote.slug}`}
-              className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
+              className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1"
             >
-              {nextNote.date} ({nextNote.day})
+              {nextNote.date}
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
           ) : (
-            <span className="text-xs text-gray-300 dark:text-slate-600">Last in {week}</span>
+            <span className="text-[12px] text-zinc-300 dark:text-zinc-600">Last</span>
           )}
         </div>
-      </div>
+      </nav>
 
-      {/* Title */}
-      <header className="mb-10">
-        <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 mb-3">
-          <span>{meta.date} ({meta.day})</span>
-          <span>·</span>
+      <header className="mb-8">
+        <div className="flex items-center gap-2 text-[12px] text-zinc-400 dark:text-zinc-500 mb-3">
+          <span>{meta.date}</span>
+          <span className="text-zinc-300 dark:text-zinc-700">·</span>
           <span>{minutes} min read</span>
-          {meta.date && (
-            <>
-              <span>·</span>
-              <span className="text-gray-400 dark:text-slate-500">
-                Last updated {meta.date}
-              </span>
-            </>
-          )}
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight leading-tight">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight mb-4">
           {meta.title}
         </h1>
         {meta.topics.length > 0 && (
@@ -202,7 +189,7 @@ export default async function NotePage({ params }: Props) {
               <Link
                 key={t}
                 href={`/?search=${encodeURIComponent(t)}`}
-                className="px-2.5 py-1 text-xs rounded-lg font-medium border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-all"
+                className="px-2 py-0.5 text-[11px] rounded font-medium border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all"
               >
                 {t}
               </Link>
@@ -211,7 +198,6 @@ export default async function NotePage({ params }: Props) {
         )}
       </header>
 
-      {/* Markdown content */}
       <div className="prose">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
@@ -264,48 +250,46 @@ export default async function NotePage({ params }: Props) {
         </ReactMarkdown>
       </div>
 
-      {/* Related notes */}
       {relatedNotes.length > 0 && (
-        <div className="mt-16 pt-8 border-t border-gray-100 dark:border-slate-800">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-4">
-            Related notes
+        <div className="mt-12 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3">
+            Related
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {relatedNotes.map((note) => (
               <Link
                 key={note.slug}
                 href={`/notes/${note.week}/${note.slug}`}
-                className="block p-4 rounded-xl border border-gray-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-all group/rel"
+                className="block p-3 rounded-md border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all group/rel"
               >
-                <p className="text-sm font-medium text-gray-700 dark:text-slate-300 group-hover/rel:text-indigo-600 dark:group-hover/rel:text-indigo-400 transition-colors mb-1 line-clamp-2">
+                <p className="text-[13px] font-medium text-zinc-700 dark:text-zinc-300 group-hover/rel:text-zinc-900 dark:group-hover/rel:text-zinc-100 transition-colors mb-1 line-clamp-2">
                   {note.title}
                 </p>
-                <p className="text-xs text-gray-400 dark:text-slate-500">{note.date} ({note.day})</p>
+                <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{note.date}</p>
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      {/* Bottom nav */}
-      <div className="flex items-center justify-between mt-16 pt-8 border-t border-gray-100 dark:border-slate-800">
+      <nav className="flex items-center justify-between mt-12 pt-6 border-t border-zinc-100 dark:border-zinc-800" aria-label="Pagination">
         {prevNote ? (
           <Link
             href={`/notes/${prevNote.week}/${prevNote.slug}`}
-            className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
-            ← {prevNote.date} ({prevNote.day})
+            ← {prevNote.date}
           </Link>
         ) : <div />}
         {nextNote ? (
           <Link
             href={`/notes/${nextNote.week}/${nextNote.slug}`}
-            className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
-            {nextNote.date} ({nextNote.day}) →
+            {nextNote.date} →
           </Link>
         ) : <div />}
-      </div>
+      </nav>
     </DocLayout>
   );
 }

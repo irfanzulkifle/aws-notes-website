@@ -41,37 +41,6 @@ const POPULAR_TOPICS = [
 
 const MAX_RECENT = 5;
 
-function getAwsServiceIcon(topic: string): string {
-  const upper = topic.toUpperCase();
-  if (upper.includes("EC2")) return "\u2621";
-  if (upper.includes("S3")) return "\u2B1B";
-  if (upper.includes("IAM")) return "\u2695";
-  if (upper.includes("VPC")) return "\u2601";
-  if (upper.includes("LAMBDA")) return "\u039B";
-  if (upper.includes("CLOUDFRONT")) return "\u2194";
-  if (upper.includes("ROUTE 53") || upper.includes("ROUTE53")) return "\u260D";
-  if (upper.includes("RDS")) return "\u2610";
-  if (upper.includes("DYNAMODB")) return "\u2606";
-  if (upper.includes("EBS")) return "\u26C5";
-  if (upper.includes("ELB") || upper.includes("ALB")) return "\u2601";
-  if (upper.includes("LINUX")) return "\u2622";
-  if (upper.includes("PYTHON")) return "\u260D";
-  if (upper.includes("SQL")) return "\u2630";
-  if (upper.includes("SECURITY")) return "\u26E8";
-  if (upper.includes("NETWORK")) return "\u2194";
-  return "";
-}
-
-const ResultIcon = ({ doc }: { doc: SearchDocument }) => {
-  const icon = doc.topics.length ? getAwsServiceIcon(doc.topics[0]) : "";
-  if (!icon) return null;
-  return (
-    <span className="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-xs shrink-0">
-      {icon}
-    </span>
-  );
-};
-
 function highlightMatch(text: string, query: string): React.ReactNode {
   if (!query.trim()) return text;
   const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -99,12 +68,12 @@ function getSnippet(doc: SearchDocument, query: string): string {
   const sectionText = doc.sections ? doc.sections.map((s) => s.content).join(" ") : "";
   const allContent = [doc.body, sectionText, ...doc.headings].join(" ");
   const idx = allContent.toLowerCase().indexOf(lower);
-  if (idx === -1) return allContent.slice(0, 120);
-  const start = Math.max(0, idx - 40);
-  const end = Math.min(allContent.length, idx + query.length + 80);
+  if (idx === -1) return allContent.slice(0, 100);
+  const start = Math.max(0, idx - 30);
+  const end = Math.min(allContent.length, idx + query.length + 60);
   let snippet = allContent.slice(start, end);
-  if (start > 0) snippet = "..." + snippet;
-  if (end < allContent.length) snippet = snippet + "...";
+  if (start > 0) snippet = "\u2026" + snippet;
+  if (end < allContent.length) snippet = snippet + "\u2026";
   return snippet;
 }
 
@@ -196,7 +165,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   const results = useMemo(() => {
     if (!fuse || !query.trim()) return [];
     const raw = fuse.search(query.trim());
-    return raw.slice(0, 20).map((r) => r.item);
+    return raw.slice(0, 15).map((r) => r.item);
   }, [fuse, query]);
 
   useEffect(() => {
@@ -209,7 +178,6 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
 
-      // Support both Ctrl+/ and Ctrl+K / Cmd+K
       if (isMod && (e.key === "/" || e.key.toLowerCase() === "k")) {
         e.preventDefault();
         if (open) {
@@ -385,7 +353,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
             value={query}
             onChange={handleQueryChange}
             onKeyDown={handleKeyDown}
-            placeholder="Search notes, topics, AWS services..."
+            placeholder="Search notes..."
             className="search-input"
             aria-label="Search notes"
             autoComplete="off"
@@ -400,7 +368,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
               }}
               aria-label="Clear search"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -412,8 +380,8 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
 
         {loading && (
           <div className="search-body">
-            <div className="flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-indigo-200 dark:border-indigo-800 border-t-indigo-500 dark:border-t-indigo-400 rounded-full animate-spin" />
+            <div className="flex items-center justify-center py-8">
+              <div className="w-4 h-4 border-2 border-zinc-200 dark:border-zinc-700 border-t-zinc-500 dark:border-t-zinc-400 rounded-full animate-spin" />
             </div>
           </div>
         )}
@@ -422,16 +390,16 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
           <div className="search-body">
             {recentSearches.length > 0 && (
               <div className="search-section">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="search-section-title">Recent searches</span>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="search-section-title">Recent</span>
                   <button
                     onClick={handleClearRecent}
-                    className="text-[10px] text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+                    className="text-[10px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                   >
                     Clear
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1">
                   {recentSearches.map((term, i) => (
                     <button
                       key={term}
@@ -444,9 +412,6 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
                       }}
                       className={`search-chip ${i === selectedIdx ? "search-chip-active" : ""}`}
                     >
-                      <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
                       {term}
                     </button>
                   ))}
@@ -455,8 +420,8 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
             )}
 
             <div className={recentSearches.length > 0 ? "search-section" : "search-section pt-0"}>
-              <span className="search-section-title">Popular topics</span>
-              <div className="flex flex-wrap gap-1.5">
+              <span className="search-section-title">Popular</span>
+              <div className="flex flex-wrap gap-1">
                 {POPULAR_TOPICS.map((topic) => (
                   <button
                     key={topic}
@@ -473,25 +438,9 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
 
         {!loading && query.trim() && results.length === 0 && (
           <div className="search-body">
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <svg
-                className="w-8 h-8 text-gray-300 dark:text-slate-600 mb-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <p className="text-sm text-gray-500 dark:text-slate-400 mb-1">
-                No matching notes found
-              </p>
-              <p className="text-xs text-gray-400 dark:text-slate-500">
-                Try a different search term
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
+                No results for &ldquo;{query}&rdquo;
               </p>
             </div>
           </div>
@@ -499,7 +448,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
 
         {!loading && results.length > 0 && (
           <div className="search-body">
-            <div className="search-section-title mb-2 px-0.5">
+            <div className="search-section-title mb-1.5 px-0.5">
               {results.length} result{results.length !== 1 ? "s" : ""}
             </div>
             <ul ref={listRef} className="space-y-0.5" role="listbox">
@@ -514,33 +463,28 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
                     onMouseEnter={() => setSelectedIdx(i)}
                     className={`search-result ${i === selectedIdx ? "search-result-active" : ""}`}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="pt-0.5">
-                        <ResultIcon doc={doc} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-sm font-medium text-gray-900 dark:text-slate-100 truncate">
-                            {highlightMatch(doc.title, query)}
-                          </span>
-                        </div>
-                        <span className="text-[11px] text-gray-400 dark:text-slate-500">
-                          {doc.weekLabel} · {doc.date}{" "}
-                          {doc.topics.slice(0, 2).map((t) => (
-                            <span
-                              key={t}
-                              className="inline-flex items-center ml-1 px-1.5 py-0.5 rounded text-[10px] bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
-                            >
-                              {t.length > 16 ? t.slice(0, 16) + "\u2026" : t}
-                            </span>
-                          ))}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[13px] font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                          {highlightMatch(doc.title, query)}
                         </span>
-                        {snippet && (
-                          <p className="text-xs text-gray-400 dark:text-slate-500 mt-1 line-clamp-2">
-                            {highlightMatch(snippet, query)}
-                          </p>
-                        )}
                       </div>
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+                        {doc.date}
+                        {doc.topics.slice(0, 2).map((t) => (
+                          <span
+                            key={t}
+                            className="inline-flex items-center ml-1.5 px-1 py-0.5 rounded text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
+                          >
+                            {t.length > 14 ? t.slice(0, 14) + "\u2026" : t}
+                          </span>
+                        ))}
+                      </span>
+                      {snippet && (
+                        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 line-clamp-2">
+                          {highlightMatch(snippet, query)}
+                        </p>
+                      )}
                     </div>
                   </li>
                 );
@@ -550,24 +494,21 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
         )}
 
         <div className="search-footer">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-slate-600">
-              <kbd className="px-1 py-0.5 rounded text-[9px] font-mono border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+              <kbd className="px-1 py-0.5 rounded text-[9px] font-mono border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                 {"\u2191\u2193"}
               </kbd>
-              Navigate
             </span>
-            <span className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-slate-600">
-              <kbd className="px-1 py-0.5 rounded text-[9px] font-mono border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
+            <span className="flex items-center gap-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+              <kbd className="px-1 py-0.5 rounded text-[9px] font-mono border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                 Enter
               </kbd>
-              Open
             </span>
-            <span className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-slate-600">
-              <kbd className="px-1 py-0.5 rounded text-[9px] font-mono border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
+            <span className="flex items-center gap-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+              <kbd className="px-1 py-0.5 rounded text-[9px] font-mono border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                 ESC
               </kbd>
-              Close
             </span>
           </div>
         </div>
