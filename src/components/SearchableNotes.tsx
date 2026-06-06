@@ -181,6 +181,13 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                   </h3>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-gray-400 dark:text-slate-500">
+                  <Link
+                    href={`/notes/${week}/weekly_summary`}
+                    className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors px-2 py-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Summary
+                  </Link>
                   <span>{weekNotes.length} notes</span>
                   <svg
                     className="w-4 h-4 transition-transform group-open:rotate-180 text-gray-300 dark:text-slate-600"
