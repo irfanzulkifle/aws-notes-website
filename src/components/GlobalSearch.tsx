@@ -4,6 +4,12 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Fuse from "fuse.js";
 
+interface SearchSection {
+  heading: string;
+  slug: string;
+  content: string;
+}
+
 interface SearchDocument {
   title: string;
   week: string;
@@ -13,6 +19,7 @@ interface SearchDocument {
   day: string;
   topics: string[];
   headings: string[];
+  sections: SearchSection[];
   body: string;
   url: string;
 }
@@ -89,7 +96,8 @@ function highlightMatch(text: string, query: string): React.ReactNode {
 function getSnippet(doc: SearchDocument, query: string): string {
   if (!query.trim()) return "";
   const lower = query.toLowerCase();
-  const allContent = [doc.body, ...doc.headings].join(" ");
+  const sectionText = doc.sections ? doc.sections.map((s) => s.content).join(" ") : "";
+  const allContent = [doc.body, sectionText, ...doc.headings].join(" ");
   const idx = allContent.toLowerCase().indexOf(lower);
   if (idx === -1) return allContent.slice(0, 120);
   const start = Math.max(0, idx - 40);
@@ -98,6 +106,25 @@ function getSnippet(doc: SearchDocument, query: string): string {
   if (start > 0) snippet = "..." + snippet;
   if (end < allContent.length) snippet = snippet + "...";
   return snippet;
+}
+
+function findBestSectionHeading(doc: SearchDocument, query: string): string {
+  if (!query.trim() || !doc.sections || doc.sections.length === 0) return "";
+  const qLower = query.toLowerCase();
+
+  for (const section of doc.sections) {
+    if (section.heading && section.heading.toLowerCase().includes(qLower)) {
+      return section.heading;
+    }
+  }
+
+  for (const section of doc.sections) {
+    if (section.content && section.content.toLowerCase().includes(qLower)) {
+      return section.heading;
+    }
+  }
+
+  return "";
 }
 
 function getRecentSearches(): string[] {
@@ -171,18 +198,17 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
     if (index.length === 0) return null;
     return new Fuse(index, {
       keys: [
-        { name: "title", weight: 4 },
-        { name: "topics", weight: 3 },
-        { name: "headings", weight: 2 },
-        { name: "body", weight: 1 },
-        { name: "weekLabel", weight: 0.5 },
+        { name: "title", weight: 0.4 },
+        { name: "topics", weight: 0.3 },
+        { name: "sections.heading", weight: 0.25 },
+        { name: "headings", weight: 0.2 },
+        { name: "sections.content", weight: 0.15 },
+        { name: "body", weight: 0.1 },
       ],
-      threshold: 0.4,
-      distance: 100,
+      threshold: 0.3,
       includeScore: true,
       minMatchCharLength: 2,
       ignoreLocation: true,
-      useExtendedSearch: true,
     });
   }, [index]);
 
@@ -266,6 +292,10 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
           const selected = results[selectedIdx];
           if (selected) {
             saveRecentSearch(query.trim());
+            const heading = findBestSectionHeading(selected, query);
+            if (heading) {
+              sessionStorage.setItem("scrollToHeading", heading);
+            }
             closeModal();
             router.push(selected.url);
           }
@@ -297,6 +327,12 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   const handleResultClick = useCallback(
     (doc: SearchDocument) => {
       saveRecentSearch(query.trim() || doc.title);
+      const heading = findBestSectionHeading(doc, query);
+      if (heading) {
+        sessionStorage.setItem("scrollToHeading", heading);
+      } else {
+        sessionStorage.removeItem("scrollToHeading");
+      }
       closeModal();
       router.push(doc.url);
     },

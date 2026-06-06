@@ -70,8 +70,7 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
     .replace(/^[-*_]{3,}$/gm, "")    // horizontal rules
     .replace(/\n{2,}/g, " ")         // collapse newlines
     .replace(/\s+/g, " ")            // collapse whitespace
-    .trim()
-    .slice(0, 2000);
+    .trim();
 
   return { week, slug, title, date, day, topics, path: relativePath, readingTime, body };
 }
