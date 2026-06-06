@@ -41,11 +41,16 @@ function parseMetadata(filePath: string, week: string, slug: string): NoteMeta {
     ? topicsRaw.split(/,\s*(?![^()]*\))/).map((t) => t.trim()).filter(Boolean)
     : [];
 
-  // Date from slug (YYYY-MM-DD)
-  const date = slug;
-  const [y, m, d] = slug.split("-").map(Number);
-  const dayOfWeek = new Date(y, m - 1, d).getDay();
-  const day = DAYS[dayOfWeek];
+  // Date from slug (YYYY-MM-DD) or fallback for non-date slugs (e.g. weekly_summary)
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  const isDateSlug = datePattern.test(slug);
+  const date = isDateSlug ? slug : "";
+  let day = "";
+  if (isDateSlug) {
+    const [y, m, d] = slug.split("-").map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    day = DAYS[dayOfWeek];
+  }
 
   const relativePath = path.join(week, `${slug}.md`);
   const words = raw.replace(/[#*`~_\[\]()]/g, "").split(/\s+/).length;
@@ -86,6 +91,8 @@ export function getAllNotes(): NoteMeta[] {
 
     for (const file of files) {
       const slug = file.replace(/\.md$/, "");
+      // Skip weekly summary files — they are not daily notes
+      if (slug === "weekly_summary" || slug === "weekly_summary_index") continue;
       const filePath = path.join(weekDir, file);
       notes.push(parseMetadata(filePath, week, slug));
     }
@@ -105,7 +112,23 @@ export function getNoteContent(week: string, slug: string): NoteContent | null {
   const { content } = matter(raw);
   const meta = parseMetadata(filePath, week, slug);
 
-  return { meta, content };
+  // Transform relative markdown links to Next.js route URLs
+  const transformedContent = content.replace(
+    /\]\(\.\/([^)]+\.md)\)/g,
+    (_match: string, linkPath: string) => {
+      // ./2026-04-13.md → /notes/week_03/2026-04-13 (same-week daily note)
+      // ./week_03/weekly_summary.md → /notes/week_03/weekly_summary (cross-week)
+      const linkSlug = linkPath.replace(/\.md$/, "");
+      // If linkPath contains week_ prefix, extract the week
+      const weekMatch = linkPath.match(/^(week_\d+)\//);
+      if (weekMatch) {
+        return `](/notes/${weekMatch[1]}/${linkSlug.replace(weekMatch[0], "")})`;
+      }
+      return `](/notes/${week}/${linkSlug})`;
+    }
+  );
+
+  return { meta, content: transformedContent };
 }
 
 export function getAllWeeks(): string[] {
@@ -113,6 +136,29 @@ export function getAllWeeks(): string[] {
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
     .sort();
+}
+
+export function getWeeksWithSummary(): string[] {
+  return fs.readdirSync(NOTES_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .filter((d) => fs.existsSync(path.join(NOTES_DIR, d.name, "weekly_summary.md")))
+    .map((d) => d.name)
+    .sort();
+}
+
+export function getWeeklySummaryIndex(): string | null {
+  const filePath = path.join(NOTES_DIR, "weekly_summary_index.md");
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(raw);
+  return content.replace(
+    /\]\(\.\/([^)]+\.md)\)/g,
+    (_match: string, linkPath: string) => {
+      const weekMatch = linkPath.match(/^(week_\d+)\/weekly_summary\.md$/);
+      if (weekMatch) return `](/notes/${weekMatch[1]}/weekly_summary)`;
+      return `](/notes/${linkPath.replace(/\.md$/, "")})`;
+    }
+  );
 }
 
 export interface Heading {
