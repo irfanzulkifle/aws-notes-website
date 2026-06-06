@@ -96,7 +96,8 @@ function highlightMatch(text: string, query: string): React.ReactNode {
 function getSnippet(doc: SearchDocument, query: string): string {
   if (!query.trim()) return "";
   const lower = query.toLowerCase();
-  const allContent = [doc.body, ...doc.headings].join(" ");
+  const sectionText = doc.sections ? doc.sections.map((s) => s.content).join(" ") : "";
+  const allContent = [doc.body, sectionText, ...doc.headings].join(" ");
   const idx = allContent.toLowerCase().indexOf(lower);
   if (idx === -1) return allContent.slice(0, 120);
   const start = Math.max(0, idx - 40);
@@ -199,13 +200,13 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
       keys: [
         { name: "title", weight: 0.4 },
         { name: "topics", weight: 0.3 },
+        { name: "sections.heading", weight: 0.25 },
         { name: "headings", weight: 0.2 },
+        { name: "sections.content", weight: 0.15 },
         { name: "body", weight: 0.1 },
       ],
-      threshold: 0.15,
-      distance: 200,
+      threshold: 0.3,
       includeScore: true,
-      includeMatches: true,
       minMatchCharLength: 2,
       ignoreLocation: true,
     });
@@ -214,10 +215,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   const results = useMemo(() => {
     if (!fuse || !query.trim()) return [];
     const raw = fuse.search(query.trim());
-    return raw
-      .filter((r) => (r.score ?? 1) <= 0.35)
-      .slice(0, 20)
-      .map((r) => r.item);
+    return raw.slice(0, 20).map((r) => r.item);
   }, [fuse, query]);
 
   useEffect(() => {
