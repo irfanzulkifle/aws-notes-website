@@ -37,7 +37,7 @@ function extractSections(markdown: string): SearchSection[] {
     const match = h2 || h3;
 
     if (match) {
-      if (currentLines.length > 0) {
+      if (currentLines.length > 0 && currentSlug) {
         sections.push({
           heading: currentHeading,
           slug: currentSlug,
@@ -53,7 +53,7 @@ function extractSections(markdown: string): SearchSection[] {
     }
   }
 
-  if (currentLines.length > 0) {
+  if (currentLines.length > 0 && currentSlug) {
     sections.push({
       heading: currentHeading,
       slug: currentSlug,

@@ -79,7 +79,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
     : notes.length;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-16">
+    <div className="py-16">
       {/* Section header */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-2">

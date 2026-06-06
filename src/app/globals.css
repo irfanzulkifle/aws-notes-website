@@ -19,8 +19,10 @@
   --color-accent: #4F46E5;
 }
 
+/* ── Base ── */
+
 html {
-  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
@@ -84,10 +86,10 @@ body {
 /* ── Glassmorphism ── */
 
 .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .glass-card {
@@ -97,12 +99,11 @@ body {
   border: 1px solid rgba(229, 231, 235, 0.8);
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-  transition: all 0.2s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-card:hover {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
-  transform: translateY(-2px);
   border-color: rgba(79, 70, 229, 0.2);
 }
 
@@ -160,8 +161,13 @@ body {
   max-width: 72ch;
 }
 
+.prose > * {
+  max-width: 72ch;
+}
+
 .prose p {
   margin-bottom: 1.25em;
+  color: #4B5563;
 }
 
 .prose strong {
@@ -172,9 +178,9 @@ body {
 .prose a {
   color: #4F46E5;
   text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: rgba(79, 70, 229, 0.3);
-  transition: all 0.15s;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(79, 70, 229, 0.25);
+  transition: all 0.15s ease;
 }
 
 .prose a:hover {
@@ -183,7 +189,7 @@ body {
 
 .prose hr {
   border-color: #E5E7EB;
-  margin: 2rem 0;
+  margin: 2.5rem 0;
 }
 
 .prose blockquote {
@@ -228,12 +234,18 @@ body {
   border: 1px solid #E5E7EB;
 }
 
+.dark .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: rgba(30, 41, 59, 0.8);
+  color: #CBD5E1;
+  border-color: #334155;
+}
+
 /* ── Prose: code blocks ── */
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-family: var(--font-mono), ui-monospace, monospace;
   background: #1E1E2E;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
@@ -252,6 +264,12 @@ body {
   color: #CDD6F4;
 }
 
+.dark .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: #0C1222;
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
 /* ── Prose: headings ── */
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -264,8 +282,27 @@ body {
   margin-bottom: 1rem;
   padding-bottom: 0.625rem;
   border-bottom: 1px solid #E5E7EB;
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 6rem;
   letter-spacing: -0.025em;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) a {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) a::before {
+  content: "#";
+  position: absolute;
+  left: -1.25rem;
+  color: #9CA3AF;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) a:hover::before {
+  opacity: 1;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -274,10 +311,29 @@ body {
   font-weight: 600;
   color: #111827;
   line-height: 1.4;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   margin-bottom: 0.75rem;
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 6rem;
   letter-spacing: -0.015em;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) a {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) a::before {
+  content: "#";
+  position: absolute;
+  left: -1.25rem;
+  color: #9CA3AF;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) a:hover::before {
+  opacity: 1;
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -286,9 +342,9 @@ body {
   font-weight: 600;
   color: #374151;
   line-height: 1.5;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   margin-bottom: 0.5rem;
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 6rem;
 }
 
 .prose :where(h5):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -297,9 +353,9 @@ body {
   font-weight: 600;
   color: #6B7280;
   line-height: 1.5;
-  margin-top: 1.25rem;
+  margin-top: 1.5rem;
   margin-bottom: 0.375rem;
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 6rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -471,11 +527,11 @@ body {
 .dark .glass-card {
   background: rgba(15, 23, 42, 0.6);
   border-color: rgba(51, 65, 85, 0.6);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .dark .glass-card:hover {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.2);
   border-color: rgba(99, 102, 241, 0.3);
 }
 
@@ -504,13 +560,21 @@ body {
   color: #94A3B8;
 }
 
+.dark .prose > * {
+  max-width: 72ch;
+}
+
+.dark .prose p {
+  color: #94A3B8;
+}
+
 .dark .prose strong {
   color: #E2E8F0;
 }
 
 .dark .prose a {
   color: #818CF8;
-  text-decoration-color: rgba(129, 140, 248, 0.3);
+  text-decoration-color: rgba(129, 140, 248, 0.25);
 }
 
 .dark .prose a:hover {
@@ -535,28 +599,29 @@ body {
   color: #E2E8F0;
 }
 
-.dark .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background: rgba(30, 41, 59, 0.8);
-  color: #CBD5E1;
-  border-color: #334155;
-}
-
-.dark .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background: #0C1222;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-.dark .prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: #CDD6F4;
-}
-
 .dark .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: #F1F5F9;
   border-bottom-color: #1E293B;
 }
 
+.dark .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) a {
+  color: #F1F5F9;
+}
+
+.dark .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) a::before {
+  color: #64748B;
+}
+
 .dark .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: #E2E8F0;
+}
+
+.dark .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) a {
+  color: #E2E8F0;
+}
+
+.dark .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) a::before {
+  color: #64748B;
 }
 
 .dark .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -577,6 +642,7 @@ body {
 
 .dark .prose .table-wrapper {
   border-color: #1E293B;
+  border: 1px solid #1E293B;
 }
 
 .dark .prose table {
@@ -584,12 +650,12 @@ body {
 }
 
 .dark .prose thead {
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.6);
 }
 
 .dark .prose th {
-  color: #94A3B8;
-  border-bottom-color: #1E293B;
+  color: #CBD5E1;
+  border-bottom-color: #334155;
 }
 
 .dark .prose td {
@@ -599,6 +665,14 @@ body {
 
 .dark .prose tbody tr:nth-child(even) {
   background: rgba(15, 23, 42, 0.3);
+}
+
+.dark .prose tbody tr:hover {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.prose tbody tr:hover {
+  background: #F9FAFB;
 }
 
 .dark ::selection {
@@ -865,3 +939,73 @@ body {
     max-height: min(65vh, 500px);
   }
 }
+
+/* ── Documentation Layout ── */
+
+.doc-layout {
+  min-height: calc(100vh - 4rem);
+  background: #FFFFFF;
+}
+
+.dark .doc-layout {
+  background: #0B0F1A;
+}
+
+/* ── Sidebar link transitions ── */
+
+.doc-sidebar-link {
+  transition: all 0.15s ease;
+}
+
+/* ── Focus visible styles ── */
+
+:focus-visible {
+  outline: 2px solid #4F46E5;
+  outline-offset: 2px;
+}
+
+.dark :focus-visible {
+  outline-color: #818CF8;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid #4F46E5;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.dark button:focus-visible,
+.dark a:focus-visible,
+.dark [role="button"]:focus-visible {
+  outline-color: #818CF8;
+}
+
+/* ── Sidebar scrollbar ── */
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+  border-radius: 3px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}
+
+.dark .sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #1E293B;
+}
+
+.dark .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
