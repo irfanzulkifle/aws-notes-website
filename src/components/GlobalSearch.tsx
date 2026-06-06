@@ -4,6 +4,12 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Fuse from "fuse.js";
 
+interface SearchSection {
+  heading: string;
+  slug: string;
+  content: string;
+}
+
 interface SearchDocument {
   title: string;
   week: string;
@@ -13,6 +19,7 @@ interface SearchDocument {
   day: string;
   topics: string[];
   headings: string[];
+  sections: SearchSection[];
   body: string;
   url: string;
 }
@@ -98,6 +105,27 @@ function getSnippet(doc: SearchDocument, query: string): string {
   if (start > 0) snippet = "..." + snippet;
   if (end < allContent.length) snippet = snippet + "...";
   return snippet;
+}
+
+function findMatchingSectionSlug(doc: SearchDocument, query: string): string {
+  if (!query.trim() || !doc.sections.length) return "";
+  const qLower = query.toLowerCase();
+
+  // First pass: exact match in heading text
+  for (const section of doc.sections) {
+    if (section.heading.toLowerCase().includes(qLower)) {
+      return section.slug;
+    }
+  }
+
+  // Second pass: match in section content (pick first section containing query)
+  for (const section of doc.sections) {
+    if (section.content.toLowerCase().includes(qLower)) {
+      return section.slug;
+    }
+  }
+
+  return "";
 }
 
 function getRecentSearches(): string[] {
@@ -267,7 +295,8 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
           if (selected) {
             saveRecentSearch(query.trim());
             closeModal();
-            router.push(selected.url);
+            const sectionSlug = findMatchingSectionSlug(selected, query);
+            router.push(sectionSlug ? `${selected.url}#${sectionSlug}` : selected.url);
           }
         } else if (!query.trim() && recentSearches.length > 0 && selectedIdx < recentSearches.length) {
           const term = recentSearches[selectedIdx];
@@ -298,7 +327,8 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
     (doc: SearchDocument) => {
       saveRecentSearch(query.trim() || doc.title);
       closeModal();
-      router.push(doc.url);
+      const sectionSlug = findMatchingSectionSlug(doc, query);
+      router.push(sectionSlug ? `${doc.url}#${sectionSlug}` : doc.url);
     },
     [query, closeModal, router]
   );
