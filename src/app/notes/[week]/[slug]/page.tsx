@@ -168,6 +168,13 @@ export default async function NotePage({ params }: Props) {
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight, rehypeSlug]}
                 components={{
+                  table({ children, ...props }) {
+                    return (
+                      <div className="table-wrapper">
+                        <table {...props}>{children}</table>
+                      </div>
+                    );
+                  },
                   pre({ children, ...props }) {
                     const codeChild = React.Children.toArray(children).find(
                       (child) => React.isValidElement(child) && child.type === "code"
