@@ -107,21 +107,19 @@ function getSnippet(doc: SearchDocument, query: string): string {
   return snippet;
 }
 
-function findMatchingSectionSlug(doc: SearchDocument, query: string): string {
+function findBestSectionHeading(doc: SearchDocument, query: string): string {
   if (!query.trim() || !doc.sections || doc.sections.length === 0) return "";
   const qLower = query.toLowerCase();
 
-  // First pass: exact match in heading text
   for (const section of doc.sections) {
-    if (section.heading.toLowerCase().includes(qLower)) {
-      return section.slug;
+    if (section.heading && section.heading.toLowerCase().includes(qLower)) {
+      return section.heading;
     }
   }
 
-  // Second pass: match in section content (pick first section containing query)
   for (const section of doc.sections) {
     if (section.content && section.content.toLowerCase().includes(qLower)) {
-      return section.slug;
+      return section.heading;
     }
   }
 
@@ -199,25 +197,27 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
     if (index.length === 0) return null;
     return new Fuse(index, {
       keys: [
-        { name: "title", weight: 4 },
-        { name: "topics", weight: 3 },
-        { name: "headings", weight: 2 },
-        { name: "body", weight: 1 },
-        { name: "weekLabel", weight: 0.5 },
+        { name: "title", weight: 0.4 },
+        { name: "topics", weight: 0.3 },
+        { name: "headings", weight: 0.2 },
+        { name: "body", weight: 0.1 },
       ],
-      threshold: 0.4,
-      distance: 100,
+      threshold: 0.15,
+      distance: 200,
       includeScore: true,
+      includeMatches: true,
       minMatchCharLength: 2,
       ignoreLocation: true,
-      useExtendedSearch: true,
     });
   }, [index]);
 
   const results = useMemo(() => {
     if (!fuse || !query.trim()) return [];
     const raw = fuse.search(query.trim());
-    return raw.slice(0, 20).map((r) => r.item);
+    return raw
+      .filter((r) => (r.score ?? 1) <= 0.35)
+      .slice(0, 20)
+      .map((r) => r.item);
   }, [fuse, query]);
 
   useEffect(() => {
@@ -294,10 +294,12 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
           const selected = results[selectedIdx];
           if (selected) {
             saveRecentSearch(query.trim());
-            const sectionSlug = findMatchingSectionSlug(selected, query);
-            const url = sectionSlug ? `${selected.url}#${sectionSlug}` : selected.url;
+            const heading = findBestSectionHeading(selected, query);
+            if (heading) {
+              sessionStorage.setItem("scrollToHeading", heading);
+            }
             closeModal();
-            router.push(url);
+            router.push(selected.url);
           }
         } else if (!query.trim() && recentSearches.length > 0 && selectedIdx < recentSearches.length) {
           const term = recentSearches[selectedIdx];
@@ -327,10 +329,14 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   const handleResultClick = useCallback(
     (doc: SearchDocument) => {
       saveRecentSearch(query.trim() || doc.title);
-      const sectionSlug = findMatchingSectionSlug(doc, query);
-      const url = sectionSlug ? `${doc.url}#${sectionSlug}` : doc.url;
+      const heading = findBestSectionHeading(doc, query);
+      if (heading) {
+        sessionStorage.setItem("scrollToHeading", heading);
+      } else {
+        sessionStorage.removeItem("scrollToHeading");
+      }
       closeModal();
-      router.push(url);
+      router.push(doc.url);
     },
     [query, closeModal, router]
   );
