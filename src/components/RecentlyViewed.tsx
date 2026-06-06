@@ -29,18 +29,18 @@ export default function RecentlyViewed() {
   if (recent.length === 0) return null;
 
   return (
-    <div className="mb-3">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1.5">
+    <div className="mb-4">
+      <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">
         Recently viewed
       </h3>
-      <div className="flex gap-1.5 overflow-x-auto">
+      <div className="flex flex-wrap gap-1.5">
         {recent.map((note) => (
           <Link
             key={note.slug}
             href={`/notes/${note.week}/${note.slug}`}
-            className="flex-shrink-0 px-2.5 py-1 rounded-md text-[12px] font-medium text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap"
+            className="px-2.5 py-1 rounded text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
-            {note.title.length > 28 ? note.title.slice(0, 28) + "\u2026" : note.title}
+            {note.title.length > 32 ? note.title.slice(0, 32) + "…" : note.title}
           </Link>
         ))}
       </div>
