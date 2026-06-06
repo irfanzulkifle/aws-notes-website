@@ -246,12 +246,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
             
             const searchQuery = encodeURIComponent(query.trim());
             const url = `${selected.url}?q=${searchQuery}`;
-            
-            if (typeof window !== "undefined") {
-              window.location.href = url;
-            } else {
-              router.push(url);
-            }
+            router.push(url);
           }
         } else if (!query.trim() && recentSearches.length > 0 && selectedIdx < recentSearches.length) {
           const term = recentSearches[selectedIdx];
@@ -285,12 +280,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
       
       const searchQuery = encodeURIComponent(query.trim());
       const url = `${doc.url}?q=${searchQuery}`;
-      
-      if (typeof window !== "undefined") {
-        window.location.href = url;
-      } else {
-        router.push(url);
-      }
+      router.push(url);
     },
     [query, closeModal, router]
   );
