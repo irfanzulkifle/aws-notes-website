@@ -16,12 +16,12 @@ export default async function HomePage({
   return (
     <div className="min-h-screen bg-white dark:bg-[#09090b]">
       <div id="main-content" className="border-b border-zinc-100 dark:border-zinc-800">
-        <div className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <header className="mb-5">
-            <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-1">
+        <div className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <header className="mb-4">
+            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight">
               AWS re/Start Notes
             </h1>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-[13px] text-zinc-500 dark:text-zinc-400 mt-0.5">
               {allNotes.length} notes across {weeks.length} weeks · Linux, Python, SQL, Networking, AWS Cloud
             </p>
           </header>
