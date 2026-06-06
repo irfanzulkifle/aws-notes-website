@@ -80,9 +80,9 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
 
   return (
     <div>
-      <div className="mb-2.5 relative">
+      <div className="mb-2 relative">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -100,37 +100,37 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Filter notes by keyword, topic, or content"
-          className="w-full pl-9 pr-9 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-zinc-300 dark:focus:border-zinc-700 focus:ring-1 focus:ring-zinc-200 dark:focus:ring-zinc-700 transition-all"
+          className="w-full pl-8 pr-8 py-1 rounded border border-zinc-200 dark:border-zinc-800 text-[13px] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-zinc-300 dark:focus:border-zinc-700 focus:ring-1 focus:ring-zinc-200 dark:focus:ring-zinc-700 transition-all"
         />
         {query && (
           <button
             onClick={() => setQuery("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
             aria-label="Clear search"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         )}
       </div>
 
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+      <div className="mb-1.5 flex items-center justify-between">
+        <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
           {query ? `${resultCount} result${resultCount !== 1 ? "s" : ""}` : `${notes.length} notes`}
         </span>
         <button
           onClick={toggleAll}
-          className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+          className="text-[11px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
         >
           {allExpanded ? "Collapse all" : "Expand all"}
         </button>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
         {filteredWeeks.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
               No notes found for &ldquo;{query}&rdquo;
             </p>
           </div>
@@ -144,15 +144,15 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
               ref={(el) => {
                 detailsRefs.current[i] = el;
               }}
-              className="group border border-zinc-200 dark:border-zinc-800 rounded-md overflow-hidden"
+              className="group"
               open={i === 0 || allExpanded}
             >
               <summary
-                className="cursor-pointer px-3.5 py-2 flex items-center justify-between gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors list-none"
+                className="cursor-pointer px-1 py-2 flex items-center justify-between gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors list-none rounded-sm"
                 role="button"
                 aria-label={`${weekLabels[week] || week}, ${weekNotes.length} notes`}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
                   <svg
                     className="w-3 h-3 shrink-0 transition-transform group-open:rotate-180 text-zinc-400 dark:text-zinc-500"
                     fill="none"
@@ -162,7 +162,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
@@ -170,34 +170,34 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                     {weekLabels[week] || week}
                   </h3>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums whitespace-nowrap">
                     {weekNotes.length} {weekNotes.length === 1 ? "note" : "notes"}
                   </span>
-                  <span className="text-xs text-zinc-300 dark:text-zinc-600 select-none">·</span>
+                  <span className="text-[11px] text-zinc-300 dark:text-zinc-700 select-none">·</span>
                   <Link
                     href={`/notes/${week}/weekly_summary`}
-                    className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors whitespace-nowrap"
+                    className="text-[11px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors whitespace-nowrap"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Summary
                   </Link>
                 </div>
               </summary>
-              <div className="border-t border-zinc-100 dark:border-zinc-800 divide-y divide-zinc-50 dark:divide-zinc-800/50">
+              <div className="pl-5 pb-1">
                 {weekNotes.map((note) => (
                   <Link
                     key={note.slug}
                     href={`/notes/${note.week}/${note.slug}`}
-                    className="block px-3.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors group/note"
+                    className="block py-1 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors group/note rounded-sm px-2 -ml-2"
                   >
-                    <h4 className="text-sm text-zinc-700 dark:text-zinc-300 group-hover/note:text-zinc-900 dark:group-hover/note:text-zinc-100 transition-colors">
+                    <p className="text-[13px] text-zinc-700 dark:text-zinc-300 group-hover/note:text-zinc-900 dark:group-hover/note:text-zinc-100 transition-colors leading-tight">
                       {note.title}
-                    </h4>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                    </p>
+                    <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5">
                       <span>{note.date} · {note.readingTime} min</span>
                       {note.topics.slice(0, 3).map((t) => (
-                        <span key={t} className="text-xs text-zinc-400 dark:text-zinc-500 before:content-['·'] before:mr-1.5">
+                        <span key={t} className="text-[11px] text-zinc-400 dark:text-zinc-500 before:content-['·'] before:mr-1">
                           {t}
                         </span>
                       ))}
