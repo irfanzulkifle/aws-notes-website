@@ -108,7 +108,7 @@ export default async function NotePage({ params }: Props) {
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
-                {prevNote.date}
+                {prevNote.date} ({prevNote.day})
               </Link>
             ) : (
               <span className="text-xs text-gray-300 dark:text-slate-600">First in {week}</span>
@@ -123,7 +123,7 @@ export default async function NotePage({ params }: Props) {
                 href={`/notes/${nextNote.week}/${nextNote.slug}`}
                 className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
               >
-                {nextNote.date}
+                {nextNote.date} ({nextNote.day})
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                 </svg>
@@ -140,7 +140,7 @@ export default async function NotePage({ params }: Props) {
             {/* Title */}
             <header className="mb-10">
               <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 mb-3">
-                <span>{meta.date}</span>
+                <span>{meta.date} ({meta.day})</span>
                 <span>·</span>
                 <span>{minutes} min read</span>
               </div>
@@ -211,7 +211,7 @@ export default async function NotePage({ params }: Props) {
                       <p className="text-sm font-medium text-gray-700 dark:text-slate-300 group-hover/rel:text-indigo-600 dark:group-hover/rel:text-indigo-400 transition-colors mb-1 line-clamp-2">
                         {note.title}
                       </p>
-                      <p className="text-xs text-gray-400 dark:text-slate-500">{note.date}</p>
+                      <p className="text-xs text-gray-400 dark:text-slate-500">{note.date} ({note.day})</p>
                     </Link>
                   ))}
                 </div>
@@ -225,7 +225,7 @@ export default async function NotePage({ params }: Props) {
                   href={`/notes/${prevNote.week}/${prevNote.slug}`}
                   className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  ← {prevNote.date}
+                  ← {prevNote.date} ({prevNote.day})
                 </Link>
               ) : <div />}
               {nextNote ? (
@@ -233,7 +233,7 @@ export default async function NotePage({ params }: Props) {
                   href={`/notes/${nextNote.week}/${nextNote.slug}`}
                   className="text-xs text-gray-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  {nextNote.date} →
+                  {nextNote.date} ({nextNote.day}) →
                 </Link>
               ) : <div />}
             </div>
