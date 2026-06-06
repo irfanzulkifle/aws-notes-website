@@ -108,25 +108,6 @@ function getSnippet(doc: SearchDocument, query: string): string {
   return snippet;
 }
 
-function findBestSectionHeading(doc: SearchDocument, query: string): string {
-  if (!query.trim() || !doc.sections || doc.sections.length === 0) return "";
-  const qLower = query.toLowerCase();
-
-  for (const section of doc.sections) {
-    if (section.heading && section.heading.toLowerCase().includes(qLower)) {
-      return section.heading;
-    }
-  }
-
-  for (const section of doc.sections) {
-    if (section.content && section.content.toLowerCase().includes(qLower)) {
-      return section.heading;
-    }
-  }
-
-  return "";
-}
-
 function getRecentSearches(): string[] {
   if (typeof window === "undefined") return [];
   try {
@@ -228,7 +209,8 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
 
-      if (isMod && e.key === "/") {
+      // Support both Ctrl+/ and Ctrl+K / Cmd+K
+      if (isMod && (e.key === "/" || e.key.toLowerCase() === "k")) {
         e.preventDefault();
         if (open) {
           closeModal();
@@ -292,12 +274,16 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
           const selected = results[selectedIdx];
           if (selected) {
             saveRecentSearch(query.trim());
-            const heading = findBestSectionHeading(selected, query);
-            if (heading) {
-              sessionStorage.setItem("scrollToHeading", heading);
-            }
             closeModal();
-            router.push(selected.url);
+            
+            const searchQuery = encodeURIComponent(query.trim());
+            const url = `${selected.url}?q=${searchQuery}`;
+            
+            if (typeof window !== "undefined") {
+              window.location.href = url;
+            } else {
+              router.push(url);
+            }
           }
         } else if (!query.trim() && recentSearches.length > 0 && selectedIdx < recentSearches.length) {
           const term = recentSearches[selectedIdx];
@@ -327,14 +313,16 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   const handleResultClick = useCallback(
     (doc: SearchDocument) => {
       saveRecentSearch(query.trim() || doc.title);
-      const heading = findBestSectionHeading(doc, query);
-      if (heading) {
-        sessionStorage.setItem("scrollToHeading", heading);
-      } else {
-        sessionStorage.removeItem("scrollToHeading");
-      }
       closeModal();
-      router.push(doc.url);
+      
+      const searchQuery = encodeURIComponent(query.trim());
+      const url = `${doc.url}?q=${searchQuery}`;
+      
+      if (typeof window !== "undefined") {
+        window.location.href = url;
+      } else {
+        router.push(url);
+      }
     },
     [query, closeModal, router]
   );

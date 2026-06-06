@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface ViewedNote {
@@ -11,23 +11,25 @@ interface ViewedNote {
   viewedAt: number;
 }
 
-function getRecent(): ViewedNote[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const stored = localStorage.getItem("recentlyViewed");
-    return stored ? JSON.parse(stored).slice(0, 5) : [];
-  } catch {
-    return [];
-  }
-}
-
 export default function RecentlyViewed() {
-  const [recent] = useState<ViewedNote[]>(getRecent);
+  const [recent, setRecent] = useState<ViewedNote[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("recentlyViewed");
+      if (stored) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setRecent(JSON.parse(stored).slice(0, 5));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   if (recent.length === 0) return null;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 mb-10">
+    <div className="mb-10">
       <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-3">
         Recently viewed
       </h3>

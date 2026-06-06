@@ -23,7 +23,7 @@ export default function SearchTrigger() {
     <button
       type="button"
       className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-gray-200 dark:hover:border-slate-700 cursor-pointer"
-      aria-label={`Search notes (${modifier}+/)`}
+      aria-label={`Search notes (${modifier}+K)`}
       onClick={() => window.dispatchEvent(new Event("openGlobalSearch"))}
     >
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +31,7 @@ export default function SearchTrigger() {
       </svg>
       <span className="hidden sm:inline text-xs">Search</span>
       <kbd className="hidden sm:inline-flex text-[9px] px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 font-mono">
-        {modifier}+/
+        {modifier}K
       </kbd>
     </button>
   );

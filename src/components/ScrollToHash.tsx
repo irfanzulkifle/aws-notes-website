@@ -1,40 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function ScrollToHash() {
   const pathname = usePathname();
-  const attemptedRef = useRef(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("scrollToHeading");
-    if (!stored) return;
-    sessionStorage.removeItem("scrollToHeading");
-
-    const q = stored.toLowerCase().replace(/[#*`~_\[\]()]/g, "").trim();
-
-    let attempts = 0;
-    const maxAttempts = 15;
-    const interval = 250;
-
-    const tryScroll = () => {
-      attempts++;
-      const els = document.querySelectorAll<HTMLElement>(".prose h2, .prose h3, .prose h4");
-      for (const el of els) {
-        const text = (el.textContent ?? "").replace(/[#*`~_\[\]()]/g, "").trim().toLowerCase();
-        if (text.includes(q) || q.includes(text)) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-          return;
-        }
-      }
-      if (attempts < maxAttempts) {
-        setTimeout(tryScroll, interval);
+    const hash = window.location.hash;
+    if (!hash) return;
+    
+    const id = hash.slice(1);
+    
+    const tryScroll = (attempts: number = 0) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      } else if (attempts < 20) {
+        setTimeout(() => tryScroll(attempts + 1), 100);
       }
     };
-
+    
     tryScroll();
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   return null;
 }
