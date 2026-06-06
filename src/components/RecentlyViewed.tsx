@@ -29,11 +29,11 @@ export default function RecentlyViewed() {
   if (recent.length === 0) return null;
 
   return (
-    <div className="mb-4">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2">
+    <div className="mb-3">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1.5">
         Recently viewed
       </h3>
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto">
         {recent.map((note) => (
           <Link
             key={note.slug}
