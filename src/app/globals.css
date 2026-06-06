@@ -424,29 +424,6 @@ body {
 .hljs-operator { color: #89DCEB; }
 .hljs-punctuation { color: #6C7086; }
 
-/* ── Find in Page highlights ── */
-
-.find-highlight {
-  background: #FDE68A;
-  color: inherit;
-  border-radius: 2px;
-  padding: 1px 0;
-}
-
-.find-highlight-active {
-  background: #F97316;
-  color: white;
-}
-
-.dark .find-highlight {
-  background: rgba(253, 230, 138, 0.3);
-}
-
-.dark .find-highlight-active {
-  background: #F97316;
-  color: white;
-}
-
 /* ── Selection ── */
 
 ::selection {
@@ -654,10 +631,9 @@ body {
   inset: 0;
   z-index: 9999;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 0 1rem;
-  padding-top: min(20vh, 200px);
+  padding: 1rem;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
