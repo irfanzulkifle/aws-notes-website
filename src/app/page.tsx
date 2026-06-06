@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getAllNotes, getAllWeeks } from "@/lib/utils";
 import { WEEK_LABELS } from "@/lib/constants";
 import SearchableNotes from "@/components/SearchableNotes";
@@ -25,12 +26,14 @@ export default async function HomePage({
             </p>
           </header>
           <RecentlyViewed />
-          <SearchableNotes
-            key={search || "_"}
-            notes={allNotes}
-            weeks={weeks}
-            weekLabels={WEEK_LABELS}
-          />
+          <Suspense fallback={null}>
+            <SearchableNotes
+              key={search || "_"}
+              notes={allNotes}
+              weeks={weeks}
+              weekLabels={WEEK_LABELS}
+            />
+          </Suspense>
         </div>
       </div>
     </div>
