@@ -39,10 +39,10 @@ export default async function HomePage({
           </div>
 
           <h1 className="animate-fade-up-delay-1 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-[1.1]">
-            Cloud computing
+            AWS re/Start
             <br />
             <span className="bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
-              learning journal
+              lecture summary
             </span>
           </h1>
 
