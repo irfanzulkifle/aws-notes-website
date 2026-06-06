@@ -9,6 +9,7 @@ interface Note {
   slug: string;
   title: string;
   date: string;
+  day: string;
   topics: string[];
   readingTime: number;
   body: string;
@@ -209,7 +210,7 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                           {note.title}
                         </h4>
                         <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
-                          {note.date} · {note.readingTime} min read
+                          {note.date} ({note.day}) · {note.readingTime} min read
                         </p>
                       </div>
                       {note.topics.length > 0 && (
