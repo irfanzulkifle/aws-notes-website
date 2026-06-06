@@ -424,29 +424,6 @@ body {
 .hljs-operator { color: #89DCEB; }
 .hljs-punctuation { color: #6C7086; }
 
-/* ── Find in Page highlights ── */
-
-.find-highlight {
-  background: #FDE68A;
-  color: inherit;
-  border-radius: 2px;
-  padding: 1px 0;
-}
-
-.find-highlight-active {
-  background: #F97316;
-  color: white;
-}
-
-.dark .find-highlight {
-  background: rgba(253, 230, 138, 0.3);
-}
-
-.dark .find-highlight-active {
-  background: #F97316;
-  color: white;
-}
-
 /* ── Selection ── */
 
 ::selection {

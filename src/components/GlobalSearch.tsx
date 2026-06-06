@@ -202,7 +202,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
 
-      if ((isMod && e.key === "/") || (isMod && e.key === "f")) {
+      if (isMod && e.key === "/") {
         e.preventDefault();
         if (open) {
           closeModal();

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemeToggle from "@/components/ThemeToggle";
-import FindInPage from "@/components/FindInPage";
 import GlobalSearch from "@/components/GlobalSearch";
 import SearchTrigger from "@/components/SearchTrigger";
 import "./globals.css";
@@ -105,7 +104,6 @@ export default function RootLayout({
         </nav>
 
         <main className="flex-1">{children}</main>
-        <FindInPage />
         <GlobalSearch />
 
         {/* Footer */}
