@@ -193,12 +193,10 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
   }, [fuse, query]);
 
   useEffect(() => {
-    if (!open) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
 
-      if (isMod && e.key === "k") {
+      if (isMod && e.key === "/") {
         e.preventDefault();
         if (open) {
           closeModal();
@@ -207,6 +205,8 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
         }
         return;
       }
+
+      if (!open) return;
 
       if (e.key === "Escape") {
         e.preventDefault();

@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemeToggle from "@/components/ThemeToggle";
 import FindInPage from "@/components/FindInPage";
 import GlobalSearch from "@/components/GlobalSearch";
+import SearchTrigger from "@/components/SearchTrigger";
 import "./globals.css";
 
 const inter = Inter({
@@ -72,20 +73,7 @@ export default function RootLayout({
               </span>
             </Link>
             <div className="flex items-center gap-4">
-              <button
-                type="button"
-                id="global-search-trigger"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-gray-200 dark:hover:border-slate-700 cursor-pointer"
-                aria-label="Search notes (Ctrl+K)"
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <span className="hidden sm:inline text-xs">Search</span>
-                <kbd className="hidden sm:inline-flex text-[9px] px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 font-mono">
-                  Ctrl+K
-                </kbd>
-              </button>
+              <SearchTrigger />
               <Link
                 href="/"
                 className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 transition-colors hidden sm:block"
