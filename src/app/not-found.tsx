@@ -2,25 +2,20 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center px-6">
+    <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center">
-        <p className="text-7xl font-bold bg-gradient-to-r from-indigo-500 to-violet-500 bg-clip-text text-transparent mb-4">
-          404
-        </p>
-        <h1 className="text-xl font-semibold text-gray-900 mb-2">
-          Page not found
-        </h1>
-        <p className="text-sm text-gray-500 mb-8 max-w-sm mx-auto">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
+        <h1 className="text-4xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">404</h1>
+        <p className="text-[13px] text-zinc-500 dark:text-zinc-400 mb-6">
+          The page you&apos;re looking for doesn&apos;t exist.
         </p>
         <Link
           href="/"
-          className="btn-primary"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
           </svg>
-          Back to all notes
+          Back to notes
         </Link>
       </div>
     </div>
