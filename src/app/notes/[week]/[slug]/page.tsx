@@ -158,7 +158,7 @@ export default async function NotePage({ params }: Props) {
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
               </svg>
-              {prevNote.date}
+              <span>{prevNote.day.slice(0, 3)} · {prevNote.date}</span>
             </Link>
           ) : (
             <span className="text-[12px] text-zinc-300 dark:text-zinc-600">First</span>
@@ -171,7 +171,7 @@ export default async function NotePage({ params }: Props) {
               href={`/notes/${nextNote.week}/${nextNote.slug}`}
               className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1"
             >
-              {nextNote.date}
+              <span>{nextNote.day.slice(0, 3)} · {nextNote.date}</span>
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
               </svg>
@@ -183,27 +183,40 @@ export default async function NotePage({ params }: Props) {
       </nav>
 
       <header className="mb-8">
-        <div className="flex items-center gap-2 text-[12px] text-zinc-400 dark:text-zinc-500 mb-3">
-          <span>{meta.date}</span>
-          <span className="text-zinc-300 dark:text-zinc-700">·</span>
-          <span>{minutes} min read</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight mb-2">
           {meta.title}
         </h1>
-        {meta.topics.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {meta.topics.map((t) => (
-              <Link
-                key={t}
-                href={`/?search=${encodeURIComponent(t)}`}
-                className="px-2 py-0.5 text-[11px] rounded font-medium border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all"
-              >
-                {t}
-              </Link>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-zinc-500 dark:text-zinc-400">
+          {meta.date && (
+            <span className="font-medium text-zinc-700 dark:text-zinc-300">
+              {new Date(meta.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </span>
+          )}
+          {meta.date && meta.day && (
+            <>
+              <span className="text-zinc-300 dark:text-zinc-700">·</span>
+              <span>{meta.day.slice(0, 3)}</span>
+            </>
+          )}
+          <span className="text-zinc-300 dark:text-zinc-700">·</span>
+          <span>{minutes} min read</span>
+          {meta.topics.length > 0 && (
+            <>
+              <span className="text-zinc-300 dark:text-zinc-700">·</span>
+              <div className="flex flex-wrap gap-1.5">
+                {meta.topics.map((t) => (
+                  <Link
+                    key={t}
+                    href={`/?search=${encodeURIComponent(t)}`}
+                    className="hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {t}
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </header>
 
       <div className="prose">
@@ -286,7 +299,7 @@ export default async function NotePage({ params }: Props) {
             href={`/notes/${prevNote.week}/${prevNote.slug}`}
             className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
-            ← {prevNote.date}
+            ← {prevNote.day.slice(0, 3)} · {prevNote.date}
           </Link>
         ) : <div />}
         {nextNote ? (
@@ -294,7 +307,7 @@ export default async function NotePage({ params }: Props) {
             href={`/notes/${nextNote.week}/${nextNote.slug}`}
             className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
-            {nextNote.date} →
+            {nextNote.day.slice(0, 3)} · {nextNote.date} →
           </Link>
         ) : <div />}
       </nav>

@@ -194,14 +194,14 @@ export default function SearchableNotes({ notes, weeks, weekLabels }: Props) {
                     <p className="text-[13px] text-zinc-700 dark:text-zinc-300 group-hover/note:text-zinc-900 dark:group-hover/note:text-zinc-100 transition-colors leading-tight">
                       {note.title}
                     </p>
-                    <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5">
-                      <span>{note.date} · {note.readingTime} min</span>
-                      {note.topics.slice(0, 3).map((t) => (
-                        <span key={t} className="text-[11px] text-zinc-400 dark:text-zinc-500 before:content-['·'] before:mr-1">
-                          {t}
-                        </span>
-                      ))}
-                    </p>
+                     <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5">
+                       <span>{note.day ? `${note.day.slice(0, 3)} · ${note.readingTime} min` : `${note.date} · ${note.readingTime} min`}</span>
+                       {note.topics.slice(0, 3).map((t) => (
+                         <span key={t} className="text-[11px] text-zinc-400 dark:text-zinc-500 before:content-['·'] before:mr-1">
+                           {t}
+                         </span>
+                       ))}
+                     </p>
                   </Link>
                 ))}
               </div>
