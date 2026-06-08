@@ -143,6 +143,37 @@ export interface SidebarNote {
   title: string;
   date: string;
   day: string;
+  displayDate: string;
+  navDate: string;
+}
+
+export function formatSidebarDate(dateSlug: string): string {
+  if (!dateSlug) return "";
+  const [y, m, d] = dateSlug.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const shortMonth = date.toLocaleDateString("en-US", { month: "short" });
+  return `${shortMonth} ${d}`;
+}
+
+export function formatNavDate(dateSlug: string, day: string): string {
+  if (!dateSlug) return day ? day.slice(0, 3) : "";
+  const [y, m, d] = dateSlug.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const shortDay = day ? day.slice(0, 3) : date.toLocaleDateString("en-US", { weekday: "short" });
+  const shortMonth = date.toLocaleDateString("en-US", { month: "short" });
+  return `${shortDay} · ${shortMonth} ${d}`;
+}
+
+export function formatPageTitle(dateSlug: string, day: string): string {
+  if (!dateSlug) return day || "";
+  const [y, m, d] = dateSlug.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export function buildNotesByWeek(allNotes: NoteMeta[], allWeeks: string[]): Record<string, SidebarNote[]> {
@@ -150,7 +181,12 @@ export function buildNotesByWeek(allNotes: NoteMeta[], allWeeks: string[]): Reco
   allWeeks.forEach((w) => {
     map[w] = allNotes
       .filter((n) => n.week === w)
-      .sort((a, b) => a.slug.localeCompare(b.slug));
+      .sort((a, b) => a.slug.localeCompare(b.slug))
+      .map((n) => ({
+        ...n,
+        displayDate: formatSidebarDate(n.date),
+        navDate: formatNavDate(n.date, n.day),
+      }));
   });
   return map;
 }

@@ -95,18 +95,23 @@ export default function TableOfContents({ headings }: Props) {
               </svg>
             </button>
           </div>
-          <nav className="overflow-y-auto max-h-[calc(50vh-48px)] p-3 space-y-0.5" aria-label="Table of contents">
+           <nav className="overflow-y-auto max-h-[calc(50vh-48px)] p-3 space-y-px" aria-label="Table of contents">
             {headings.map((h) => (
               <button
                 key={h.id}
                 onClick={() => handleClick(h.id)}
-                className={`block w-full text-left text-[12px] py-1.5 px-2 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 ${
-                  h.level === 3 ? "pl-4" : ""
-                } ${
-                  activeId === h.id
-                    ? "text-zinc-900 dark:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 font-medium"
-                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-                }`}
+                className={`
+                  block w-full text-left text-[12px] leading-relaxed py-1.5 px-2 rounded transition-all
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50
+                  ${h.level === 2 
+                    ? "font-medium text-zinc-700 dark:text-zinc-200 border-l-2 border-transparent" 
+                    : "text-[11px] text-zinc-500 dark:text-zinc-400 border-l-2 border-transparent pl-4"
+                  }
+                  ${activeId === h.id
+                    ? "text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-400/10 border-blue-600 dark:border-blue-400"
+                    : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  }
+                `}
                 aria-current={activeId === h.id ? "location" : undefined}
               >
                 {h.text}
@@ -116,29 +121,34 @@ export default function TableOfContents({ headings }: Props) {
         </div>
       )}
 
-      <div>
-        <h4 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2">
-          On this page
-        </h4>
-        <nav className="space-y-px" aria-label="Table of contents">
-          {headings.map((h) => (
-            <button
-              key={h.id}
-              onClick={() => handleClick(h.id)}
-              className={`block w-full text-left text-[12px] leading-relaxed py-1 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500/50 rounded ${
-                h.level === 3 ? "pl-3" : ""
-              } ${
-                activeId === h.id
-                  ? "text-zinc-900 dark:text-zinc-100 font-medium"
-                  : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-              }`}
-              aria-current={activeId === h.id ? "location" : undefined}
-            >
-              {h.text}
-            </button>
-          ))}
-        </nav>
-      </div>
+        <div>
+          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2">
+            On this page
+          </h4>
+          <nav className="space-y-px" aria-label="Table of contents">
+            {headings.map((h) => (
+              <button
+                key={h.id}
+                onClick={() => handleClick(h.id)}
+                className={`
+                  block w-full text-left text-[12px] leading-relaxed py-1.5 px-2 transition-all
+                  focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500/50 rounded
+                  ${h.level === 2 
+                    ? "font-medium text-zinc-700 dark:text-zinc-300 border-l-2 border-transparent" 
+                    : "text-[11px] text-zinc-500 dark:text-zinc-400 border-l-2 border-transparent pl-4"
+                  }
+                  ${activeId === h.id
+                    ? "text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10 border-blue-600 dark:border-blue-400"
+                    : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  }
+                `}
+                aria-current={activeId === h.id ? "location" : undefined}
+              >
+                {h.text}
+              </button>
+            ))}
+          </nav>
+        </div>
     </>
   );
 }
