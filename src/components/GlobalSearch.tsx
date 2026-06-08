@@ -459,17 +459,17 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
                           {highlightMatch(doc.title, query)}
                         </span>
                       </div>
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
-                        {doc.date}
-                        {doc.topics.slice(0, 2).map((t) => (
-                          <span
-                            key={t}
-                            className="inline-flex items-center ml-1.5 px-1 py-0.5 rounded text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
-                          >
-                            {t.length > 14 ? t.slice(0, 14) + "\u2026" : t}
-                          </span>
-                        ))}
-                      </span>
+                       <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+                         {doc.day ? `${doc.day.slice(0, 3)} · ${doc.date}` : doc.date}
+                         {doc.topics.slice(0, 2).map((t) => (
+                           <span
+                             key={t}
+                             className="inline-flex items-center ml-1.5 px-1 py-0.5 rounded text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
+                           >
+                             {t.length > 14 ? t.slice(0, 14) + "\u2026" : t}
+                           </span>
+                         ))}
+                       </span>
                       {snippet && (
                         <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 line-clamp-2">
                           {highlightMatch(snippet, query)}
