@@ -14,11 +14,11 @@ A beautifully styled static website publishing my **AWS re/Start lecture notes**
 
 ## 📋 Content
 
-- **30 lecture notes** across 8 weeks of the AWS re/Start program
+- **33 lecture notes** across 8 weeks of the AWS re/Start program
 - **Cohort 3: Project CloudIgnite**
 - Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases
 - Each note tagged with **AWS CLF-C02 exam relevance** flags
-- Last updated: 2026-06-03
+- Last updated: 2026-06-06
 
 > 📓 Source notes at [irfanzulkifle/aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
 
@@ -33,7 +33,7 @@ A beautifully styled static website publishing my **AWS re/Start lecture notes**
 | Week 7 | Python Fundamentals | 5 |
 | Week 8 | Python & DevOps | 6 |
 | Week 9 | Databases & SQL | 5 |
-| Week 10 | SQL Advanced & Amazon RDS | 1 |
+| Week 10 | SQL Advanced & Amazon RDS | 4 |
 
 ---
 
@@ -134,7 +134,7 @@ npm run lint       # Run ESLint
 ```
 aws-notes-website/
 ├── content/
-│   └── notes/                  # All 30 markdown notes
+│   └── notes/                  # All 33 markdown notes
 │       ├── week_03/
 │       ├── week_04/
 │       ├── ...

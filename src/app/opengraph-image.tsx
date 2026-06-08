@@ -78,7 +78,7 @@ export default function OGImage() {
             marginTop: 16,
           }}
         >
-          30 lecture notes across 8 weeks of cloud computing
+           33 lecture notes across 8 weeks of cloud computing
         </div>
         <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
           {["Linux", "Python", "SQL", "AWS Cloud", "Security"].map((tag) => (
