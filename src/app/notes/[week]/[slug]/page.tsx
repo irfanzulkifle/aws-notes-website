@@ -6,8 +6,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllNotes, getNoteContent, extractHeadings, readingTime, getWeeksWithSummary, getAllWeeks, buildNotesByWeek } from "@/lib/utils";
-import { WEEK_LABELS } from "@/lib/constants";
+import { getAllNotes, getNoteContent, extractHeadings, readingTime, getWeeksWithSummary, getAllWeeks, buildNotesByWeek, formatPageTitle, formatNavDate, formatSidebarDate } from "@/lib/utils";
 import TableOfContents from "@/components/TableOfContents";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import TrackView from "@/components/TrackView";
@@ -137,14 +136,8 @@ export default async function NotePage({ params }: Props) {
         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
-        <span className="text-zinc-500 dark:text-zinc-400">
-          {WEEK_LABELS[week] || week}
-        </span>
-        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-        <span className="text-zinc-700 dark:text-zinc-300 font-medium truncate max-w-[200px]">
-          {meta.title}
+        <span className="text-zinc-700 dark:text-zinc-300 font-medium">
+          Week {week.replace("week_0", "").replace("week_", "")}
         </span>
       </nav>
 
@@ -158,7 +151,7 @@ export default async function NotePage({ params }: Props) {
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
               </svg>
-              <span>{prevNote.day.slice(0, 3)} · {prevNote.date}</span>
+              <span>{formatNavDate(prevNote.date, prevNote.day)}</span>
             </Link>
           ) : (
             <span className="text-[12px] text-zinc-300 dark:text-zinc-600">First</span>
@@ -171,7 +164,7 @@ export default async function NotePage({ params }: Props) {
               href={`/notes/${nextNote.week}/${nextNote.slug}`}
               className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1"
             >
-              <span>{nextNote.day.slice(0, 3)} · {nextNote.date}</span>
+              <span>{formatNavDate(nextNote.date, nextNote.day)}</span>
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
               </svg>
@@ -182,39 +175,24 @@ export default async function NotePage({ params }: Props) {
         </div>
       </nav>
 
-      <header className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight mb-2">
-          {meta.title}
+      <header className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight mb-3">
+          {formatPageTitle(meta.date, meta.day)}
         </h1>
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-zinc-500 dark:text-zinc-400">
-          {meta.date && (
-            <span className="font-medium text-zinc-700 dark:text-zinc-300">
-              {new Date(meta.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-            </span>
-          )}
-          {meta.date && meta.day && (
-            <>
-              <span className="text-zinc-300 dark:text-zinc-700">·</span>
-              <span>{meta.day.slice(0, 3)}</span>
-            </>
-          )}
-          <span className="text-zinc-300 dark:text-zinc-700">·</span>
-          <span>{minutes} min read</span>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13px]">
+          <span className="text-zinc-500 dark:text-zinc-400">{minutes} min read</span>
           {meta.topics.length > 0 && (
-            <>
-              <span className="text-zinc-300 dark:text-zinc-700">·</span>
-              <div className="flex flex-wrap gap-1.5">
-                {meta.topics.map((t) => (
-                  <Link
-                    key={t}
-                    href={`/?search=${encodeURIComponent(t)}`}
-                    className="hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
-                  >
-                    {t}
-                  </Link>
-                ))}
-              </div>
-            </>
+            <div className="flex flex-wrap gap-1.5">
+              {meta.topics.map((t) => (
+                <Link
+                  key={t}
+                  href={`/?search=${encodeURIComponent(t)}`}
+                  className="inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[12px] font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                >
+                  {t}
+                </Link>
+              ))}
+            </div>
           )}
         </div>
       </header>
@@ -283,10 +261,10 @@ export default async function NotePage({ params }: Props) {
                 href={`/notes/${note.week}/${note.slug}`}
                 className="block p-3 rounded-md border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all group/rel"
               >
-                <p className="text-[13px] font-medium text-zinc-700 dark:text-zinc-300 group-hover/rel:text-zinc-900 dark:group-hover/rel:text-zinc-100 transition-colors mb-1 line-clamp-2">
-                  {note.title}
-                </p>
-                <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{note.date}</p>
+                 <p className="text-[13px] font-medium text-zinc-700 dark:text-zinc-300 group-hover/rel:text-zinc-900 dark:group-hover/rel:text-zinc-100 transition-colors mb-1 line-clamp-2">
+                   {note.title}
+                 </p>
+                 <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{formatSidebarDate(note.date)}</p>
               </Link>
             ))}
           </div>
@@ -299,7 +277,7 @@ export default async function NotePage({ params }: Props) {
             href={`/notes/${prevNote.week}/${prevNote.slug}`}
             className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
-            ← {prevNote.day.slice(0, 3)} · {prevNote.date}
+            ← {formatNavDate(prevNote.date, prevNote.day)}
           </Link>
         ) : <div />}
         {nextNote ? (
@@ -307,7 +285,7 @@ export default async function NotePage({ params }: Props) {
             href={`/notes/${nextNote.week}/${nextNote.slug}`}
             className="text-[12px] text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
-            {nextNote.day.slice(0, 3)} · {nextNote.date} →
+            {formatNavDate(nextNote.date, nextNote.day)} →
           </Link>
         ) : <div />}
       </nav>

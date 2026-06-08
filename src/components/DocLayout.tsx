@@ -5,7 +5,7 @@ import DocSidebar from "./DocSidebar";
 
 interface DocLayoutProps {
   weeks: string[];
-  notesByWeek: Record<string, { week: string; slug: string; title: string; date: string; day: string }[]>;
+  notesByWeek: Record<string, { week: string; slug: string; title: string; date: string; day: string; displayDate: string; navDate: string }[]>;
   weeksWithSummary: string[];
   currentWeek: string;
   currentSlug: string;
@@ -54,7 +54,7 @@ export default function DocLayout({
           />
         )}
 
-        <aside className="hidden lg:block w-52 shrink-0 py-6">
+        <aside className="hidden lg:block w-44 shrink-0 py-6">
           <div className="sticky top-13 h-[calc(100vh-3.25rem)] overflow-y-auto sidebar-scroll pr-1 -mr-1">
             <DocSidebar
               weeks={weeks}
