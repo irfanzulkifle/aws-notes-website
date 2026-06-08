@@ -2,14 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
-interface SidebarNote {
-  week: string;
-  slug: string;
-  title: string;
-  date: string;
-  day: string;
-}
+import type { SidebarNote } from "@/lib/utils";
 
 interface DocSidebarProps {
   weeks: string[];
@@ -140,13 +133,14 @@ export default function DocSidebar({
                         }`}
                         title={note.title}
                       >
-                        <span className="block truncate flex items-center gap-1.5">
+                        <span className="block truncate flex items-center gap-x-1">
                           {note.date ? (
                             <>
                               <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 w-4 text-right shrink-0">
                                 {note.day.slice(0, 3)}
                               </span>
-                              <span>{note.date}</span>
+                              <span className="text-zinc-500 dark:text-zinc-400">·</span>
+                              <span className="text-zinc-600 dark:text-zinc-400">{note.displayDate}</span>
                             </>
                           ) : (
                             note.title
