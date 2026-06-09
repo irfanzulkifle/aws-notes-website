@@ -57,7 +57,7 @@ function createSlugger() {
 
 function parseMetadata(filePath, week, slug) {
   const raw = fs.readFileSync(filePath, "utf-8");
-  const lines = raw.split("\n");
+  const lines = raw.split(/\r?\n/);
   const titleLine = lines.find((line) => line.startsWith("# ")) || "";
   const title = titleLine
     .replace(/^#\s*(?:\u{1F4DA}\s*)?/u, "")
@@ -136,7 +136,7 @@ function getNoteContent(week, slug) {
 
 function extractSections(markdown) {
   const slugger = createSlugger();
-  const lines = markdown.split("\n");
+  const lines = markdown.split(/\r?\n/);
   const sections = [];
   let currentHeading = "";
   let currentSlug = "";
@@ -154,7 +154,7 @@ function extractSections(markdown) {
         });
       }
       currentHeading = match[1].replace(/[#*`~_[\]()]/g, "").replace(/\*\*/g, "").trim();
-      currentSlug = slugger.slug(currentHeading);
+      currentSlug = slugger(currentHeading);
       currentLines = [];
     } else {
       currentLines.push(line);
