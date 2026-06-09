@@ -7190,7 +7190,7 @@
   {
     "title": "June 8, 2026",
     "week": "week_11",
-    "weekLabel": "Week 11 — SysOps, AWS CLI & Systems Manager",
+    "weekLabel": "Week 11 — SysOps, AWS CLI, S3 Static Hosting & EC2",
     "slug": "2026-06-08",
     "date": "2026-06-08",
     "day": "Monday",
@@ -7477,5 +7477,204 @@
     ],
     "body": "Cohort 3 | Project CloudIgnite Topics: System Operations (SysOps) Overview, AWS CLI, AWS Systems Manager, IAM Recap, Troubleshooting Knowledge Base Duration: ~3 hours SysOps responsibilities: build, test, deploy, monitor, maintain, safeguard — automate repetitive tasks with Bash/Python/CloudFormation/Terraform Troubleshooting Knowledge Base: structured document tracking issues, symptoms, root causes, resolutions — enables consistent, fast incident response IAM Recap: Users, Groups, Roles; identity-based vs resource-based policies; SCPs at org level; least privilege, MFA, never use root AWS CLI: terminal-based management; stores keys in ; common commands: , , ; checks permissions without executing AWS Systems Manager (SSM): manage many EC2 instances centrally; Run Command, Session Manager (no SSH), Parameter Store (secrets/config), Fleet Manager, Patch Manager Session Manager vs SSH: no port 22 needed, no key pairs, audit logging built-in Parameter Store: store config values and passwords; EC2 reads at runtime for dynamic configuration System Operations Overview Troubleshooting Knowledge Base AWS Identity and Access Management (IAM) — Recap AWS Command Line Interface (CLI) Lab 168 — Installing & Configuring AWS CLI AWS Systems Manager Lab — AWS Systems Manager CLF-C02 Relevance Map Quick-Reference Cheatsheet System Operations (SysOps) is the discipline responsible for the deployment, administration, monitoring, maintenance, and security of cloud infrastructure. The goal is to automate repetitive tasks. Common tools and formats: Bash / Shell scripts — Linux scripting Python — Most versatile; recommended for this program C# / Ruby — Alternative languages AWS CloudFormation — Infrastructure-as-Code (IaC) template format, similar to Terraform Terraform — Third-party IaC tool ⚠️ Common Misconception: Creating reusable infrastructure templates is done with CloudFormation, not IAM. IAM manages user/group permissions only. A structured, categorised document (e.g., Excel sheet or CSV) that records known issues, their symptoms, root causes, and resolution steps. It helps teams respond to incidents quickly without starting from scratch each time. Avoid guessing — knowing the category narrows down where to investigate Consistent response across the team Institutional memory — knowledge stays even when people leave EC2 Connectivity Issue (Networking) — Symptom: browser shows \"cannot connect\". Root cause: Security Group missing inbound rule, or server not running. SSH to EC2 Fails (Networking) — Root cause: Port 22 not open in Security Group. EC2 Out of Disk Space (Compute) — Symptom: instance stops running. Root cause: EBS volume full. 📝 Activity: A knowledge base deliverable is expected at the end of the cohort. Use the provided Excel template to fill it in. Follow the category table to classify issues correctly. MFA (Multi-Factor Authentication) adds an extra layer on top of any method, especially recommended for root and IAM users. Identity Types User — Individual person or service account Group — Collection of users; attach policies to the group Role — Assumed by users, services, or cross-account principals; acts as a bridge Policy Types IAM Policy Structure (JSON) : or : What operations are permitted (e.g., = all EC2 actions) : Which resources the policy applies to (Conditionbash curl \"https://awscli.amazonaws.com/awscli-exe-linux-x8664.zip\" -o \"awscliv2.zip\" unzip awscliv2.zip sudo ./aws/install aws --version bash aws configure ~/.aws/config~/.aws/credentialsjsontabletextbash export AWSDEFAULTOUTPUT=table aws <service> <operation> [parameters] [--output <format>] bash aws ec2 stop-instances --instance-ids i-1234567890abcdef0 --output json aws s3 ls aws ec2 describe-instances aws ec2 describe-instances --query \"Reservations[0].Instances[0]\" aws ec2 describe-instances \\ --query \"Reservations[].Instances[].InstanceId\" \\ --filters \"Name=instance-type,Values=t3.micro,t3.small\" aws iam list-users bash aws help # All top-level commands aws ec2 help # All EC2 subcommands aws ec2 describe-instances help # Specific command help aws ec2 help | grep start # Show only \"start\"-related commands aws ec2 help | grep stop bash aws ec2 stop-instances --instance-ids i-1234567890abcdef0 --dry-run aws ec2 start-instances ...boto3.client('ec2').startinstances(...).pemchmod 400 keyfile.pemicaclsaws-studentaws configurebash # Get the policy ARN first aws iam list-policies --scope Local # Then retrieve and save the policy document aws iam get-policy-version \\ --policy-arn <YOURPOLICYARN> \\ --version-id v1 \\ > lab-policy.json # View the saved file less lab-policy.json list-policiesbetafeaturesTrue.pembetafeaturesTruebash # Set session reason (metadata) # Retrieve instance metadata # Describe EC2 instances aws ec2 describe-instances bash aws --version aws configure aws iam list-users aws ec2 describe-instances aws ec2 stop-instances --instance-ids <INSTANCEID> aws ec2 start-instances --instance-ids <INSTANCEID> aws ec2 stop-instances --instance-ids <INSTANCEID> --dry-run aws s3 ls aws ec2 help aws s3 help aws ec2 help | grep describe aws iam get-policy-version \\ --policy-arn <POLICYARN> \\ --version-id v1 Notes compiled from lecture transcript · AWS re/Start Program Cohort 3 · June 8, 2026",
     "url": "/notes/week_11/2026-06-08"
+  },
+  {
+    "title": "June 9, 2026",
+    "week": "week_11",
+    "weekLabel": "Week 11 — SysOps, AWS CLI, S3 Static Hosting & EC2",
+    "slug": "2026-06-09",
+    "date": "2026-06-09",
+    "day": "Tuesday",
+    "topics": [
+      "Amazon S3 Static Website Hosting",
+      "AWS CLI",
+      "EC2 Deep Dive (AMI, Key Pairs, Security Groups, Instance Profile, User Data, Metadata, IP Types, Connection Methods)"
+    ],
+    "headings": [
+      "Key Takeaways",
+      "Table of Contents",
+      "1. Amazon S3 — Static Website Hosting Theory",
+      "What is a static website?",
+      "Why host a static website on S3?",
+      "How S3 static website hosting works",
+      "Using a custom domain",
+      "Automating website updates with AWS CLI",
+      "Bash script structure common pitfall",
+      "2. EC2 Compute — Deep Dive",
+      "EC2 Architecture Recap",
+      "AMI — Amazon Machine Image",
+      "EC2 Instance Types",
+      "Key Pairs",
+      "IP Address Types",
+      "Security Groups",
+      "Instance Profile",
+      "User Data",
+      "Instance Metadata Service",
+      "EC2 Connection Methods",
+      "Launching an EC2 Instance via AWS CLI",
+      "EC2 Best Practices from lecture",
+      "Troubleshooting: SSH Timeout with Public IP",
+      "3. Lab Walkthrough — Static Website on S3 using AWS CLI",
+      "Lab Steps Summary",
+      "4. CLF-C02 Exam Relevance",
+      "Domain 3 — Cloud Technology and Services 33% of exam",
+      "Domain 2 — Security and Compliance 30% of exam",
+      "Domain 1 — Cloud Concepts 24% of exam",
+      "Key Facts to Remember for the Exam"
+    ],
+    "sections": [
+      {
+        "heading": "Key Takeaways",
+        "slug": "key-takeaways",
+        "content": "- **S3 static website hosting:** no servers to manage, cost-effective, automatic scaling, globally unique bucket names required, endpoint format: `http://<bucket>.s3-website-<region>.amazonaws.com` - **aws s3 sync vs cp:** `sync` uploads only changed files (preferred for scripts), `cp --recursive` re-uploads everything every run - **EC2 instance types:** General Purpose (T), Compute Optimized (C), Memory Optimized (R/X), Storage Optimized (I/D), Accelerated Computing (P/G), HPC (Hpc) — T3 used in labs so far - **IP addressing:** Private IP retained on stop/start, Public IP changes on every stop/start, Elastic IP is static and persistent - **Instance Profile** attaches IAM Role to EC2 — allows EC2 to access AWS services without storing credentials; **User Data** runs once at launch for bootstrapping - **Instance Metadata Service:** `http://169.254.169.254/latest/meta-data/` — accessible only from within EC2, returns instance info - **EC2 connection methods ranked by security:** SSM Session Manager (no ports, no keys) > EC2 Instance Connect (port 22, browser) > SSH (port 22, .pem key) - **Instance store is ephemeral** (data lost on stop/terminate), EBS is persistent — always use EBS for important data ---"
+      },
+      {
+        "heading": "Table of Contents",
+        "slug": "table-of-contents",
+        "content": "1. [Amazon S3 — Static Website Hosting (Theory)](#1-amazon-s3--static-website-hosting-theory) 2. [EC2 Compute — Deep Dive](#2-ec2-compute--deep-dive) 3. [Lab Walkthrough — Static Website on S3 using AWS CLI](#3-lab-walkthrough--static-website-on-s3-using-aws-cli) 4. [CLF-C02 Exam Relevance](#4-clf-c02-exam-relevance) ---"
+      },
+      {
+        "heading": "1. Amazon S3 — Static Website Hosting Theory",
+        "slug": "1-amazon-s3-—-static-website-hosting-theory",
+        "content": ""
+      },
+      {
+        "heading": "What is a static website?",
+        "slug": "what-is-a-static-website",
+        "content": "- A website made up of **HTML, CSS, and client-side JavaScript** only — no server-side scripting, no database. - Content changes infrequently (e.g. a café info page, a portfolio, a product image gallery). - Client-side JavaScript **is** allowed; server-side processing (PHP, Python, etc.) is **not**."
+      },
+      {
+        "heading": "Why host a static website on S3?",
+        "slug": "why-host-a-static-website-on-s3",
+        "content": "| Benefit | Detail | |---|---| | No infrastructure to manage | No EC2 instance, no OS patching, no web server config | | Cost-effective | S3 charges based on storage size + data transfer, not compute time | | Automatic scalability | AWS handles traffic spikes transparently | | High availability | Built into S3's architecture | > **Dynamic websites** (with databases, server-side logic) should use **EC2** instead."
+      },
+      {
+        "heading": "How S3 static website hosting works",
+        "slug": "how-s3-static-website-hosting-works",
+        "content": "1. Create an S3 bucket (bucket name must be **globally unique**). 2. Upload static files (HTML, CSS, JS, images). 3. Enable **Static Website Hosting** on the bucket. 4. S3 automatically assigns an **endpoint URL** in the format: ``` http://<bucket-name>.s3-website-<region>.amazonaws.com ``` 5. Set **Block Public Access** to **off** and enable **ACLs (Access Control Lists)** so objects can be read publicly."
+      },
+      {
+        "heading": "Using a custom domain",
+        "slug": "using-a-custom-domain",
+        "content": "- Use **Amazon Route 53** to map your own domain name to the S3 static website endpoint."
+      },
+      {
+        "heading": "Automating website updates with AWS CLI",
+        "slug": "automating-website-updates-with-aws-cli",
+        "content": "- Instead of manually uploading files every time (error-prone, slow), write a **bash script** using the AWS CLI. - Two key CLI commands for S3 file operations: | Command | Use | |---|---| | `aws s3 cp <source> s3://<bucket> --recursive --acl public-read` | Copies all files (re-uploads everything each run) | | `aws s3 sync <source> s3://<bucket>` | Only uploads files that have **changed** — more efficient | > **Tip from lecture:** Prefer `sync` over `cp` for update scripts — it avoids re-uploading unchanged files."
+      },
+      {
+        "heading": "Bash script structure common pitfall",
+        "slug": "bash-script-structure-common-pitfall",
+        "content": "```bash #!/bin/bash aws s3 sync ./website s3://your-bucket-name ``` - `#!/bin/bash` must be on its **own line** — do not put the `aws` command on the same line. - Make the script executable: `chmod +x update_website.sh` - Run it: `./update_website.sh` ---"
+      },
+      {
+        "heading": "2. EC2 Compute — Deep Dive",
+        "slug": "2-ec2-compute-—-deep-dive",
+        "content": ""
+      },
+      {
+        "heading": "EC2 Architecture Recap",
+        "slug": "ec2-architecture-recap",
+        "content": "- EC2 instances are **virtual machines** running on top of a **hypervisor**. - Each instance has: **CPU, RAM, ephemeral (instance store) storage**. - **Instance store is not persistent** — data is lost when an instance is stopped or rebooted. Use **EBS** for persistent storage. EC2 instances sit **inside a VPC subnet** and can communicate with: - The internet via an **Internet Gateway** - Other EC2 instances within the VPC - S3 via an **S3 VPC Endpoint** - Attached **EBS volumes** ---"
+      },
+      {
+        "heading": "AMI — Amazon Machine Image",
+        "slug": "ami-—-amazon-machine-image",
+        "content": "An AMI is a **pre-configured template** used to launch EC2 instances. It contains: - **Boot volume** (OS + pre-installed software) - **Block device mapping** (storage configuration) - **Launch permissions** (who can use the AMI) **Benefits of AMIs:** - Repeatable — launch hundreds of identical instances from one template. - Consistent configuration — reduces human error. - Available from multiple sources: AWS-provided, community, or your own custom AMIs. ---"
+      },
+      {
+        "heading": "EC2 Instance Types",
+        "slug": "ec2-instance-types",
+        "content": "| Category | Code | Use Case | |---|---|---| | General Purpose | T (e.g. T3) | Everyday workloads, web servers, dev environments | | Compute Optimized | C | High CPU demand, batch processing | | Memory Optimized | R, X | Databases, in-memory caching | | Accelerated Computing | P, G | GPU workloads, machine learning, graphics | | Storage Optimized | I, D | High I/O, data warehouses | | High Performance Compute | Hpc | Scientific computing, mathematical modelling | > **In labs so far:** T3 (General Purpose) has been used throughout. ---"
+      },
+      {
+        "heading": "Key Pairs",
+        "slug": "key-pairs",
+        "content": "- Used to **connect to an EC2 instance** without a username/password. - **Public key** → stored by AWS on the instance. - **Private key** → downloaded by you (`.pem` file). Keep it safe — it cannot be recovered. - Connection uses **SSH on port 22**. ---"
+      },
+      {
+        "heading": "IP Address Types",
+        "slug": "ip-address-types",
+        "content": "| Type | Behaviour | |---|---| | **Private IP** | Static within the VPC; does not change on stop/start | | **Public IP** | Dynamically assigned; **changes** every time the instance is stopped and started | | **Elastic IP** | Static public IP; manually requested from AWS and associated with an instance; does not change | > Use **Elastic IP** when you need a permanent, unchanging public IP address. ---"
+      },
+      {
+        "heading": "Security Groups",
+        "slug": "security-groups",
+        "content": "- Act as a **virtual firewall** for EC2 instances. - Control **inbound and outbound** traffic by port, protocol, and source/destination. - **One security group can be applied to many instances.** - Source can be: - `0.0.0.0/0` — anyone (open to the world) - A specific IP CIDR range — restricted access - **Another security group** — only instances in that security group can connect - Common rule: **SSH = port 22**, **HTTP = port 80**, **HTTPS = port 443** ---"
+      },
+      {
+        "heading": "Instance Profile",
+        "slug": "instance-profile",
+        "content": "- A way to attach an **IAM Role to an EC2 instance**. - The EC2 instance can then **perform actions on AWS services** (e.g. read from S3) without storing credentials. - Example: Attach a role with `AmazonS3FullAccess` → the EC2 instance can now read/write S3 buckets. ---"
+      },
+      {
+        "heading": "User Data",
+        "slug": "user-data",
+        "content": "- A **bash script** provided at instance launch time. - Runs **once automatically** when the EC2 instance first boots. - Used for: installing software, configuration tasks, downloading files, etc. - Format: ```bash #!/bin/bash yum update -y yum install -y httpd ``` - Also supports **cloud-init directives** (alternative format — less common in this course). ---"
+      },
+      {
+        "heading": "Instance Metadata Service",
+        "slug": "instance-metadata-service",
+        "content": "- A built-in HTTP endpoint accessible **only from within an EC2 instance**. - URL: `http://169.254.169.254/latest/meta-data/` - Returns information about the instance: instance ID, instance type, public hostname, AMI ID, etc. - Also accessible: `http://169.254.169.254/latest/user-data/` to retrieve the user data script. ```bash # Run this from inside an EC2 instance curl http://169.254.169.254/latest/meta-data/ curl http://169.254.169.254/latest/meta-data/instance-id ``` > This URL is **not reachable** from your local machine — only from within EC2. ---"
+      },
+      {
+        "heading": "EC2 Connection Methods",
+        "slug": "ec2-connection-methods",
+        "content": "| Method | Port Required | Notes | |---|---|---| | **EC2 Instance Connect** | Port 22 (SSH) | Browser-based; uses SSH under the hood; requires port 22 open in security group | | **SSH** | Port 22 | Requires `.pem` key file and port 22 open | | **SSM Session Manager** | None | No open ports needed; connect through AWS Systems Manager; more secure | > **Best practice:** Prefer **SSM Session Manager** — no port 22 needed, no key pair required, and all sessions are logged. ---"
+      },
+      {
+        "heading": "Launching an EC2 Instance via AWS CLI",
+        "slug": "launching-an-ec2-instance-via-aws-cli",
+        "content": "```bash aws ec2 run-instances \\ --image-id <ami-id> \\ --instance-type t3.micro \\ --key-name <key-pair-name> \\ --security-group-ids <sg-id> \\ --subnet-id <subnet-id> \\ --iam-instance-profile Name=<profile-name> \\ --user-data file://userdata.sh \\ --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]' ``` ---"
+      },
+      {
+        "heading": "EC2 Best Practices from lecture",
+        "slug": "ec2-best-practices-from-lecture",
+        "content": "- Use **key pairs or SSM** — do not enable password login. - For Windows instances: use **AWS Directory Service / Active Directory**. - Apply **security patches regularly**. - **Enable Termination Protection** to prevent accidental deletion. - Turn off **source/destination check** only for **NAT instances**. - Take **screenshots** for troubleshooting unreachable instances. - Use **IAM roles (instance profile)** instead of hardcoding credentials. ---"
+      },
+      {
+        "heading": "Troubleshooting: SSH Timeout with Public IP",
+        "slug": "troubleshooting-ssh-timeout-with-public-ip",
+        "content": "**Symptom:** Instance launched successfully, has a public IP, but SSH connection times out. **Most likely cause:** Port 22 is **not open** in the security group inbound rules. **Solution:** Edit the security group and add an inbound rule: `SSH / TCP / Port 22 / Source: your IP or 0.0.0.0/0`. ---"
+      },
+      {
+        "heading": "3. Lab Walkthrough — Static Website on S3 using AWS CLI",
+        "slug": "3-lab-walkthrough-—-static-website-on-s3-using-aws-cli",
+        "content": "**Business scenario:** Build a static website for a café (Sophia's Café) to display product photos and business info. Frank updates menu photos regularly, so the update process must be automated."
+      },
+      {
+        "heading": "Lab Steps Summary",
+        "slug": "lab-steps-summary",
+        "content": "**Step 1 — Connect to EC2 (CLI Host) via SSM Session Manager** ```bash # Switch to ec2-user after connecting sudo su -l ec2-user ``` **Step 2 — Configure AWS CLI** ```bash aws configure # Enter: Access Key ID, Secret Access Key, Region (us-west-2), Output format (json) ``` **Step 3 — Create an S3 Bucket** ```bash aws s3api create-bucket \\ --bucket <your-unique-bucket-name> \\ --region us-west-2 \\ --create-bucket-configuration LocationConstraint=us-west-2 ``` > Bucket names must be **globally unique** across all AWS accounts. **Step 4 — Create an IAM User** ```bash # Create the user aws iam create-user --user-name aws-s3-user # Create a login profile (set password) aws iam create-login-profile \\ --user-name aws-s3-user \\ --password Training123! ``` **Step 5 — Attach S3 Policy to the User** ```bash # List available policies to find AmazonS3FullAccess ARN aws iam list-policies --scope AWS | grep S3 # Attach the policy aws iam attach-user-policy \\ --user-name aws-s3-user \\ --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess ``` **Step 6 — Enable Public Access & ACLs on the Bucket** - In the S3 Console → Permissions → uncheck **Block all public access** → Save. - Edit **Object Ownership** → enable **ACLs**. **Step 7 — Configure the Bucket for Static Website Hosting** ```bash aws s3 website s3://<your-bucket-name> \\ --index-document index.html ``` **Step 8 — Unzip and Upload Website Files** ```bash # Unzip the provided website archive tar -xvf <website-archive>.tar.gz # or unzip depending on format # Upload all files with public read ACL aws s3 cp ./website s3://<your-bucket-name> \\ --recursive \\ --acl public-read ``` **Step 9 — Access the Website** - Go to S3 → your bucket → **Properties** → **Static website hosting** → copy the endpoint URL. - Open the URL in a browser. **Step 10 — Create an Automation Bash Script** ```bash #!/bin/bash aws s3 sync /path/to/website s3://<your-bucket-name> --acl public-read ``` ```bash chmod +x update_website.sh ./update_website.sh ``` > `sync` only uploads **changed files**. `cp --recursive` re-uploads everything every time. ---"
+      },
+      {
+        "heading": "4. CLF-C02 Exam Relevance",
+        "slug": "4-clf-c02-exam-relevance",
+        "content": "The following topics from today's lecture directly map to the **AWS Certified Cloud Practitioner (CLF-C02)** exam domains. ---"
+      },
+      {
+        "heading": "Domain 3 — Cloud Technology and Services 33% of exam",
+        "slug": "domain-3-—-cloud-technology-and-services-33-of-exam",
+        "content": "| Topic | CLF-C02 Relevance | |---|---| | **Amazon S3** — storage types, use cases, static website hosting | Core service — high frequency on exam | | **Amazon S3** — bucket naming (globally unique), endpoint URL format | Likely to appear in scenario questions | | **Amazon Route 53** — mapping custom domain to S3 endpoint | Service awareness question | | **EC2 instance types** — General, Compute, Memory, Storage, Accelerated | Know category names and when to choose each | | **AMI** — what it is, sources (AWS, community, custom), benefits | Definition + benefit questions | | **Security Groups** — stateful firewall, inbound/outbound rules, source options | Frequently tested | | **Elastic IP vs Public IP** — static vs dynamic | \"What changes when you stop/start an EC2?\" | | **EC2 connection methods** — Instance Connect vs SSH vs SSM | SSM = no open ports; know the distinction | | **Instance Profile / IAM Role on EC2** | Core IAM concept — how services get permissions | | **User Data** — bootstrap scripts at launch | Know the purpose; not usually deep technical detail | | **EC2 instance store vs EBS** — ephemeral vs persistent storage | \"What happens to data when instance stops?\" | | **VPC fundamentals** — subnets, internet gateway, private/public subnet | Domain 3 and Domain 2 overlap | ---"
+      },
+      {
+        "heading": "Domain 2 — Security and Compliance 30% of exam",
+        "slug": "domain-2-—-security-and-compliance-30-of-exam",
+        "content": "| Topic | CLF-C02 Relevance | |---|---| | **IAM Users, Policies, and Permissions** | Core IAM — heavily tested | | **Principle of least privilege** — attach only needed policies (e.g. S3FullAccess for S3 tasks only) | Foundational security concept | | **Key pairs** — SSH authentication, no password login | Security best practice | | **SSM Session Manager** — no port 22, no key pair, fully logged | Preferred secure access method | | **Security Group rules** — troubleshooting SSH timeout = check port 22 inbound rule | Scenario-based troubleshooting | ---"
+      },
+      {
+        "heading": "Domain 1 — Cloud Concepts 24% of exam",
+        "slug": "domain-1-—-cloud-concepts-24-of-exam",
+        "content": "| Topic | CLF-C02 Relevance | |---|---| | **Benefits of AWS** — no infrastructure management for S3 static hosting | Maps to cloud value proposition | | **AWS cost model** — S3 pricing on storage + access, EC2 pricing on compute time | Understand the billing model | | **Automation & scalability** — using CLI/scripts instead of manual console work | Cloud operational efficiency | ---"
+      },
+      {
+        "heading": "Key Facts to Remember for the Exam",
+        "slug": "key-facts-to-remember-for-the-exam",
+        "content": "- **S3 bucket names are globally unique** across all AWS accounts. - **S3 static website** = no server, no infrastructure to manage, scales automatically. - **Elastic IP** = static public IP. **Public IP** = changes on every stop/start. - **Instance store** = ephemeral (lost on stop). **EBS** = persistent. - **Security Groups are stateful** — if you allow inbound traffic, the response is automatically allowed outbound. - **SSM Session Manager** requires no open ports and no key pair — preferred over SSH for security. - **IAM Roles attached to EC2** (via instance profile) = no need to store credentials on the instance. - **User Data** runs once at launch and is used to automate instance configuration. - `aws s3 sync` uploads only **changed** files; `aws s3 cp` copies everything. --- *Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 9, 2026.*"
+      }
+    ],
+    "body": "Cohort 3 | Project CloudIgnite Topics: Amazon S3 Static Website Hosting, AWS CLI, EC2 Deep Dive (AMI, Key Pairs, Security Groups, Instance Profile, User Data, Metadata, IP Types, Connection Methods) Duration: ~3 hours S3 static website hosting: no servers to manage, cost-effective, automatic scaling, globally unique bucket names required, endpoint format: aws s3 sync vs cp: uploads only changed files (preferred for scripts), re-uploads everything every run EC2 instance types: General Purpose (T), Compute Optimized (C), Memory Optimized (R/X), Storage Optimized (I/D), Accelerated Computing (P/G), HPC (Hpc) — T3 used in labs so far IP addressing: Private IP retained on stop/start, Public IP changes on every stop/start, Elastic IP is static and persistent Instance Profile attaches IAM Role to EC2 — allows EC2 to access AWS services without storing credentials; User Data runs once at launch for bootstrapping Instance Metadata Service: — accessible only from within EC2, returns instance info EC2 connection methods ranked by security: SSM Session Manager (no ports, no keys) > EC2 Instance Connect (port 22, browser) > SSH (port 22, .pem key) Instance store is ephemeral (data lost on stop/terminate), EBS is persistent — always use EBS for important data Amazon S3 — Static Website Hosting (Theory) EC2 Compute — Deep Dive Lab Walkthrough — Static Website on S3 using AWS CLI CLF-C02 Exam Relevance A website made up of HTML, CSS, and client-side JavaScript only — no server-side scripting, no database. Content changes infrequently (e.g. a café info page, a portfolio, a product image gallery). Client-side JavaScript is allowed; server-side processing (PHP, Python, etc.) is not. Dynamic websites (with databases, server-side logic) should use EC2 instead. Create an S3 bucket (bucket name must be globally unique). Upload static files (HTML, CSS, JS, images). Enable Static Website Hosting on the bucket. S3 automatically assigns an endpoint URL in the format: Set Block Public Access to off and enable ACLs (Access Control Lists) so objects can be read publicly. Use Amazon Route 53 to map your own domain name to the S3 static website endpoint. Instead of manually uploading files every time (error-prone, slow), write a bash script using the AWS CLI. Two key CLI commands for S3 file operations: Tip from lecture: Prefer over for update scripts — it avoids re-uploading unchanged files. must be on its own line — do not put the command on the same line. Make the script executable: Run it: EC2 instances are virtual machines running on top of a hypervisor. Each instance has: CPU, RAM, ephemeral (instance store) storage. Instance store is not persistent — data is lost when an instance is stopped or rebooted. Use EBS for persistent storage. EC2 instances sit inside a VPC subnet and can communicate with: The internet via an Internet Gateway Other EC2 instances within the VPC S3 via an S3 VPC Endpoint Attached EBS volumes An AMI is a pre-configured template used to launch EC2 instances. It contains: Boot volume (OS + pre-installed software) Block device mapping (storage configuration) Launch permissions (who can use the AMI) Benefits of AMIs: Repeatable — launch hundreds of identical instances from one template. Consistent configuration — reduces human error. Available from multiple sources: AWS-provided, community, or your own custom AMIs. In labs so far: T3 (General Purpose) has been used throughout. Used to connect to an EC2 instance without a username/password. Public key → stored by AWS on the instance. Private key → downloaded by you ( file). Keep it safe — it cannot be recovered. Connection uses SSH on port 22. Use Elastic IP when you need a permanent, unchanging public IP address. Act as a virtual firewall for EC2 instances. Control inbound and outbound traffic by port, protocol, and source/destination. One security group can be applied to many instances. Source can be: - — anyone (open to the world) - A specific IP CIDR range — restricted access - Another security group — only instances in that security group can connect Common rule: SSH = port 22, HTTP = port 80, HTTPS = port 443 A way to attach an IAM Role to an EC2 instance. The EC2 instance can then perform actions on AWS services (e.g. read from S3) without storing credentials. Example: Attach a role with → the EC2 instance can now read/write S3 buckets. A bash script provided at instance launch time. Runs once automatically when the EC2 instance first boots. Used for: installing software, configuration tasks, downloading files, etc. Format: Also supports cloud-init directives (alternative format — less common in this course). A built-in HTTP endpoint accessible only from within an EC2 instance. URL: Returns information about the instance: instance ID, instance type, public hostname, AMI ID, etc. Also accessible: to retrieve the user data script. This URL is not reachable from your local machine — only from within EC2. Best practice: Prefer SSM Session Manager — no port 22 needed, no key pair required, and all sessions are logged. Use key pairs or SSM — do not enable password login. For Windows instances: use AWS Directory Service / Active Directory. Apply security patches regularly. Enable Termination Protection to prevent accidental deletion. Turn off source/destination check only for NAT instances. Take screenshots for troubleshooting unreachable instances. Use IAM roles (instance profile) instead of hardcoding credentials. Symptom: Instance launched successfully, has a public IP, but SSH connection times out. Most likely cause: Port 22 is not open in the security group inbound rules. Solution: Edit the security group and add an inbound rule: . Business scenario: Build a static website for a café (Sophia's Café) to display product photos and business info. Frank updates menu photos regularly, so the update process must be automated. Step 1 — Connect to EC2 (CLI Host) via SSM Session Manager Step 2 — Configure AWS CLI Step 3 — Create an S3 Bucket Bucket names must be globally unique across all AWS accounts. Step 4 — Create an IAM User Step 5 — Attach S3 Policy to the User Step 6 — Enable Public Access & ACLs on the Bucket In the S3 Console → Permissions → uncheck Block all public access → Save. Edit Object Ownership → enable ACLs. Step 7 — Configure the Bucket for Static Website Hosting Step 8 — Unzip and Upload Website Files Step 9 — Access the Website Go to S3 → your bucket → Properties → Static website hosting → copy the endpoint URL. Open the URL in a browser. Step 10 — Create an Automation Bash Script only uploads changed files. re-uploads everything every time. The following topics from today's lecture directly map to the AWS Certified Cloud Practitioner (CLF-C02) exam domains. S3 bucket names are globally unique across all AWS accounts. S3 static website = no server, no infrastructure to manage, scales automatically. Elastic IP = static public IP. Public IP = changes on every stop/start. Instance store = ephemeral (lost on stop). EBS = persistent. Security Groups are stateful — if you allow inbound traffic, the response is automatically allowed outbound. SSM Session Manager requires no open ports and no key pair — preferred over SSH for security. IAM Roles attached to EC2 (via instance profile) = no need to store credentials on the instance. User Data runs once at launch and is used to automate instance configuration. uploads only changed files; copies everything. Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 9, 2026.",
+    "url": "/notes/week_11/2026-06-09"
   }
 ]
