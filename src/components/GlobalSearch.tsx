@@ -137,7 +137,7 @@ export default function GlobalSearch({ onToggle }: GlobalSearchProps) {
 
   useEffect(() => {
     if (open && index.length === 0) {
-      fetch("/api/search-index")
+      fetch("/search-index.json")
         .then((r) => r.json())
         .then((data: SearchDocument[]) => setIndex(data))
         .catch(() => {});
