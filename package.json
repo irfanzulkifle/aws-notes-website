@@ -4,11 +4,14 @@
   "description": "Static website publishing AWS re/Start lecture notes — Next.js + Tailwind CSS",
   "private": true,
   "engines": {
-    "node": ">=22.0.0",
+    "node": "22.x",
     "npm": ">=10.0.0"
   },
   "scripts": {
+    "generate:search-index": "node scripts/generate-search-index.mjs",
+    "predev": "npm run generate:search-index",
     "dev": "next dev",
+    "prebuild": "npm run generate:search-index",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
