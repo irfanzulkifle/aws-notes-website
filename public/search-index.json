@@ -7186,5 +7186,296 @@
     ],
     "body": "Cohort 3 | Project CloudIgnite Topics: Amazon RDS (MySQL), Amazon Aurora, Amazon DynamoDB, SQL JOIN Operations, Database Normalization Duration: ~3 hours Amazon RDS: fully managed MySQL/PostgreSQL/Oracle/SQL Server; AWS handles OS, patching, backups RDS Security Group = bridge between EC2 and RDS (source = Web Security Group, not IP) DB Subnet Group: defines which private subnets RDS launches into; different from a regular subnet Aurora: AWS-native; automatic Multi-AZ replication; Writer endpoint (read/write) vs Reader endpoint (read-only) DynamoDB: NoSQL, schema-flexible, serverless; Partition Key + optional Sort Key; Query (fast, uses key) vs Scan (slow, reads all) SQL JOINs: INNER (matching only), LEFT (all left + matching right), RIGHT (opposite), FULL (all), CROSS (Cartesian product) Database normalization: separate tables eliminate redundancy and prevent data anomalies AWS DMS: migrate on-prem databases to AWS; for small DBs (upload to S3, import to RDS) Amazon RDS — Lab 160 (MySQL) Amazon Aurora — Lab 162 & 274 Amazon DynamoDB SQL JOIN Operations Database Normalization Database Migration to AWS CLF-C02 Exam Relevance Amazon Relational Database Service (RDS) is a managed service for launching and operating relational databases in the cloud. Lab 160 focused on launching a MySQL RDS instance and connecting to it from an EC2 instance. Navigate to: VPC → Security Groups → Create Security Group Name it: VPC: Must select (not Default) Outbound rules: No changes needed Inbound rules: Add one rule: - Type: - Source type: - Source: select the Web Security Group (the one attached to your EC2 instance) Why this matters: The security group acts as the bridge/link between the RDS database and the EC2 instance. Only EC2 instances that have the Web Security Group attached will be able to connect to the database. Any EC2 with a different security group will be blocked. Navigate to: RDS → Subnet Groups → Create DB Subnet Group Name: VPC: Availability Zones: Select first two AZs Subnets: Select and Key distinction: - Subnet → belongs to a VPC - DB Subnet Group → belongs to RDS; determines which subnet the DB instance is launched into Copy the RDS Endpoint from the AWS console Open the web app, enter: endpoint, database , username , password You can add, view, and delete records directly from the browser Amazon Aurora is an AWS-built, MySQL/PostgreSQL-compatible relational database engine. It is part of the RDS family but uses a different architecture — it handles high availability and replication differently from standard MySQL. Important: Do NOT manually create an Aurora Replica when launching Aurora — Aurora handles this automatically. Writer endpoint: Use for all read and write operations (INSERT, UPDATE, DELETE, SELECT) Reader endpoint: Used for read-only queries (SELECT only); cannot create tables or insert data Create DB Security Group in VPC (same process as MySQL) Create DB Subnet Group in RDS (same process as MySQL) Create database: Aurora MySQL-Compatible - Engine mode: Provisioned - Instance class: - DB Cluster Identifier: any name (this is your \"server name\") - Initial Database Name: any name (this is one database inside the cluster) - Multi-AZ: Do not create Aurora Replica — Aurora manages this - VPC: - Security Group: (remove default) - Disable: Enhanced monitoring, Performance Insights, minor version upgrades Cluster vs. Database: One Aurora cluster = one server. Inside one cluster, you can have multiple databases. Amazon DynamoDB is a fully managed NoSQL key-value and document database. It is serverless, highly scalable, and schema-flexible — equivalent to MongoDB in the open-source world. Navigate to: DynamoDB → Tables → Create Table Table name: Partition key: (String) Sort key: (String) Go inside the table → Actions → Create Item Add required keys (Artist, Song) + optional attributes (Album, Year, Genre) Key insight: DynamoDB is schema-flexible — different items can have different attributes (e.g., one item has , another has a typo instead of ) and it will still work without errors. Scan example: Filter by (Number type) → returns only matching records. DynamoDB → Tables → select table → Delete → confirm Unlike relational databases, DynamoDB does not enforce a schema per row. Each item can have its own set of attributes. This makes it excellent for unstructured or rapidly changing data models. Practiced using SQLite browser with a database containing , , and tables. JOINs combine rows from two or more tables based on a related column (usually a shared ID/key). Returns only matching rows from both tables If no match → row is excluded entirely Returns all rows from the left table + matching rows from the right table No match on right side → appears for right-side columns Returns all rows from the right table + matching rows from the left table No match on left side → appears for left-side columns Returns everything: matching rows + unmatched rows from both left and right tables Unmatched sides show Returns every possible combination of rows from both tables (Cartesian product) No condition needed ⚠️ Avoid on large tables — 1,000 rows × 1,000 rows = 1,000,000 rows output Joins a table with itself; returns matching rows within the same table If you stored all city, country, and continent info in one big table: A country with 100 cities → country info (name, population, surface area, political structure) stored 100 times If someone updates population in one row but not others → data inconsistency (Tokyo and Kyoto show different populations for the same country) Eliminates redundant data — store each fact in exactly one place Prevents anomalies — update one record, it reflects everywhere Saves storage — reference IDs instead of duplicating full data Maintains data integrity — no conflicting values for the same entity Bottom line: Store in the city table, not the full country record. Use JOINs to retrieve the combined data when needed. Came up as a question: \"In the real world, if a company already has a DB on-premise, how do you import it?\" AWS managed service for migrating existing on-premise databases to AWS Install an AWS application on your on-premise machine → AWS copies all data to AWS cloud Best for: large databases (hundreds of GB+) Supports continuous replication — migration happens while the old DB is still live Used for migrating full infrastructure (servers, code, applications) to AWS — not just databases Use to export your entire database to a dump file Upload the dump file to Amazon S3 Import the data from S3 into your new RDS/Aurora instance Best for: small databases (a few GB or less) The following topics from today's lecture are directly relevant to the AWS Certified Cloud Practitioner (CLF-C02) exam. They fall primarily under Domain 3: Cloud Technology and Services. RDS = managed relational database (SQL); you don't manage the underlying OS DynamoDB = managed NoSQL database; serverless, scales automatically Aurora = AWS proprietary engine; MySQL/PostgreSQL-compatible, higher performance and availability than standard RDS Multi-AZ = high availability (automatic failover to standby); different from Read Replicas (performance/scaling) Security Groups = stateful virtual firewall applied at the instance/resource level Private Subnet = no direct internet access; used for databases for security AWS DMS = Database Migration Service for moving existing DBs to AWS Notes compiled from lecture transcript — June 6, 2026 | AWS re/Start Cohort 3: Project CloudIgnite",
     "url": "/notes/week_10/2026-06-06"
+  },
+  {
+    "title": "June 8, 2026",
+    "week": "week_11",
+    "weekLabel": "Week 11 — SysOps, AWS CLI & Systems Manager",
+    "slug": "2026-06-08",
+    "date": "2026-06-08",
+    "day": "Monday",
+    "topics": [
+      "System Operations (SysOps) Overview",
+      "AWS CLI",
+      "AWS Systems Manager",
+      "IAM Recap",
+      "Troubleshooting Knowledge Base"
+    ],
+    "headings": [
+      "Key Takeaways",
+      "Table of Contents",
+      "1. System Operations Overview",
+      "What is SysOps?",
+      "Core SysOps Responsibilities",
+      "Automation in SysOps",
+      "2. Troubleshooting Knowledge Base",
+      "What Is It?",
+      "Why Build One?",
+      "Knowledge Base Structure",
+      "Example Entries",
+      "Category Reference Table Partial",
+      "3. AWS Identity and Access Management IAM — Recap",
+      "Three Ways to Access AWS Services",
+      "Key IAM Concepts",
+      "IAM Best Practices",
+      "Single Sign-On SSO & Federated Access",
+      "4. AWS Command Line Interface CLI",
+      "What Is AWS CLI?",
+      "Supported Operating Systems",
+      "CLI Installation Steps Linux/EC2",
+      "Configuration",
+      "Output Formats",
+      "Common CLI Command Structure",
+      "Using the Help System",
+      "Dry Run",
+      "AWS SDK vs AWS CLI",
+      "5. Lab 168 — Installing & Configuring AWS CLI",
+      "Key Tasks",
+      "6. AWS Systems Manager",
+      "What Is It?",
+      "Why Use It?",
+      "Key SSM Capabilities",
+      "SSM Documents",
+      "Parameter Store",
+      "Patch Manager Workflow",
+      "Session Manager vs SSH",
+      "7. Lab — AWS Systems Manager",
+      "Task Walkthrough",
+      "CLF-C02 Relevance Map",
+      "✅ Domain 2 — Security and Compliance",
+      "✅ Domain 3 — Cloud Technology and Services",
+      "✅ Domain 4 — Billing, Pricing, and Support",
+      "⚠️ Topics Covered Today But Lower Priority for CLF-C02",
+      "Quick-Reference Cheatsheet"
+    ],
+    "sections": [
+      {
+        "heading": "Key Takeaways",
+        "slug": "key-takeaways",
+        "content": "- **SysOps** responsibilities: build, test, deploy, monitor, maintain, safeguard — automate repetitive tasks with Bash/Python/CloudFormation/Terraform - **Troubleshooting Knowledge Base:** structured document tracking issues, symptoms, root causes, resolutions — enables consistent, fast incident response - **IAM Recap:** Users, Groups, Roles; identity-based vs resource-based policies; SCPs at org level; least privilege, MFA, never use root - **AWS CLI:** terminal-based management; `aws configure` stores keys in `~/.aws/credentials`; common commands: `describe-instances`, `stop-instances`, `s3 ls`; `--dry-run` checks permissions without executing - **AWS Systems Manager (SSM):** manage many EC2 instances centrally; Run Command, Session Manager (no SSH), Parameter Store (secrets/config), Fleet Manager, Patch Manager - **Session Manager** vs SSH: no port 22 needed, no key pairs, audit logging built-in - **Parameter Store:** store config values and passwords; EC2 reads at runtime for dynamic configuration ---"
+      },
+      {
+        "heading": "Table of Contents",
+        "slug": "table-of-contents",
+        "content": "1. [System Operations Overview](#1-system-operations-overview) 2. [Troubleshooting Knowledge Base](#2-troubleshooting-knowledge-base) 3. [AWS Identity and Access Management (IAM) — Recap](#3-aws-identity-and-access-management-iam--recap) 4. [AWS Command Line Interface (CLI)](#4-aws-command-line-interface-cli) 5. [Lab 168 — Installing & Configuring AWS CLI](#5-lab-168--installing--configuring-aws-cli) 6. [AWS Systems Manager](#6-aws-systems-manager) 7. [Lab — AWS Systems Manager](#7-lab--aws-systems-manager) 8. [CLF-C02 Relevance Map](#clf-c02-relevance-map) 9. [Quick-Reference Cheatsheet](#quick-reference-cheatsheet) ---"
+      },
+      {
+        "heading": "1. System Operations Overview",
+        "slug": "1-system-operations-overview",
+        "content": ""
+      },
+      {
+        "heading": "What is SysOps?",
+        "slug": "what-is-sysops",
+        "content": "System Operations (SysOps) is the discipline responsible for the **deployment, administration, monitoring, maintenance, and security** of cloud infrastructure."
+      },
+      {
+        "heading": "Core SysOps Responsibilities",
+        "slug": "core-sysops-responsibilities",
+        "content": "| Responsibility | Description | |---|---| | **Build** | Create separate environments for development, test, and production | | **Test** | Test backup, disaster recovery procedures, and failure scenarios | | **Deploy** | Deploy applications and workloads into their runtime environments | | **Monitor** | Track infrastructure performance continuously | | **Maintain** | Apply OS updates and security patches | | **Safeguard** | Implement security measures across all infrastructure layers |"
+      },
+      {
+        "heading": "Automation in SysOps",
+        "slug": "automation-in-sysops",
+        "content": "The goal is to **automate repetitive tasks**. Common tools and formats: - **Bash / Shell scripts** — Linux scripting - **Python** — Most versatile; recommended for this program - **C# / Ruby** — Alternative languages - **AWS CloudFormation** — Infrastructure-as-Code (IaC) template format, similar to Terraform - **Terraform** — Third-party IaC tool > ⚠️ **Common Misconception:** Creating reusable infrastructure templates is done with **CloudFormation**, *not* IAM. IAM manages user/group permissions only. ---"
+      },
+      {
+        "heading": "2. Troubleshooting Knowledge Base",
+        "slug": "2-troubleshooting-knowledge-base",
+        "content": ""
+      },
+      {
+        "heading": "What Is It?",
+        "slug": "what-is-it",
+        "content": "A structured, categorised document (e.g., Excel sheet or CSV) that records known issues, their symptoms, root causes, and resolution steps. It helps teams respond to incidents quickly without starting from scratch each time."
+      },
+      {
+        "heading": "Why Build One?",
+        "slug": "why-build-one",
+        "content": "- Avoid guessing — knowing the category narrows down where to investigate - Consistent response across the team - Institutional memory — knowledge stays even when people leave"
+      },
+      {
+        "heading": "Knowledge Base Structure",
+        "slug": "knowledge-base-structure",
+        "content": "| Field | Description | |---|---| | **Issue Number** | Unique identifier for the issue | | **Category** | Type of issue (e.g., Networking, Storage, Security & Compliance) | | **Issue Description** | Brief summary of what went wrong | | **Symptoms** | What the user *sees* — error messages, unreachable endpoints, etc. | | **Root Cause Analysis** | *Why* it happened — e.g., port 22 not open, disk full | | **Resolution Procedure** | Step-by-step fix | | **Helpful Tools & Resources** | Links, AWS docs, CLI commands | | **Comments** | Personal notes |"
+      },
+      {
+        "heading": "Example Entries",
+        "slug": "example-entries",
+        "content": "- **EC2 Connectivity Issue** (Networking) — Symptom: browser shows \"cannot connect\". Root cause: Security Group missing inbound rule, or server not running. - **SSH to EC2 Fails** (Networking) — Root cause: Port 22 not open in Security Group. - **EC2 Out of Disk Space** (Compute) — Symptom: instance stops running. Root cause: EBS volume full."
+      },
+      {
+        "heading": "Category Reference Table Partial",
+        "slug": "category-reference-table-partial",
+        "content": "| Category | Example Services | |---|---| | Storage & Data Management | Amazon S3, EBS, EFS | | Networking | VPC, Subnets, Security Groups, Route Tables | | Security & Compliance | IAM, TLS/SSL, ACM | | Compute | EC2, Auto Scaling | > 📝 **Activity:** A knowledge base deliverable is expected at the end of the cohort. Use the provided Excel template to fill it in. Follow the category table to classify issues correctly. ---"
+      },
+      {
+        "heading": "3. AWS Identity and Access Management IAM — Recap",
+        "slug": "3-aws-identity-and-access-management-iam-—-recap",
+        "content": ""
+      },
+      {
+        "heading": "Three Ways to Access AWS Services",
+        "slug": "three-ways-to-access-aws-services",
+        "content": "| Method | How It Works | Credentials Used | |---|---|---| | **AWS Management Console** | Browser-based GUI | Email/password or IAM username/password | | **AWS CLI** | Terminal commands | Access Key ID + Secret Access Key | | **AWS SDK** | Code (Python, etc.) | Access Key ID + Secret Access Key | > MFA (Multi-Factor Authentication) adds an extra layer on top of any method, especially recommended for root and IAM users."
+      },
+      {
+        "heading": "Key IAM Concepts",
+        "slug": "key-iam-concepts",
+        "content": "**Identity Types** - **User** — Individual person or service account - **Group** — Collection of users; attach policies to the group - **Role** — Assumed by users, services, or cross-account principals; acts as a bridge **Policy Types** | Policy Type | Focus | Notes | |---|---|---| | Identity-based | *Who* can do what | Attached to user/group/role; manages policies + inline policies + permission boundaries | | Resource-based | *What* can be accessed by whom | Attached directly to a resource (e.g., S3 bucket policy); supports managed + inline | | Service Control Policy (SCP) | Organisation-level boundary | Applied via AWS Organizations; defines what *cannot* be done | | Access Control List (ACL) | Resource access control | Legacy; defines allowed/denied principals | **IAM Policy Structure (JSON)** ```json { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Effect\": \"Allow\", \"Action\": \"ec2:*\", \"Resource\": \"*\", \"Condition\": { \"BoolIfExists\": { \"aws:MultiFactorAuthPresent\": \"true\" }, \"IpAddress\": { \"aws:SourceIp\": \"192.0.2.0/24\" } } } ] } ``` - `Effect`: `Allow` or `Deny` - `Action`: What operations are permitted (e.g., `ec2:*` = all EC2 actions) - `Resource`: Which resources the policy applies to (`*` = all) - `Condition`: Optional constraints (e.g., MFA required, specific source IP)"
+      },
+      {
+        "heading": "IAM Best Practices",
+        "slug": "iam-best-practices",
+        "content": "1. **Never use the root account** for everyday tasks — it is off-limits 2. **Principle of Least Privilege** — grant only the permissions needed; nothing extra 3. **Use IAM Roles** for cross-account access instead of sharing credentials 4. **Enable MFA** for all IAM users, especially root"
+      },
+      {
+        "heading": "Single Sign-On SSO & Federated Access",
+        "slug": "single-sign-on-sso-federated-access",
+        "content": "- SSO allows one set of credentials to access multiple services (e.g., logging into AWS Restart portal and being automatically signed into the AWS Management Console) - Roles enable **cross-account access** — one account can consume a role that grants access to resources in another account, without sharing passwords ---"
+      },
+      {
+        "heading": "4. AWS Command Line Interface CLI",
+        "slug": "4-aws-command-line-interface-cli",
+        "content": ""
+      },
+      {
+        "heading": "What Is AWS CLI?",
+        "slug": "what-is-aws-cli",
+        "content": "A tool that lets you manage AWS resources from the **terminal** using commands — instead of clicking through the AWS Management Console."
+      },
+      {
+        "heading": "Supported Operating Systems",
+        "slug": "supported-operating-systems",
+        "content": "- Windows - Linux - macOS"
+      },
+      {
+        "heading": "CLI Installation Steps Linux/EC2",
+        "slug": "cli-installation-steps-linuxec2",
+        "content": "```bash # 1. Download the CLI package curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o \"awscliv2.zip\" # 2. Unzip unzip awscliv2.zip # 3. Install sudo ./aws/install # 4. Verify installation aws --version ```"
+      },
+      {
+        "heading": "Configuration",
+        "slug": "configuration",
+        "content": "```bash aws configure # Prompts: # AWS Access Key ID # AWS Secret Access Key # Default region name (e.g., us-east-1) # Default output format (json | table | text) ``` Configuration is stored in: - `~/.aws/config` — region and output format - `~/.aws/credentials` — access key and secret key > ⚠️ CLI configuration is **instance-specific**. If you configure CLI on an EC2 instance, it only applies to that instance."
+      },
+      {
+        "heading": "Output Formats",
+        "slug": "output-formats",
+        "content": "| Format | Best For | |---|---| | `json` | Programmatic use; most common | | `table` | Human-readable, tabular output (like SQL SELECT results) | | `text` | Plain text output | Change output format on the fly using an environment variable: ```bash export AWS_DEFAULT_OUTPUT=table ```"
+      },
+      {
+        "heading": "Common CLI Command Structure",
+        "slug": "common-cli-command-structure",
+        "content": "``` aws <service> <operation> [parameters] [--output <format>] ``` **Examples:** ```bash # Stop an EC2 instance aws ec2 stop-instances --instance-ids i-1234567890abcdef0 --output json # List all S3 buckets aws s3 ls # Describe all running EC2 instances aws ec2 describe-instances # Get info on first instance only (JMESPath query) aws ec2 describe-instances --query \"Reservations[0].Instances[0]\" # Filter by instance type aws ec2 describe-instances \\ --query \"Reservations[].Instances[].InstanceId\" \\ --filters \"Name=instance-type,Values=t3.micro,t3.small\" # List IAM users aws iam list-users ```"
+      },
+      {
+        "heading": "Using the Help System",
+        "slug": "using-the-help-system",
+        "content": "```bash aws help # All top-level commands aws ec2 help # All EC2 subcommands aws ec2 describe-instances help # Specific command help # Filter help output using grep (Linux) aws ec2 help | grep start # Show only \"start\"-related commands aws ec2 help | grep stop ```"
+      },
+      {
+        "heading": "Dry Run",
+        "slug": "dry-run",
+        "content": "A **dry run** simulates a command without actually executing it. It: - Checks whether you have the required permissions - Predicts if the command would succeed - Does **not** change any resources ```bash aws ec2 stop-instances --instance-ids i-1234567890abcdef0 --dry-run ```"
+      },
+      {
+        "heading": "AWS SDK vs AWS CLI",
+        "slug": "aws-sdk-vs-aws-cli",
+        "content": "| | AWS CLI | AWS SDK | |---|---|---| | Interface | Terminal commands | Code (Python, C#, etc.) | | Best for | Ad-hoc management, scripting | Application integration, automation | | Example | `aws ec2 start-instances ...` | `boto3.client('ec2').start_instances(...)` | ---"
+      },
+      {
+        "heading": "5. Lab 168 — Installing & Configuring AWS CLI",
+        "slug": "5-lab-168-—-installing-configuring-aws-cli",
+        "content": "**Goal:** Install AWS CLI on a Red Hat Linux EC2 instance, configure it with IAM credentials, and run basic commands."
+      },
+      {
+        "heading": "Key Tasks",
+        "slug": "key-tasks",
+        "content": "1. **Task 1** — Connect to the EC2 instance via SSH (download `.pem` key, set permissions, connect) - Linux/macOS: `chmod 400 keyfile.pem` - Windows: use `icacls` 2. **Task 2** — Download and install AWS CLI on the EC2 instance (commands above) 3. **Task 3** — Go to IAM in Management Console → find `aws-student` user → inspect the **Lab Policy** (JSON) under the Permissions tab → copy the Access Key ID and Secret Key from the **Security Credentials** tab (or the lab Details panel) 4. **Task 4** — Run `aws configure` with the copied credentials 5. **Activity Challenge** — Use the CLI to download the Lab Policy document in JSON format: ```bash # Get the policy ARN first aws iam list-policies --scope Local # Then retrieve and save the policy document aws iam get-policy-version \\ --policy-arn <YOUR_POLICY_ARN> \\ --version-id v1 \\ > lab-policy.json # View the saved file less lab-policy.json ``` > ⚠️ The ARN in the lab example is a placeholder — always copy the real ARN from `list-policies` output. ---"
+      },
+      {
+        "heading": "6. AWS Systems Manager",
+        "slug": "6-aws-systems-manager",
+        "content": ""
+      },
+      {
+        "heading": "What Is It?",
+        "slug": "what-is-it-1",
+        "content": "AWS Systems Manager (SSM) is a **centralised management service** that lets you manage and automate tasks across many EC2 instances (or on-premises servers) without connecting to each one individually via SSH."
+      },
+      {
+        "heading": "Why Use It?",
+        "slug": "why-use-it",
+        "content": "Instead of SSH-ing into 100 EC2 instances one by one to install a patch or software, Systems Manager lets you do it all from one place in minutes."
+      },
+      {
+        "heading": "Key SSM Capabilities",
+        "slug": "key-ssm-capabilities",
+        "content": "| Capability | Purpose | |---|---| | **Fleet Manager** | Inventory of all managed instances and their software | | **Run Command** | Execute shell scripts or commands across a group of instances simultaneously | | **Session Manager** | Browser-based terminal session to an EC2 instance — **no port 22 / SSH required** | | **Patch Manager** | Centralise OS patching; define patch baselines and apply them | | **Maintenance Window** | Schedule a time window for tasks like patching or software updates | | **State Manager** | Keep instances in a defined desired state; apply configurations on a schedule | | **Parameter Store** | Securely store configuration values, environment variables, passwords, and tokens | | **Inventory** | Collect and track software, files, network config, and services across instances |"
+      },
+      {
+        "heading": "SSM Documents",
+        "slug": "ssm-documents",
+        "content": "- A **document** is an instruction file — like a Bash script stored in AWS - Types: AWS-managed documents, custom documents, shared documents from other users - Used by Run Command, State Manager, and Automation"
+      },
+      {
+        "heading": "Parameter Store",
+        "slug": "parameter-store",
+        "content": "- Stores **secrets and config values** (e.g., database passwords, API tokens, feature flags, environment variables) - EC2 instances can read parameters at runtime — enables dynamic configuration without hardcoding values - Example use: a web app reads a `beta_features` parameter; if it exists and is `True`, the app shows a beta UI"
+      },
+      {
+        "heading": "Patch Manager Workflow",
+        "slug": "patch-manager-workflow",
+        "content": "1. Create a patch baseline (define which patches to apply) 2. Apply the baseline to target instances 3. Monitor results (pending / success / failed) 4. (Optional) Schedule via a Maintenance Window"
+      },
+      {
+        "heading": "Session Manager vs SSH",
+        "slug": "session-manager-vs-ssh",
+        "content": "| | SSH | Session Manager | |---|---|---| | Port required | Port 22 must be open | No open ports needed | | Key pair needed | Yes (`.pem` file) | No | | Access method | Terminal + key file | AWS Console / CLI | | Audit logging | Manual | Built-in (CloudTrail/S3) | ---"
+      },
+      {
+        "heading": "7. Lab — AWS Systems Manager",
+        "slug": "7-lab-—-aws-systems-manager",
+        "content": "**Goal:** Use Fleet Manager, Run Command, Parameter Store, and Session Manager to manage an EC2 instance from a central point without SSH."
+      },
+      {
+        "heading": "Task Walkthrough",
+        "slug": "task-walkthrough",
+        "content": "**Task 1 — Generate Software Inventory (Fleet Manager)** 1. Go to **Systems Manager → Node Management → Fleet Manager** 2. Click **Account Management → Set Up Inventory** 3. Name the inventory association (optional) 4. Target: choose **Manually selecting instances**, pick your EC2 instance 5. Click **Set Up Inventory** 6. Click on the Node ID → go to the **Inventory** tab 7. View all installed software packages on the instance **Task 2 — Install Software via Run Command** 1. Go to **Systems Manager → Node Tools → Run Command** 2. Filter by **Owner: Owned by me** 3. Select the **install-dashboard-app** document 4. Target: choose your EC2 instance 5. Uncheck **Enable S3 bucket** output (not needed for this lab) 6. Click **Run** 7. Wait for status → **Success** 8. Copy the EC2 public IP → open in browser (use **HTTP**, not HTTPS) 9. Verify the dashboard app is running **Task 3 — Create a Parameter Store Entry** 1. Go to **Systems Manager → Application Management → Parameter Store** 2. Click **Create Parameter** 3. Name: `beta_features` (copy exact name from lab instructions) 4. Value: `True` (capital T) 5. Save the parameter 6. Refresh the dashboard URL → beta feature section should now appear **Task 4 — Connect via Session Manager** 1. Go to **Systems Manager → Node Tools → Session Manager** 2. Click **Start Session** 3. Select target EC2 instance → click **Start Session** 4. A browser-based terminal opens (no SSH / no key pair needed) 5. Run commands to explore: ```bash # Set session reason (metadata) # Retrieve instance metadata # Describe EC2 instances aws ec2 describe-instances ``` ---"
+      },
+      {
+        "heading": "CLF-C02 Relevance Map",
+        "slug": "clf-c02-relevance-map",
+        "content": "> The following topics covered in today's lecture map directly to the **AWS Certified Cloud Practitioner (CLF-C02)** exam."
+      },
+      {
+        "heading": "✅ Domain 2 — Security and Compliance",
+        "slug": "✅-domain-2-—-security-and-compliance",
+        "content": "| Topic | CLF-C02 Relevance | |---|---| | IAM Users, Groups, Roles | Core exam topic — understand each identity type | | IAM Policies (identity-based vs resource-based) | Frequently tested; know the difference | | Principle of Least Privilege | Listed as an AWS best practice in exam content | | MFA (Multi-Factor Authentication) | Best practice; exam asks when and why to use it | | Root account security (never use for daily tasks) | Exam best practice question | | IAM policy structure (Effect, Action, Resource) | May appear in scenario questions | | Single Sign-On (SSO) / Federated access | Understand the concept for exam scenarios | | SCP (Service Control Policy) | Understand as an org-level boundary, not user-level |"
+      },
+      {
+        "heading": "✅ Domain 3 — Cloud Technology and Services",
+        "slug": "✅-domain-3-—-cloud-technology-and-services",
+        "content": "| Topic | CLF-C02 Relevance | |---|---| | AWS CLI as a way to access AWS | One of three access methods tested | | AWS SDK as a way to access AWS | One of three access methods tested | | AWS Management Console | One of three access methods tested | | AWS Systems Manager (overview) | Tested as a managed service; know its capabilities | | Parameter Store | Know it stores config/secrets; used with EC2 | | Session Manager | Know it enables SSH-less EC2 access | | AWS CloudFormation (infrastructure templates) | Know it is the IaC service for reusable templates |"
+      },
+      {
+        "heading": "✅ Domain 4 — Billing, Pricing, and Support",
+        "slug": "✅-domain-4-—-billing-pricing-and-support",
+        "content": "*(Not directly covered today, but CLI/automation context is relevant for cost optimisation questions.)*"
+      },
+      {
+        "heading": "⚠️ Topics Covered Today But Lower Priority for CLF-C02",
+        "slug": "⚠️-topics-covered-today-but-lower-priority-for-clf-c02",
+        "content": "- SysOps day-to-day workflow details (Build / Test / Deploy cycle) — more relevant for SysOps Associate (SOA-C02) - Troubleshooting Knowledge Base structure — practical skill, not directly tested on CLF-C02 - CLI installation steps — hands-on skill; CLF-C02 tests concepts, not commands - Detailed SSM lab steps (Run Command document, Fleet Manager inventory) — deeper than CLF-C02 scope ---"
+      },
+      {
+        "heading": "Quick-Reference Cheatsheet",
+        "slug": "quick-reference-cheatsheet",
+        "content": "```bash # Check CLI version aws --version # Configure CLI aws configure # List IAM users aws iam list-users # Describe EC2 instances aws ec2 describe-instances # Stop an EC2 instance aws ec2 stop-instances --instance-ids <INSTANCE_ID> # Start an EC2 instance aws ec2 start-instances --instance-ids <INSTANCE_ID> # Simulate a command (dry run) aws ec2 stop-instances --instance-ids <INSTANCE_ID> --dry-run # List all S3 buckets aws s3 ls # Get help for a service aws ec2 help aws s3 help # Filter help output aws ec2 help | grep describe # Get a specific IAM policy version aws iam get-policy-version \\ --policy-arn <POLICY_ARN> \\ --version-id v1 ``` --- *Notes compiled from lecture transcript · AWS re/Start Program Cohort 3 · June 8, 2026*"
+      }
+    ],
+    "body": "Cohort 3 | Project CloudIgnite Topics: System Operations (SysOps) Overview, AWS CLI, AWS Systems Manager, IAM Recap, Troubleshooting Knowledge Base Duration: ~3 hours SysOps responsibilities: build, test, deploy, monitor, maintain, safeguard — automate repetitive tasks with Bash/Python/CloudFormation/Terraform Troubleshooting Knowledge Base: structured document tracking issues, symptoms, root causes, resolutions — enables consistent, fast incident response IAM Recap: Users, Groups, Roles; identity-based vs resource-based policies; SCPs at org level; least privilege, MFA, never use root AWS CLI: terminal-based management; stores keys in ; common commands: , , ; checks permissions without executing AWS Systems Manager (SSM): manage many EC2 instances centrally; Run Command, Session Manager (no SSH), Parameter Store (secrets/config), Fleet Manager, Patch Manager Session Manager vs SSH: no port 22 needed, no key pairs, audit logging built-in Parameter Store: store config values and passwords; EC2 reads at runtime for dynamic configuration System Operations Overview Troubleshooting Knowledge Base AWS Identity and Access Management (IAM) — Recap AWS Command Line Interface (CLI) Lab 168 — Installing & Configuring AWS CLI AWS Systems Manager Lab — AWS Systems Manager CLF-C02 Relevance Map Quick-Reference Cheatsheet System Operations (SysOps) is the discipline responsible for the deployment, administration, monitoring, maintenance, and security of cloud infrastructure. The goal is to automate repetitive tasks. Common tools and formats: Bash / Shell scripts — Linux scripting Python — Most versatile; recommended for this program C# / Ruby — Alternative languages AWS CloudFormation — Infrastructure-as-Code (IaC) template format, similar to Terraform Terraform — Third-party IaC tool ⚠️ Common Misconception: Creating reusable infrastructure templates is done with CloudFormation, not IAM. IAM manages user/group permissions only. A structured, categorised document (e.g., Excel sheet or CSV) that records known issues, their symptoms, root causes, and resolution steps. It helps teams respond to incidents quickly without starting from scratch each time. Avoid guessing — knowing the category narrows down where to investigate Consistent response across the team Institutional memory — knowledge stays even when people leave EC2 Connectivity Issue (Networking) — Symptom: browser shows \"cannot connect\". Root cause: Security Group missing inbound rule, or server not running. SSH to EC2 Fails (Networking) — Root cause: Port 22 not open in Security Group. EC2 Out of Disk Space (Compute) — Symptom: instance stops running. Root cause: EBS volume full. 📝 Activity: A knowledge base deliverable is expected at the end of the cohort. Use the provided Excel template to fill it in. Follow the category table to classify issues correctly. MFA (Multi-Factor Authentication) adds an extra layer on top of any method, especially recommended for root and IAM users. Identity Types User — Individual person or service account Group — Collection of users; attach policies to the group Role — Assumed by users, services, or cross-account principals; acts as a bridge Policy Types IAM Policy Structure (JSON) : or : What operations are permitted (e.g., = all EC2 actions) : Which resources the policy applies to (Conditionbash curl \"https://awscli.amazonaws.com/awscli-exe-linux-x8664.zip\" -o \"awscliv2.zip\" unzip awscliv2.zip sudo ./aws/install aws --version bash aws configure ~/.aws/config~/.aws/credentialsjsontabletextbash export AWSDEFAULTOUTPUT=table aws <service> <operation> [parameters] [--output <format>] bash aws ec2 stop-instances --instance-ids i-1234567890abcdef0 --output json aws s3 ls aws ec2 describe-instances aws ec2 describe-instances --query \"Reservations[0].Instances[0]\" aws ec2 describe-instances \\ --query \"Reservations[].Instances[].InstanceId\" \\ --filters \"Name=instance-type,Values=t3.micro,t3.small\" aws iam list-users bash aws help # All top-level commands aws ec2 help # All EC2 subcommands aws ec2 describe-instances help # Specific command help aws ec2 help | grep start # Show only \"start\"-related commands aws ec2 help | grep stop bash aws ec2 stop-instances --instance-ids i-1234567890abcdef0 --dry-run aws ec2 start-instances ...boto3.client('ec2').startinstances(...).pemchmod 400 keyfile.pemicaclsaws-studentaws configurebash # Get the policy ARN first aws iam list-policies --scope Local # Then retrieve and save the policy document aws iam get-policy-version \\ --policy-arn <YOURPOLICYARN> \\ --version-id v1 \\ > lab-policy.json # View the saved file less lab-policy.json list-policiesbetafeaturesTrue.pembetafeaturesTruebash # Set session reason (metadata) # Retrieve instance metadata # Describe EC2 instances aws ec2 describe-instances bash aws --version aws configure aws iam list-users aws ec2 describe-instances aws ec2 stop-instances --instance-ids <INSTANCEID> aws ec2 start-instances --instance-ids <INSTANCEID> aws ec2 stop-instances --instance-ids <INSTANCEID> --dry-run aws s3 ls aws ec2 help aws s3 help aws ec2 help | grep describe aws iam get-policy-version \\ --policy-arn <POLICYARN> \\ --version-id v1 Notes compiled from lecture transcript · AWS re/Start Program Cohort 3 · June 8, 2026",
+    "url": "/notes/week_11/2026-06-08"
   }
 ]
