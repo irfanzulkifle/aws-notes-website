@@ -7,5 +7,5 @@ export const WEEK_LABELS: Record<string, string> = {
   week_08: "Week 8 — Python & DevOps",
   week_09: "Week 9 — Databases & SQL",
   week_10: "Week 10 — SQL, RDS, DynamoDB, CAF & Well-Architected Framework",
-  week_11: "Week 11 — SysOps, AWS CLI & Systems Manager",
+   week_11: "Week 11 — SysOps, AWS CLI, S3 Static Hosting & EC2",
 };
