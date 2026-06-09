@@ -1,4 +1,4 @@
-# ☁️ AWS re/Start Notes
+# AWS re/Start Notes
 
 [![AWS re/Start](https://img.shields.io/badge/AWS-re%2FStart-orange)](https://github.com/irfanzulkifle/aws_restart_note)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
@@ -6,21 +6,22 @@
 [![License](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
 [![Live](https://img.shields.io/badge/Live-aws--notes--website.vercel.app-000?logo=vercel)](https://aws-notes-website.vercel.app)
 
-A beautifully styled static website publishing my **AWS re/Start lecture notes** — a structured learning journal covering cloud computing fundamentals, Linux administration, Python programming, SQL databases, and networking.
+A polished notes website publishing my **AWS re/Start lecture notes** - a structured learning journal covering cloud computing fundamentals, Linux administration, Python programming, SQL databases, networking, security, and AWS services.
 
 **Live site → [aws-notes-website.vercel.app](https://aws-notes-website.vercel.app)**
 
 ---
 
-## 📋 Content
+## Content
 
 - **33 lecture notes** across 8 weeks of the AWS re/Start program
+- **8 weekly summaries** plus a weekly summary index
 - **Cohort 3: Project CloudIgnite**
-- Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases
+- Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases · RDS · DynamoDB · Cloud Architecture
 - Each note tagged with **AWS CLF-C02 exam relevance** flags
 - Last updated: 2026-06-06
 
-> 📓 Source notes at [irfanzulkifle/aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
+> Source notes at [irfanzulkifle/aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
 
 ### Week Breakdown
 
@@ -33,55 +34,60 @@ A beautifully styled static website publishing my **AWS re/Start lecture notes**
 | Week 7 | Python Fundamentals | 5 |
 | Week 8 | Python & DevOps | 6 |
 | Week 9 | Databases & SQL | 5 |
-| Week 10 | SQL Advanced & Amazon RDS | 4 |
+| Week 10 | SQL, RDS, DynamoDB, CAF & Well-Architected Framework | 4 |
 
 ---
 
-## ✨ Features
+## Features
 
 ### Reading Experience
-- **Minimal dark theme** — clean, modern aesthetic optimized for reading technical content
-- **Unified typography** — Geist Sans for body text, Geist Mono for code blocks
-- **Syntax highlighting** — SQL, Python, Bash code blocks with Material-inspired theme
-- **Copy code button** — one-click copy for all code blocks
-- **Reading time estimate** — shown on each note card and page
-- **Related notes** — automatically surfaced notes with shared topics
+- **Light/dark theme** - clean technical reading interface with persisted theme preference
+- **Unified typography** - Inter for body text, Geist Mono for code blocks
+- **Syntax highlighting** - SQL, Python, Bash, and other code blocks via `rehype-highlight`
+- **Copy code button** - one-click copy for code blocks
+- **Reading time estimate** - shown on each note card and page
+- **Weekly summaries** - dedicated summary pages for each week and a learning-journey index
 
 ### Navigation & Discovery
-- **Search & filter** — real-time search across all notes by title, topic, or week
-- **Topic pills** — clickable topic filters on homepage and note pages
-- **Mobile TOC** — bottom-sheet table of contents drawer on mobile devices
-- **Desktop TOC** — sticky sidebar with scroll spy highlighting active section
-- **Week navigation** — previous/next navigation within and across weeks
-- **Expand/collapse all** — toggle all week cards at once
+- **Homepage filter** - real-time filtering across titles, topics, week labels, and note bodies
+- **Global fuzzy search** - modal search powered by Fuse.js with keyboard shortcuts and result snippets
+- **Search index API** - generated from note metadata, headings, sections, topics, and body text
+- **Document sidebar** - persistent desktop navigation and mobile slide-out navigation
+- **Desktop TOC** - sticky table of contents with scroll spy highlighting active section
+- **Week navigation** - previous/next navigation within and across weeks
+- **Recently viewed notes** - quick access to recent reading history
+- **Expand/collapse all** - toggle all week cards at once
 
 ### Technical
-- **Static generation** — 37 pages pre-rendered at build time for lightning-fast performance
-- **SEO optimized** — JSON-LD structured data, OpenGraph tags, auto-generated sitemap
-- **Security headers** — CSP, X-Frame-Options, HSTS, and more via Vercel config
-- **Fully responsive** — mobile-first design with touch-friendly interactions
-- **Accessibility** — skip-to-content link, ARIA labels, focus rings, WCAG AA contrast
+- **Static generation** - note pages and weekly summary pages are generated from Markdown content
+- **SEO optimized** - metadata, OpenGraph image generation, sitemap, and robots.txt
+- **Security headers** - CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy, and more via Vercel config
+- **Vercel analytics** - includes Vercel Analytics and Speed Insights
+- **Fully responsive** - mobile-first design with touch-friendly interactions
+- **Accessibility** - skip-to-content link, ARIA labels, focus rings, and high-contrast theme support
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Framework | [Next.js 16](https://nextjs.org) (App Router) |
+| Runtime UI | React 19 |
 | Language | TypeScript |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com) |
 | Markdown | react-markdown + remark-gfm |
-| Syntax | rehype-highlight |
+| Syntax | rehype-highlight + rehype-slug |
+| Search | Fuse.js |
 | Slug generation | github-slugger |
 | Frontmatter | gray-matter |
-| Fonts | Geist Sans + Geist Mono (Google Fonts) |
+| Fonts | Inter + Geist Mono (Google Fonts) |
 | Deployment | [Vercel](https://vercel.com) |
 | Node.js | 22 (via .nvmrc) |
 
 ---
 
-## 🚀 Local Development
+## Local Development
 
 ### Prerequisites
 
@@ -127,14 +133,21 @@ npm run lint       # Run ESLint
    ```
 3. The site will automatically pick up the new note on next build
 
+### Adding Weekly Summaries
+
+1. Create or update `content/notes/week_XX/weekly_summary.md`
+2. Add the week to `content/notes/weekly_summary_index.md`
+3. The summary will be linked from the homepage week card, sidebar, and `/notes/weekly-summary`
+
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 aws-notes-website/
 ├── content/
-│   └── notes/                  # All 33 markdown notes
+│   └── notes/                  # Daily notes, weekly summaries, and summary index
+│       ├── weekly_summary_index.md
 │       ├── week_03/
 │       ├── week_04/
 │       ├── ...
@@ -150,11 +163,19 @@ aws-notes-website/
 │   │   ├── not-found.tsx       # Custom 404 page
 │   │   ├── error.tsx           # Error boundary
 │   │   ├── loading.tsx         # Loading state
+│   │   ├── api/search-index/   # Generated JSON search index
+│   │   ├── notes/weekly-summary/
+│   │   │   └── page.tsx        # Weekly summary index page
 │   │   └── notes/[week]/[slug]/
-│   │       └── page.tsx        # Individual note page (SSG)
+│   │       └── page.tsx        # Individual note and weekly summary pages
 │   ├── components/
+│   │   ├── DocLayout.tsx       # Note page shell with sidebars
+│   │   ├── DocSidebar.tsx      # Week and note navigation
+│   │   ├── GlobalSearch.tsx    # Fuzzy search modal
 │   │   ├── SearchableNotes.tsx # Search/filter client component
 │   │   ├── TableOfContents.tsx # Desktop + mobile TOC with scroll spy
+│   │   ├── ThemeToggle.tsx     # Light/dark theme switcher
+│   │   ├── RecentlyViewed.tsx  # Local recent-note history
 │   │   └── CopyCodeButton.tsx  # Code block copy button
 │   └── lib/
 │       ├── utils.ts            # File scanning + metadata parsing
@@ -168,7 +189,7 @@ aws-notes-website/
 
 ---
 
-## 🔒 Security
+## Security
 
 The site implements security headers via `vercel.json`:
 
@@ -177,11 +198,10 @@ The site implements security headers via `vercel.json`:
 - **Referrer-Policy**: strict-origin-when-cross-origin
 - **Permissions-Policy**: Restricts camera, microphone, geolocation
 - **Content-Security-Policy**: Restricts resource loading to same origin
-- **HSTS**: HTTP Strict Transport Security (2 years)
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 This is a personal learning journal, but if you notice any errors or have suggestions:
 
@@ -197,7 +217,7 @@ Please ensure:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — you may share and adapt with attribution.
 
@@ -205,7 +225,7 @@ Content © 2026 Irfan Zulkifle.
 
 ---
 
-## 🔗 Links
+## Links
 
 - **Live Site**: [aws-notes-website.vercel.app](https://aws-notes-website.vercel.app)
 - **Source Notes**: [aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
