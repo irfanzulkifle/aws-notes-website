@@ -14,12 +14,12 @@ A polished notes website publishing my **AWS re/Start lecture notes** - a struct
 
 ## Content
 
-- **36 lecture notes** across 11 weeks of the AWS re/Start program
+- **39 lecture notes** across 11 weeks of the AWS re/Start program
 - **11 weekly summaries** plus a weekly summary index
 - **Cohort 3: Project CloudIgnite**
-- Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases · RDS · DynamoDB · Cloud Architecture · SysOps · CLI · Systems Manager · S3 · EC2
+- Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases · RDS · DynamoDB · Cloud Architecture · SysOps · CLI · Systems Manager · S3 · EC2 · ELB · ASG · Route 53 · CloudFront · IAM
 - Each note tagged with **AWS CLF-C02 exam relevance** flags
-- Last updated: 2026-06-09
+- Last updated: 2026-06-13
 
 > Source notes at [irfanzulkifle/aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
 
@@ -35,7 +35,7 @@ A polished notes website publishing my **AWS re/Start lecture notes** - a struct
 | Week 8 | Python & DevOps | 6 |
 | Week 9 | Databases & SQL | 5 |
 | Week 10 | SQL, RDS, DynamoDB, CAF & Well-Architected Framework | 4 |
-| Week 11 | SysOps, AWS CLI, S3 Static Hosting & EC2 | 2 |
+| Week 11 | SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle | 6 |
 
 ---
 
