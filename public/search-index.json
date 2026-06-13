@@ -7190,7 +7190,7 @@
   {
     "title": "June 8, 2026",
     "week": "week_11",
-    "weekLabel": "Week 11 — SysOps, AWS CLI, S3 Static Hosting & EC2",
+    "weekLabel": "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
     "slug": "2026-06-08",
     "date": "2026-06-08",
     "day": "Monday",
@@ -7481,7 +7481,7 @@
   {
     "title": "June 9, 2026",
     "week": "week_11",
-    "weekLabel": "Week 11 — SysOps, AWS CLI, S3 Static Hosting & EC2",
+    "weekLabel": "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
     "slug": "2026-06-09",
     "date": "2026-06-09",
     "day": "Tuesday",
@@ -7676,5 +7676,763 @@
     ],
     "body": "Cohort 3 | Project CloudIgnite Topics: Amazon S3 Static Website Hosting, AWS CLI, EC2 Deep Dive (AMI, Key Pairs, Security Groups, Instance Profile, User Data, Metadata, IP Types, Connection Methods) Duration: ~3 hours S3 static website hosting: no servers to manage, cost-effective, automatic scaling, globally unique bucket names required, endpoint format: aws s3 sync vs cp: uploads only changed files (preferred for scripts), re-uploads everything every run EC2 instance types: General Purpose (T), Compute Optimized (C), Memory Optimized (R/X), Storage Optimized (I/D), Accelerated Computing (P/G), HPC (Hpc) — T3 used in labs so far IP addressing: Private IP retained on stop/start, Public IP changes on every stop/start, Elastic IP is static and persistent Instance Profile attaches IAM Role to EC2 — allows EC2 to access AWS services without storing credentials; User Data runs once at launch for bootstrapping Instance Metadata Service: — accessible only from within EC2, returns instance info EC2 connection methods ranked by security: SSM Session Manager (no ports, no keys) > EC2 Instance Connect (port 22, browser) > SSH (port 22, .pem key) Instance store is ephemeral (data lost on stop/terminate), EBS is persistent — always use EBS for important data Amazon S3 — Static Website Hosting (Theory) EC2 Compute — Deep Dive Lab Walkthrough — Static Website on S3 using AWS CLI CLF-C02 Exam Relevance A website made up of HTML, CSS, and client-side JavaScript only — no server-side scripting, no database. Content changes infrequently (e.g. a café info page, a portfolio, a product image gallery). Client-side JavaScript is allowed; server-side processing (PHP, Python, etc.) is not. Dynamic websites (with databases, server-side logic) should use EC2 instead. Create an S3 bucket (bucket name must be globally unique). Upload static files (HTML, CSS, JS, images). Enable Static Website Hosting on the bucket. S3 automatically assigns an endpoint URL in the format: Set Block Public Access to off and enable ACLs (Access Control Lists) so objects can be read publicly. Use Amazon Route 53 to map your own domain name to the S3 static website endpoint. Instead of manually uploading files every time (error-prone, slow), write a bash script using the AWS CLI. Two key CLI commands for S3 file operations: Tip from lecture: Prefer over for update scripts — it avoids re-uploading unchanged files. must be on its own line — do not put the command on the same line. Make the script executable: Run it: EC2 instances are virtual machines running on top of a hypervisor. Each instance has: CPU, RAM, ephemeral (instance store) storage. Instance store is not persistent — data is lost when an instance is stopped or rebooted. Use EBS for persistent storage. EC2 instances sit inside a VPC subnet and can communicate with: The internet via an Internet Gateway Other EC2 instances within the VPC S3 via an S3 VPC Endpoint Attached EBS volumes An AMI is a pre-configured template used to launch EC2 instances. It contains: Boot volume (OS + pre-installed software) Block device mapping (storage configuration) Launch permissions (who can use the AMI) Benefits of AMIs: Repeatable — launch hundreds of identical instances from one template. Consistent configuration — reduces human error. Available from multiple sources: AWS-provided, community, or your own custom AMIs. In labs so far: T3 (General Purpose) has been used throughout. Used to connect to an EC2 instance without a username/password. Public key → stored by AWS on the instance. Private key → downloaded by you ( file). Keep it safe — it cannot be recovered. Connection uses SSH on port 22. Use Elastic IP when you need a permanent, unchanging public IP address. Act as a virtual firewall for EC2 instances. Control inbound and outbound traffic by port, protocol, and source/destination. One security group can be applied to many instances. Source can be: - — anyone (open to the world) - A specific IP CIDR range — restricted access - Another security group — only instances in that security group can connect Common rule: SSH = port 22, HTTP = port 80, HTTPS = port 443 A way to attach an IAM Role to an EC2 instance. The EC2 instance can then perform actions on AWS services (e.g. read from S3) without storing credentials. Example: Attach a role with → the EC2 instance can now read/write S3 buckets. A bash script provided at instance launch time. Runs once automatically when the EC2 instance first boots. Used for: installing software, configuration tasks, downloading files, etc. Format: Also supports cloud-init directives (alternative format — less common in this course). A built-in HTTP endpoint accessible only from within an EC2 instance. URL: Returns information about the instance: instance ID, instance type, public hostname, AMI ID, etc. Also accessible: to retrieve the user data script. This URL is not reachable from your local machine — only from within EC2. Best practice: Prefer SSM Session Manager — no port 22 needed, no key pair required, and all sessions are logged. Use key pairs or SSM — do not enable password login. For Windows instances: use AWS Directory Service / Active Directory. Apply security patches regularly. Enable Termination Protection to prevent accidental deletion. Turn off source/destination check only for NAT instances. Take screenshots for troubleshooting unreachable instances. Use IAM roles (instance profile) instead of hardcoding credentials. Symptom: Instance launched successfully, has a public IP, but SSH connection times out. Most likely cause: Port 22 is not open in the security group inbound rules. Solution: Edit the security group and add an inbound rule: . Business scenario: Build a static website for a café (Sophia's Café) to display product photos and business info. Frank updates menu photos regularly, so the update process must be automated. Step 1 — Connect to EC2 (CLI Host) via SSM Session Manager Step 2 — Configure AWS CLI Step 3 — Create an S3 Bucket Bucket names must be globally unique across all AWS accounts. Step 4 — Create an IAM User Step 5 — Attach S3 Policy to the User Step 6 — Enable Public Access & ACLs on the Bucket In the S3 Console → Permissions → uncheck Block all public access → Save. Edit Object Ownership → enable ACLs. Step 7 — Configure the Bucket for Static Website Hosting Step 8 — Unzip and Upload Website Files Step 9 — Access the Website Go to S3 → your bucket → Properties → Static website hosting → copy the endpoint URL. Open the URL in a browser. Step 10 — Create an Automation Bash Script only uploads changed files. re-uploads everything every time. The following topics from today's lecture directly map to the AWS Certified Cloud Practitioner (CLF-C02) exam domains. S3 bucket names are globally unique across all AWS accounts. S3 static website = no server, no infrastructure to manage, scales automatically. Elastic IP = static public IP. Public IP = changes on every stop/start. Instance store = ephemeral (lost on stop). EBS = persistent. Security Groups are stateful — if you allow inbound traffic, the response is automatically allowed outbound. SSM Session Manager requires no open ports and no key pair — preferred over SSH for security. IAM Roles attached to EC2 (via instance profile) = no need to store credentials on the instance. User Data runs once at launch and is used to automate instance configuration. uploads only changed files; copies everything. Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 9, 2026.",
     "url": "/notes/week_11/2026-06-09"
+  },
+  {
+    "title": "June 10, 2026",
+    "week": "week_11",
+    "weekLabel": "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
+    "slug": "2026-06-10",
+    "date": "2026-06-10",
+    "day": "Wednesday",
+    "topics": [
+      "EC2 Instance Lifecycle & Management",
+      "AMI Deprecation",
+      "AWS Elastic Beanstalk",
+      "EC2 Launch via Console & CLI",
+      "VPC/Security Group Troubleshooting",
+      "Intro to Elastic Load Balancing & Auto Scaling"
+    ],
+    "headings": [
+      "Key Takeaways",
+      "Table of Contents",
+      "1. EC2 Instance Lifecycle & States",
+      "Instance Hibernation",
+      "2. Billing Implications of Instance States",
+      "3. Data Persistence: Instance Store vs EBS",
+      "Termination & EBS",
+      "4. Public IP Behavior & Elastic IP",
+      "5. Modifying an EC2 Instance",
+      "Why design for quick start/stop?",
+      "Steps to change instance type",
+      "Conditions to modify instance type",
+      "OS/Software Updates",
+      "6. AMI Deprecation",
+      "7. AWS Elastic Beanstalk",
+      "Conceptual Comparison",
+      "What Elastic Beanstalk Does",
+      "Supported Languages/Platforms",
+      "Benefits",
+      "Cost Model",
+      "8. Lab: Launching EC2 via Console & Troubleshooting LAMP",
+      "Steps to Launch EC2 Console",
+      "Connecting to the Instance",
+      "Troubleshooting Misconfigured Instance",
+      "9. Launching EC2 via AWS CLI",
+      "Workflow",
+      "Practical Takeaways",
+      "10. Challenge Lab: New VPC + EC2 + Security Group Troubleshooting",
+      "VPC Creation Notes",
+      "Security Group Setup",
+      "Common Troubleshooting Issues",
+      "11. Intro: ELB, Auto Scaling, Route 53",
+      "Elastic Load Balancing ELB",
+      "EC2 Auto Scaling Group",
+      "Route 53 brief mention",
+      "12. CLF-C02 Exam Relevance"
+    ],
+    "sections": [
+      {
+        "heading": "Key Takeaways",
+        "slug": "key-takeaways",
+        "content": "- **EC2 lifecycle states:** pending → running → stopping → stopped → terminated; **terminated is permanent and unrecoverable** - **Billing in stopped state:** no compute charge, but **EBS storage still billed**; also billed during the brief \"stopping\" transition - **Instance Store vs EBS:** Instance Store is ephemeral (data lost on stop/restart); EBS is persistent (preserved across stop/start) - **IP behavior:** Public IP changes on every stop/start; **Elastic IP** is a static, reassignable public IP - **AMI deprecation:** custom AMIs deprecated ~2 years after creation; existing instances keep running, but new launches are blocked (critical to refresh AMI in time for ASGs) - **Elastic Beanstalk** = PaaS: AWS manages OS, runtime, scaling; you upload code; **no additional charge** — pay only for underlying EC2/EBS/RDS - **Modifying instance type:** must stop the instance first; new type's architecture must be compatible - **Security Group = instance-level stateful firewall** (default deny inbound); NACL = subnet-level stateless ---"
+      },
+      {
+        "heading": "Table of Contents",
+        "slug": "table-of-contents",
+        "content": "1. [EC2 Instance Lifecycle & States](#1-ec2-instance-lifecycle--states) 2. [Billing Implications of Instance States](#2-billing-implications-of-instance-states) 3. [Data Persistence: Instance Store vs EBS](#3-data-persistence-instance-store-vs-ebs) 4. [Public IP Behavior & Elastic IP](#4-public-ip-behavior--elastic-ip) 5. [Modifying an EC2 Instance](#5-modifying-an-ec2-instance) 6. [AMI Deprecation](#6-ami-deprecation) 7. [AWS Elastic Beanstalk](#7-aws-elastic-beanstalk) 8. [Lab: Launching EC2 via Console & Troubleshooting LAMP](#8-lab-launching-ec2-via-console--troubleshooting-lamp) 9. [Launching EC2 via AWS CLI](#9-launching-ec2-via-aws-cli) 10. [Challenge Lab: New VPC + EC2 + Security Group Troubleshooting](#10-challenge-lab-new-vpc--ec2--security-group-troubleshooting) 11. [Intro: ELB, Auto Scaling, Route 53](#11-intro-elb-auto-scaling-route-53) 12. [CLF-C02 Exam Relevance](#12-clf-c02-exam-relevance) ---"
+      },
+      {
+        "heading": "1. EC2 Instance Lifecycle & States",
+        "slug": "1-ec2-instance-lifecycle-states",
+        "content": "- **Pending** → instance is launching; takes time before it becomes available. - **Running** → instance is active and usable. - From running, you can: **reboot**, **stop**, or **terminate**. - **Reboot** → goes through a temporary \"rebooting\" state before returning to \"running\". - **Stop** → goes through a temporary \"stopping\" state before reaching \"stopped\". - **Terminate** → instance enters \"terminated\" state — **this is permanent and unrecoverable**. - From a **stopped** state, you can either **start** the instance again or **terminate** it."
+      },
+      {
+        "heading": "Instance Hibernation",
+        "slug": "instance-hibernation",
+        "content": "- Hibernation = instance consumes very little power (not fully running), but **RAM state is preserved**. - On resume, the instance starts faster and resumes exactly where it left off. - **Not available for all instance types** — requires an EBS root volume. ---"
+      },
+      {
+        "heading": "2. Billing Implications of Instance States",
+        "slug": "2-billing-implications-of-instance-states",
+        "content": "| State | Do you pay? | |---|---| | Running | Yes (compute charges) | | Stopping | Yes — billed for the transition period | | Stopped | Yes for **EBS volume storage** (not for compute) | | Terminated | No (root EBS is deleted by default) | **Key takeaway:** Even a *stopped* instance generates EBS storage cost. ---"
+      },
+      {
+        "heading": "3. Data Persistence: Instance Store vs EBS",
+        "slug": "3-data-persistence-instance-store-vs-ebs",
+        "content": "| Storage Type | Persistence Behavior | |---|---| | **Instance Store** | Temporary. Data is **lost** if instance is stopped/restarted. | | **EBS (Elastic Block Store)** | Persistent. Data is **preserved** across stop/start. |"
+      },
+      {
+        "heading": "Termination & EBS",
+        "slug": "termination-ebs",
+        "content": "- By default, the **root EBS volume is deleted on termination**. - Controlled by the **\"Delete on Termination\"** setting: - **Yes** → EBS volume deleted when instance terminates. - **No** → EBS volume is retained after termination. ---"
+      },
+      {
+        "heading": "4. Public IP Behavior & Elastic IP",
+        "slug": "4-public-ip-behavior-elastic-ip",
+        "content": "- A normal **public IP address changes** every time you stop and start an instance. - If you need a **static** IP that persists across stop/start and can be **reassigned to different instances**, use an **Elastic IP**. > **Checkpoint Q&A:** An engineer rebooted an instance and it worked fine. After stopping and restarting it the next day, users can't access the app. > **Answer:** The **public IP address changed** after stop/start — users were likely still using the old IP/DNS. ---"
+      },
+      {
+        "heading": "5. Modifying an EC2 Instance",
+        "slug": "5-modifying-an-ec2-instance",
+        "content": ""
+      },
+      {
+        "heading": "Why design for quick start/stop?",
+        "slug": "why-design-for-quick-startstop",
+        "content": "- Supports **horizontal scalability** (Auto Scaling Groups need to launch/terminate instances quickly). - Faster OS upgrades, faster repair, cost savings."
+      },
+      {
+        "heading": "Steps to change instance type",
+        "slug": "steps-to-change-instance-type",
+        "content": "1. **Stop** the instance first (cannot resize while running). 2. Modify via AWS Management Console (Actions → Instance Settings → Change Instance Type), or via AWS CLI."
+      },
+      {
+        "heading": "Conditions to modify instance type",
+        "slug": "conditions-to-modify-instance-type",
+        "content": "1. Instance must be **stopped**. 2. New instance type's **architecture must be compatible** (e.g., both must support 64-bit). 3. (For hibernation) Instance **must have an EBS root volume** — otherwise RAM state can't be preserved."
+      },
+      {
+        "heading": "OS/Software Updates",
+        "slug": "ossoftware-updates",
+        "content": "- You are responsible for periodically updating OS, security patches, and tools. - Can use **AWS Systems Manager** and **OpsWorks** to manage/automate updates. ---"
+      },
+      {
+        "heading": "6. AMI Deprecation",
+        "slug": "6-ami-deprecation",
+        "content": "- **AMI (Amazon Machine Image)** = a template used to quickly launch EC2 instances (includes OS, configuration, etc.). - AMI sources: provided by **AWS**, **shared by other users**, or **created by you**. - **Custom AMIs are deprecated ~2 years after creation date.** - Effect of deprecation: - Existing instances launched from that AMI **continue to run fine** — no issue. - You **cannot launch new instances** using a deprecated AMI. - You must update/refresh your AMI before it deprecates, especially important for **Auto Scaling Groups** that rely on AMIs. ---"
+      },
+      {
+        "heading": "7. AWS Elastic Beanstalk",
+        "slug": "7-aws-elastic-beanstalk",
+        "content": ""
+      },
+      {
+        "heading": "Conceptual Comparison",
+        "slug": "conceptual-comparison",
+        "content": "| Service | Type | Who manages OS/runtime? | |---|---|---| | **EC2** | IaaS | You (full responsibility) | | **Elastic Beanstalk** | PaaS | AWS manages OS + app environment | | **Lambda** | PaaS / Serverless | AWS manages everything |"
+      },
+      {
+        "heading": "What Elastic Beanstalk Does",
+        "slug": "what-elastic-beanstalk-does",
+        "content": "- You choose the OS/language stack (e.g., Red Hat Linux, Node.js, Java) — **AWS installs, patches, and maintains it**. - AWS handles: OS upgrades, security patches, language runtime/interpreter, application server, load balancing, auto scaling, and health monitoring. - You retain control over key configuration: EC2 instance type, database choice, auto-scaling settings, load balancer options."
+      },
+      {
+        "heading": "Supported Languages/Platforms",
+        "slug": "supported-languagesplatforms",
+        "content": "Java, .NET, PHP, Node.js, Python, Ruby, Go, and **Docker** (containers)."
+      },
+      {
+        "heading": "Benefits",
+        "slug": "benefits",
+        "content": "- Increased **developer productivity** (focus only on code). - Built-in **scalability**. - **Reduced management complexity** (no manual patching/upgrades)."
+      },
+      {
+        "heading": "Cost Model",
+        "slug": "cost-model",
+        "content": "- **No charge for Elastic Beanstalk itself** — you only pay for the underlying AWS resources (EC2, EBS, RDS, etc.). ---"
+      },
+      {
+        "heading": "8. Lab: Launching EC2 via Console & Troubleshooting LAMP",
+        "slug": "8-lab-launching-ec2-via-console-troubleshooting-lamp",
+        "content": "**Scenario:** A bakery (Sophia/Frank/Martha's business) previously had a **static website** (for displaying info only). They now want an **online ordering system**, which requires a dynamic backend → decided to use a **LAMP stack** (**L**inux, **A**pache, **M**ariaDB, **P**HP). Sophia attempted deployment via a **user data script** but something went wrong — this lab is the troubleshooting exercise."
+      },
+      {
+        "heading": "Steps to Launch EC2 Console",
+        "slug": "steps-to-launch-ec2-console",
+        "content": "1. **Launch Instance** → name/tag it (e.g., \"bastion host\"). 2. Choose **AMI**: Amazon Linux. 3. Choose **instance type**: T3.micro. 4. **Key pair**: \"Proceed without a key pair\" (lab purposes only). 5. **Network settings**: - Select the **correct VPC** (e.g., \"Lab VPC\", not default). - Use **public subnet**. - Enable **auto-assign public IP**. - Create a new **security group** — keep the SSH (port 22) rule. 6. **Storage**: Default EBS GP3 volume, 8 GB. 7. **Advanced Details**: Set the **Instance Profile** — critical step, easy to skip, hard to fix later if missed. 8. Launch instance → wait for status checks to turn **green**."
+      },
+      {
+        "heading": "Connecting to the Instance",
+        "slug": "connecting-to-the-instance",
+        "content": "- Use **EC2 Instance Connect** (not SSM Session Manager) — this works over **SSH (port 22)** under the hood. - Requires **port 22 open** in the security group's inbound rules."
+      },
+      {
+        "heading": "Troubleshooting Misconfigured Instance",
+        "slug": "troubleshooting-misconfigured-instance",
+        "content": "**Problem 1:** Couldn't connect via Instance Connect. - **Cause:** Security group only had port 80 open, no port 22. - **Fix:** Add inbound rule for SSH (port 22). **Problem 2:** Public DNS didn't load a web page. - **Cause:** Web server (Apache) wasn't actually running — user data script hadn't executed. - **Fix:** 1. Rename `userdata.txt` → `install.sh` (text files can't be executed directly). 2. Give execute permission: `chmod +x install.sh` 3. Run with elevated privileges: `sudo ./install.sh` - Result: Apache installs and dashboard becomes accessible. > **Key concept:** User data = a bash script that runs on first boot. Must have execute permission and proper file extension/handling to run. ---"
+      },
+      {
+        "heading": "9. Launching EC2 via AWS CLI",
+        "slug": "9-launching-ec2-via-aws-cli",
+        "content": ""
+      },
+      {
+        "heading": "Workflow",
+        "slug": "workflow",
+        "content": "1. **Retrieve AMI ID** dynamically (newer metadata retrieval requires a token — may need to set values manually if the automated script fails): ```bash export AZ=us-west-2a export region=us-west-2 ``` 2. **Retrieve subnet ID** and **security group ID** — store in environment variables (`$SUBNET`, `$SG`, `$AMI`). 3. **Download the user data script** — this script downloads a `.zip`/`.gz` file and extracts it to `/var/www/html` to deploy a basic website. 4. **Launch the instance**: ```bash aws ec2 run-instances \\ --image-id $AMI \\ --subnet-id $SUBNET \\ --security-group-ids $SG \\ --user-data file://userdata.txt \\ --instance-type t3.micro \\ --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=web-server}]' \\ --query 'Instances[0].InstanceId' ``` - Running this command **multiple times launches multiple separate instances** (does not overwrite existing ones). 5. **Describe instances**: ```bash aws ec2 describe-instances aws ec2 describe-instances --instance-ids <instance-id> aws ec2 describe-instances --instance-ids <instance-id> \\ --query 'Reservations[0].Instances[0].PublicDnsName' --output text ```"
+      },
+      {
+        "heading": "Practical Takeaways",
+        "slug": "practical-takeaways",
+        "content": "- CLI launches are **faster and repeatable** compared to clicking through the console — can be saved as a **bash script** for future use. - Use `--query` with JSONPath-like syntax to extract specific fields from CLI JSON output. - Watch out for **unexpected newlines** when copying multi-line commands. ---"
+      },
+      {
+        "heading": "10. Challenge Lab: New VPC + EC2 + Security Group Troubleshooting",
+        "slug": "10-challenge-lab-new-vpc-ec2-security-group-troubleshooting",
+        "content": "**Task:** Use the Management Console to: 1. Create a **new VPC** (with new subnets). 2. Launch a **T3.micro EC2 instance** in the new VPC's public subnet with **auto-assigned public IP**. 3. Use **user data** to install/start HTTP service (Apache) and set correct permissions on the web root. 4. Use **GP2** storage (not GP3, per challenge requirements). 5. Configure security so you can connect via **SSH**. 6. Create `projects.html`, move it to `/var/www/html/`, and verify via browser."
+      },
+      {
+        "heading": "VPC Creation Notes",
+        "slug": "vpc-creation-notes",
+        "content": "- Used **\"VPC and more\"** option — automatically creates: - Internet Gateway - Route tables (public/private) - Subnets (2 public, 2 private) - **CIDR block**: Must be between **/16 and /28**. - A **/22** CIDR → ~1,000 available IP addresses (smaller number = larger range). - **NAT Gateway**: set to **None** for this lab (not required). - **S3 Gateway Endpoint**: not needed for this lab — used only when you want private connectivity between EC2 and S3 without going over the public internet."
+      },
+      {
+        "heading": "Security Group Setup",
+        "slug": "security-group-setup",
+        "content": "- Create a **new security group** explicitly associated with the **new (\"Challenge\") VPC** — NOT the default VPC's security group. - Add inbound rules: - **SSH (port 22)** — Anywhere (IPv4) - **HTTP (port 80)** — Anywhere (IPv4) - **Outbound rule**: Leave as default — **Allow all traffic**. Do not restrict/remove the default outbound rule."
+      },
+      {
+        "heading": "Common Troubleshooting Issues",
+        "slug": "common-troubleshooting-issues",
+        "content": "| Symptom | Root Cause | Fix | |---|---|---| | Can't connect via Instance Connect | Editing the **wrong security group** (default instead of the new \"web server\" SG) | Identify the SG actually attached to the instance and edit **that one** | | No public IP shown | Auto-assign public IP wasn't enabled at launch | Actions → Networking → Manage IP Addresses → enable Auto-assign Public IP → Save → refresh | | Port 80/22 \"not open\" even after adding rules | Outbound rule had been **deleted/misconfigured** | Outbound rule must allow **all traffic**; re-add inbound rules for SSH (22) and HTTP (80) | | Webpage doesn't load `projects.html` | Forgot to specify the file path | Append `/projects.html` to the public IP/DNS in the browser URL | ---"
+      },
+      {
+        "heading": "11. Intro: ELB, Auto Scaling, Route 53",
+        "slug": "11-intro-elb-auto-scaling-route-53",
+        "content": ""
+      },
+      {
+        "heading": "Elastic Load Balancing ELB",
+        "slug": "elastic-load-balancing-elb",
+        "content": "- Sits **between end users and backend servers**. - **Distributes incoming traffic** across multiple EC2 instances. - Types to be covered later: **Application Load Balancer**, **Network Load Balancer**, etc."
+      },
+      {
+        "heading": "EC2 Auto Scaling Group",
+        "slug": "ec2-auto-scaling-group",
+        "content": "- Automatically **adds or removes EC2 instances** based on demand (traffic spikes/drops). - Scaling can be triggered by: - **Traffic/load** (e.g., CPU usage, network bandwidth) - **Time** (scheduled scaling — e.g., higher traffic during business hours) - **Events** (e.g., queue depth) - **Benefits**: fault tolerance, high availability, better performance, and cost optimization. - Important distinction: Auto Scaling **adds more instances (horizontal scaling)** — it does **not** increase RAM/CPU of an existing instance."
+      },
+      {
+        "heading": "Route 53 brief mention",
+        "slug": "route-53-brief-mention",
+        "content": "- AWS's **DNS service**. - Will cover **failover routing** — automatically redirects traffic to a secondary/backup server if the primary server fails. ---"
+      },
+      {
+        "heading": "12. CLF-C02 Exam Relevance",
+        "slug": "12-clf-c02-exam-relevance",
+        "content": "| Topic | CLF-C02 Domain | Relevance | |---|---|---| | **EC2 instance lifecycle & billing** | Cloud Technology & Services | High — terminated is irreversible; EBS still billed when stopped | | **Instance Store vs EBS** | Cloud Technology & Services | High — ephemeral vs persistent storage | | **Elastic IP vs dynamic public IP** | Cloud Technology & Services | High — Elastic IP is static and reassignable | | **Security Group vs NACL** | Security & Compliance | High — SG = instance-level stateful; NACL = subnet-level stateless | | **Instance Profile / IAM roles for EC2** | Security & Compliance | High — secure EC2 access to AWS services without hardcoded credentials | | **AMI and AMI deprecation** | Cloud Technology & Services | Medium — templates for ASG; ~2 year deprecation | | **Elastic Beanstalk** | Cloud Technology & Services | High — PaaS, no extra charge, IaaS vs PaaS vs Serverless distinction | | **VPC fundamentals** (CIDR, IGW, route tables, subnets, NAT GW) | Cloud Technology & Services | High — exam-relevant networking | | **Elastic Load Balancing & Auto Scaling Group** | Cloud Technology & Services | High — HA, elasticity, cost optimization (Well-Architected pillars) | | **Route 53 & failover routing** | Cloud Technology & Services | Medium — DNS routing as part of HA architecture | **Practical/Lab content** (AWS CLI commands, security group troubleshooting) is less likely to appear directly on CLF-C02 (which is conceptual) but reinforces the underlying concepts that are tested. --- *Notes generated from lecture transcript dated June 10, 2026 (Cohort 3: Project CloudIgnite).*"
+      }
+    ],
+    "body": "Cohort 3 | Project CloudIgnite Topics: EC2 Instance Lifecycle & Management, AMI Deprecation, AWS Elastic Beanstalk, EC2 Launch via Console & CLI, VPC/Security Group Troubleshooting, Intro to Elastic Load Balancing & Auto Scaling Duration: ~3 hours EC2 lifecycle states: pending → running → stopping → stopped → terminated; terminated is permanent and unrecoverable Billing in stopped state: no compute charge, but EBS storage still billed; also billed during the brief \"stopping\" transition Instance Store vs EBS: Instance Store is ephemeral (data lost on stop/restart); EBS is persistent (preserved across stop/start) IP behavior: Public IP changes on every stop/start; Elastic IP is a static, reassignable public IP AMI deprecation: custom AMIs deprecated ~2 years after creation; existing instances keep running, but new launches are blocked (critical to refresh AMI in time for ASGs) Elastic Beanstalk = PaaS: AWS manages OS, runtime, scaling; you upload code; no additional charge — pay only for underlying EC2/EBS/RDS Modifying instance type: must stop the instance first; new type's architecture must be compatible Security Group = instance-level stateful firewall (default deny inbound); NACL = subnet-level stateless EC2 Instance Lifecycle & States Billing Implications of Instance States Data Persistence: Instance Store vs EBS Public IP Behavior & Elastic IP Modifying an EC2 Instance AMI Deprecation AWS Elastic Beanstalk Lab: Launching EC2 via Console & Troubleshooting LAMP Launching EC2 via AWS CLI Challenge Lab: New VPC + EC2 + Security Group Troubleshooting Intro: ELB, Auto Scaling, Route 53 CLF-C02 Exam Relevance Pending → instance is launching; takes time before it becomes available. Running → instance is active and usable. From running, you can: reboot, stop, or terminate. Reboot → goes through a temporary \"rebooting\" state before returning to \"running\". Stop → goes through a temporary \"stopping\" state before reaching \"stopped\". Terminate → instance enters \"terminated\" state — this is permanent and unrecoverable. From a stopped state, you can either start the instance again or terminate it. Hibernation = instance consumes very little power (not fully running), but RAM state is preserved. On resume, the instance starts faster and resumes exactly where it left off. Not available for all instance types — requires an EBS root volume. Key takeaway: Even a stopped instance generates EBS storage cost. By default, the root EBS volume is deleted on termination. Controlled by the \"Delete on Termination\" setting: - Yes → EBS volume deleted when instance terminates. - No → EBS volume is retained after termination. A normal public IP address changes every time you stop and start an instance. If you need a static IP that persists across stop/start and can be reassigned to different instances, use an Elastic IP. Checkpoint Q&A: An engineer rebooted an instance and it worked fine. After stopping and restarting it the next day, users can't access the app. Answer: The public IP address changed after stop/start — users were likely still using the old IP/DNS. Supports horizontal scalability (Auto Scaling Groups need to launch/terminate instances quickly). Faster OS upgrades, faster repair, cost savings. Stop the instance first (cannot resize while running). Modify via AWS Management Console (Actions → Instance Settings → Change Instance Type), or via AWS CLI. Instance must be stopped. New instance type's architecture must be compatible (e.g., both must support 64-bit). (For hibernation) Instance must have an EBS root volume — otherwise RAM state can't be preserved. You are responsible for periodically updating OS, security patches, and tools. Can use AWS Systems Manager and OpsWorks to manage/automate updates. AMI (Amazon Machine Image) = a template used to quickly launch EC2 instances (includes OS, configuration, etc.). AMI sources: provided by AWS, shared by other users, or created by you. Custom AMIs are deprecated ~2 years after creation date. Effect of deprecation: - Existing instances launched from that AMI continue to run fine — no issue. - You cannot launch new instances using a deprecated AMI. - You must update/refresh your AMI before it deprecates, especially important for Auto Scaling Groups that rely on AMIs. You choose the OS/language stack (e.g., Red Hat Linux, Node.js, Java) — AWS installs, patches, and maintains it. AWS handles: OS upgrades, security patches, language runtime/interpreter, application server, load balancing, auto scaling, and health monitoring. You retain control over key configuration: EC2 instance type, database choice, auto-scaling settings, load balancer options. Java, .NET, PHP, Node.js, Python, Ruby, Go, and Docker (containers). Increased developer productivity (focus only on code). Built-in scalability. Reduced management complexity (no manual patching/upgrades). No charge for Elastic Beanstalk itself — you only pay for the underlying AWS resources (EC2, EBS, RDS, etc.). Scenario: A bakery (Sophia/Frank/Martha's business) previously had a static website (for displaying info only). They now want an online ordering system, which requires a dynamic backend → decided to use a LAMP stack (Linux, Apache, MariaDB, PHP). Sophia attempted deployment via a user data script but something went wrong — this lab is the troubleshooting exercise. Launch Instance → name/tag it (e.g., \"bastion host\"). Choose AMI: Amazon Linux. Choose instance type: T3.micro. Key pair: \"Proceed without a key pair\" (lab purposes only). Network settings: - Select the correct VPC (e.g., \"Lab VPC\", not default). - Use public subnet. - Enable auto-assign public IP. - Create a new security group — keep the SSH (port 22) rule. Storage: Default EBS GP3 volume, 8 GB. Advanced Details: Set the Instance Profile — critical step, easy to skip, hard to fix later if missed. Launch instance → wait for status checks to turn green. Use EC2 Instance Connect (not SSM Session Manager) — this works over SSH (port 22) under the hood. Requires port 22 open in the security group's inbound rules. Problem 1: Couldn't connect via Instance Connect. Cause: Security group only had port 80 open, no port 22. Fix: Add inbound rule for SSH (port 22). Problem 2: Public DNS didn't load a web page. Cause: Web server (Apache) wasn't actually running — user data script hadn't executed. Fix: 1. Rename → (text files can't be executed directly). 2. Give execute permission: 3. Run with elevated privileges: Result: Apache installs and dashboard becomes accessible. Key concept: User data = a bash script that runs on first boot. Must have execute permission and proper file extension/handling to run. Retrieve AMI ID dynamically (newer metadata retrieval requires a token — may need to set values manually if the automated script fails): Retrieve subnet ID and security group ID — store in environment variables (, , ). Download the user data script — this script downloads a / file and extracts it to to deploy a basic website. Launch the instance: - Running this command multiple times launches multiple separate instances (does not overwrite existing ones). Describe instances: CLI launches are faster and repeatable compared to clicking through the console — can be saved as a bash script for future use. Use with JSONPath-like syntax to extract specific fields from CLI JSON output. Watch out for unexpected newlines when copying multi-line commands. Task: Use the Management Console to: Create a new VPC (with new subnets). Launch a T3.micro EC2 instance in the new VPC's public subnet with auto-assigned public IP. Use user data to install/start HTTP service (Apache) and set correct permissions on the web root. Use GP2 storage (not GP3, per challenge requirements). Configure security so you can connect via SSH. Create , move it to , and verify via browser. Used \"VPC and more\" option — automatically creates: - Internet Gateway - Route tables (public/private) - Subnets (2 public, 2 private) CIDR block: Must be between /16 and /28. - A /22 CIDR → ~1,000 available IP addresses (smaller number = larger range). NAT Gateway: set to None for this lab (not required). S3 Gateway Endpoint: not needed for this lab — used only when you want private connectivity between EC2 and S3 without going over the public internet. Create a new security group explicitly associated with the new (\"Challenge\") VPC — NOT the default VPC's security group. Add inbound rules: - SSH (port 22) — Anywhere (IPv4) - HTTP (port 80) — Anywhere (IPv4) Outbound rule: Leave as default — Allow all traffic. Do not restrict/remove the default outbound rule. Sits between end users and backend servers. Distributes incoming traffic across multiple EC2 instances. Types to be covered later: Application Load Balancer, Network Load Balancer, etc. Automatically adds or removes EC2 instances based on demand (traffic spikes/drops). Scaling can be triggered by: - Traffic/load (e.g., CPU usage, network bandwidth) - Time (scheduled scaling — e.g., higher traffic during business hours) - Events (e.g., queue depth) Benefits: fault tolerance, high availability, better performance, and cost optimization. Important distinction: Auto Scaling adds more instances (horizontal scaling) — it does not increase RAM/CPU of an existing instance. AWS's DNS service. Will cover failover routing — automatically redirects traffic to a secondary/backup server if the primary server fails. Practical/Lab content (AWS CLI commands, security group troubleshooting) is less likely to appear directly on CLF-C02 (which is conceptual) but reinforces the underlying concepts that are tested. Notes generated from lecture transcript dated June 10, 2026 (Cohort 3: Project CloudIgnite).",
+    "url": "/notes/week_11/2026-06-10"
+  },
+  {
+    "title": "June 11, 2026",
+    "week": "week_11",
+    "weekLabel": "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
+    "slug": "2026-06-11",
+    "date": "2026-06-11",
+    "day": "Thursday",
+    "topics": [
+      "Elastic Load Balancing (deep dive)",
+      "Auto Scaling Groups",
+      "Lab 173 (EC2 LAMP deployment troubleshooting script)",
+      "Lab 174 (ALB + Auto Scaling Group build with load testing)"
+    ],
+    "headings": [
+      "Key Takeaways",
+      "Table of Contents",
+      "1. Elastic Load Balancing ELB — Deep Dive",
+      "Types of Load Balancers",
+      "Key ALB Features",
+      "Scenario-Based Selection Rule of Thumb",
+      "2. Auto Scaling Groups ASG",
+      "Why ASGs Are Needed",
+      "Typical Architecture Flow",
+      "Why a Shared Database RDS Matters",
+      "Scaling Policy Types",
+      "Capacity Settings",
+      "3. Decoupled / Scalable Architecture Concepts",
+      "4. Lab 173 — Troubleshooting the LAMP EC2 Deployment Script",
+      "Lab Setup Steps",
+      "Issue 1: Hardcoded/Incorrect Region",
+      "Issue 2: Wrong Port in Security Group 8080 vs 80",
+      "Additional Notes from the Lab",
+      "5. Annotated Walkthrough of create-ec2.txt",
+      "6. Lab 174 — Building an Auto Scaling Group Behind an ALB",
+      "High-Level Steps",
+      "Troubleshooting Notes from the Lab",
+      "7. Useful Vim/Nano & CLI Commands",
+      "8. CLF-C02 Exam Relevance"
+    ],
+    "sections": [
+      {
+        "heading": "Key Takeaways",
+        "slug": "key-takeaways",
+        "content": "- **ELB types:** ALB (L7, HTTP/HTTPS, path-based routing), NLB (L4, TCP/UDP, extreme performance/low latency), GWLB (L3/4, third-party security appliances), CLB (legacy — avoid) - **Auto Scaling Group (ASG)** maintains desired instance count and scales in/out based on demand; pairs with ELB for high availability - **ASG capacity:** **Minimum** (floor), **Desired** (target), **Maximum** (ceiling) - **Shared database (RDS)** is critical — ASG instances are ephemeral, so data must live in centralized storage to survive scale-in - **Decoupled architecture:** ALB in public subnets, application servers in **private subnets** (not directly reachable) - **AMI → Launch Template → ASG:** the custom AMI in the launch template makes new instances identical - **CloudWatch alarms** (e.g., CPU > 50%) trigger ASG scaling actions - **Service-linked IAM role for Auto Scaling** may be required for ASG + CloudWatch integration to work ---"
+      },
+      {
+        "heading": "Table of Contents",
+        "slug": "table-of-contents",
+        "content": "1. [Elastic Load Balancing (ELB) — Deep Dive](#1-elastic-load-balancing-elb--deep-dive) 2. [Auto Scaling Groups (ASG)](#2-auto-scaling-groups-asg) 3. [Decoupled / Scalable Architecture Concepts](#3-decoupled--scalable-architecture-concepts) 4. [Lab 173 — Troubleshooting the LAMP EC2 Deployment Script](#4-lab-173--troubleshooting-the-lamp-ec2-deployment-script) 5. [Annotated Walkthrough of `create-ec2.txt`](#5-annotated-walkthrough-of-create-ec2txt) 6. [Lab 174 — Building an Auto Scaling Group Behind an ALB](#6-lab-174--building-an-auto-scaling-group-behind-an-alb) 7. [Useful Vim/Nano & CLI Commands](#7-useful-vimnano--cli-commands) 8. [CLF-C02 Exam Relevance](#8-clf-c02-exam-relevance) ---"
+      },
+      {
+        "heading": "1. Elastic Load Balancing ELB — Deep Dive",
+        "slug": "1-elastic-load-balancing-elb-—-deep-dive",
+        "content": "ELB distributes incoming application traffic across multiple targets (EC2 instances, containers, IP addresses) in one or more Availability Zones, increasing fault tolerance and availability."
+      },
+      {
+        "heading": "Types of Load Balancers",
+        "slug": "types-of-load-balancers",
+        "content": "| Type | OSI Layer | Protocols | Best Use Case | Notes | |---|---|---|---|---| | **Application Load Balancer (ALB)** | Layer 7 | HTTP, HTTPS, gRPC | Normal web applications, microservices, path/host-based routing | Most commonly used; path-based routing, native IPv6, deletion protection, target health checks | | **Network Load Balancer (NLB)** | Layer 4 | TCP, UDP, TLS | Extreme performance, gaming servers, sudden traffic bursts | Faster than ALB but fewer features | | **Gateway Load Balancer (GWLB)** | Layer 3/4 | IP | Routing traffic to third-party virtual security/inspection appliances | Used for packet inspection before traffic reaches the server | | **Classic Load Balancer (CLB)** | Legacy | HTTP/HTTPS/TCP | N/A — deprecated | Legacy; not used in modern deployments |"
+      },
+      {
+        "heading": "Key ALB Features",
+        "slug": "key-alb-features",
+        "content": "- Path-based routing (e.g., `/auth` → instance group 1, `/posts` → instance group 2) - Health checks: continuously monitors whether EC2 instances are healthy - TLS termination: ALB decrypts incoming traffic so backend servers don't need to handle SSL/TLS overhead - Active-active design across multiple EC2 instances/AZs"
+      },
+      {
+        "heading": "Scenario-Based Selection Rule of Thumb",
+        "slug": "scenario-based-selection-rule-of-thumb",
+        "content": "- Normal website → **ALB** - Massive sudden traffic bursts / gaming / extreme low-latency → **NLB** - Need to route traffic through a security appliance for packet inspection → **GWLB** - Legacy systems only → CLB (avoid for new designs) ---"
+      },
+      {
+        "heading": "2. Auto Scaling Groups ASG",
+        "slug": "2-auto-scaling-groups-asg",
+        "content": ""
+      },
+      {
+        "heading": "Why ASGs Are Needed",
+        "slug": "why-asgs-are-needed",
+        "content": "ELB alone only *distributes* traffic across existing instances — it does not add or remove instances. **Auto Scaling Groups** maintain the desired number of EC2 instances and automatically scale in/out based on demand."
+      },
+      {
+        "heading": "Typical Architecture Flow",
+        "slug": "typical-architecture-flow",
+        "content": "``` Route 53 (DNS) → Elastic Load Balancer → EC2 Instances (in an Auto Scaling Group) → RDS (shared database) ```"
+      },
+      {
+        "heading": "Why a Shared Database RDS Matters",
+        "slug": "why-a-shared-database-rds-matters",
+        "content": "- If application data is stored locally on an individual EC2 instance, and the ASG terminates that instance during scale-in, the data is **lost**. - Best practice: use a centralized **RDS** database so all EC2 instances share consistent data."
+      },
+      {
+        "heading": "Scaling Policy Types",
+        "slug": "scaling-policy-types",
+        "content": "- **Target tracking scaling policy** – e.g., maintain CPU utilization at 50%; if CPU > 50%, ASG launches more instances - Based on number of requests - Based on a CloudWatch alarm - **Scheduled scaling** – e.g., scale down overnight in regions with predictably low traffic"
+      },
+      {
+        "heading": "Capacity Settings",
+        "slug": "capacity-settings",
+        "content": "- **Minimum capacity** – the floor; ASG will never go below this number of instances - **Desired capacity** – the target number of instances under normal conditions - **Maximum capacity** – the ceiling; ASG will never exceed this number *Lab 174 example values: Minimum = 2, Desired = 2, Maximum = 4, Target Tracking on CPU Utilization = 50%* ---"
+      },
+      {
+        "heading": "3. Decoupled / Scalable Architecture Concepts",
+        "slug": "3-decoupled-scalable-architecture-concepts",
+        "content": "- **Decoupling**: Client requests go to the Load Balancer first, not directly to application servers. Application servers can live in **private subnets** (not publicly reachable). - **Stateless application design**: Because ASG can terminate instances at any time during scale-in, instances should not store unique/critical data locally — use a shared database (RDS) or external storage. - **Microservices**: Different EC2 instances/target groups can handle different responsibilities, with the ALB routing based on URL path. - Static/media content (video, images, audio) is generally better served via **Amazon S3 + CDN** rather than from application servers. ---"
+      },
+      {
+        "heading": "4. Lab 173 — Troubleshooting the LAMP EC2 Deployment Script",
+        "slug": "4-lab-173-—-troubleshooting-the-lamp-ec2-deployment-script",
+        "content": ""
+      },
+      {
+        "heading": "Lab Setup Steps",
+        "slug": "lab-setup-steps",
+        "content": "1. Connect to a **CLI host** EC2 instance using **EC2 Instance Connect**. 2. Configure AWS CLI with `aws configure`: - Access Key ID - Secret Access Key - Default region - Output format (JSON) 3. Locate the provided script `create-lamp-instance...sh` and create a backup copy before editing. 4. Use `vim` (with `:set number` to show line numbers) to review the script."
+      },
+      {
+        "heading": "Issue 1: Hardcoded/Incorrect Region",
+        "slug": "issue-1-hardcodedincorrect-region",
+        "content": "- The script contained a hardcoded region (`us-east-1`) that did not match the actual working region (`us-west-2`). - **Fix**: Edit the script in vim and replace the hardcoded region string with the `$region` variable that the script already derives dynamically, so the script becomes region-agnostic."
+      },
+      {
+        "heading": "Issue 2: Wrong Port in Security Group 8080 vs 80",
+        "slug": "issue-2-wrong-port-in-security-group-8080-vs-80",
+        "content": "- After running the script successfully, the resulting website was unreachable. - Used **`nmap`** to scan open ports on the public IP: - `sudo yum install -y nmap` - `nmap -Pn <public-ip>` → scans all ports, showing port 22 and 8080 open, but **port 80 closed** - Root cause: The script opened port **8080** instead of port **80** in the security group ingress rule. - **Two ways to fix**: 1. Edit the security group inbound rule directly in the AWS console — change the rule type from \"Custom TCP / 8080\" to **HTTP (port 80)**. 2. Edit the script itself (change `8080` → `80`) so the security group is created correctly the *next* time the script runs. - Once port 80 is open, the LAMP \"Cafe\" web app becomes accessible at: `http://<public-ip>/cafe`"
+      },
+      {
+        "heading": "Additional Notes from the Lab",
+        "slug": "additional-notes-from-the-lab",
+        "content": "- HTTPS will **not** work simply by opening port 443 in the security group — an SSL/TLS certificate must also be installed/configured on the server. - The outbound rule should remain \"All traffic\" (default) — no change needed. - If an EC2 instance is **terminated**, it cannot be recovered (unlike \"stopped,\" which can be restarted). ---"
+      },
+      {
+        "heading": "5. Annotated Walkthrough of create-ec2.txt",
+        "slug": "5-annotated-walkthrough-of-create-ec2txt",
+        "content": "| Section | Purpose | |---|---| | **Shebang (`#!/bin/bash`)** | Declares the script should run using bash | | **Hardcoded values** | Sets `instanceType=\"t3.small\"` and `profile=\"default\"` | | **Region/VPC discovery loop** | Uses `aws ec2 describe-regions` and `describe-vpcs` to find the region and VPC tagged `Cafe VPC` | | **Subnet lookup** | Uses `describe-subnets` to find the subnet tagged `Cafe Public Subnet 1` | | **Key pair lookup** | Uses `describe-key-pairs` to retrieve the existing SSH key pair name | | **AMI lookup** | Uses `ssm get-parameters` to fetch the latest Amazon Linux 2 AMI ID via `/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2` | | **Existing instance check** | Uses `describe-instances` to check if an instance tagged `cafeserver` is already running; if so, prompts to terminate it | | **Existing security group check** | Uses `describe-security-groups` to check for an existing `cafeSG`; prompts to delete if found | | **Security group creation** | `create-security-group` creates a new `cafeSG` group in the discovered VPC | | **Inbound rule configuration** | `authorize-security-group-ingress` opens **port 22** (SSH) and a port for HTTP — *bug: it opened port `8080` instead of `80`* | | **Instance launch** | `run-instances` launches the EC2 instance using: discovered AMI ID, instance type, subnet, security group, IAM instance profile, user data, and key pair — *bug: `--region us-east-1` was hardcoded instead of using the `$region` variable* | | **Result extraction** | Parses the JSON output with `python -m json.tool` to extract the new `instanceId` | | **Public IP polling loop** | Repeatedly calls `describe-instances` until a public IP is assigned | | **Final output** | Prints SSH connection command and the web app URL: `http://<public-ip>/cafe/` | **Key takeaways for understanding automation scripts:** - Most of the script's logic is dedicated to *discovering* required resource IDs dynamically via CLI queries rather than hardcoding them. - Only the final `aws ec2 run-instances` command actually creates the resource — everything before it gathers the inputs needed. - Scripts like this are idempotent-aware: they check for and optionally clean up pre-existing resources before re-running. ---"
+      },
+      {
+        "heading": "6. Lab 174 — Building an Auto Scaling Group Behind an ALB",
+        "slug": "6-lab-174-—-building-an-auto-scaling-group-behind-an-alb",
+        "content": ""
+      },
+      {
+        "heading": "High-Level Steps",
+        "slug": "high-level-steps",
+        "content": "1. **Create an AMI** from the existing configured EC2 instance (Actions → Image and templates → Create image). This \"Web Server AMI\" is later used to launch identical new instances. 2. **Create a service-linked IAM role for Auto Scaling** (IAM → Roles → Create role → AWS service → use case = EC2 Auto Scaling). May be required for the ASG to function correctly with CloudWatch alarms. 3. **Create an Application Load Balancer**: - Choose **Application Load Balancer** (not Network or Gateway) - Name it (e.g., `Lab ELB`) - Network mapping: select the **lab VPC** (not default VPC), both Availability Zones, and **public subnets** - Security group: use the existing **web security group** (not default) - Create a new **target group** (target type = instances, protocol HTTP, port 80) - Note/copy the ALB's **DNS name** — this is the URL used to test the app 4. **Create a Launch Template**: - Provide name/description - Instance type: `t3.micro` - Do **not** include a key pair in the launch template - Select the **web security group** - Select the **custom AMI** created in step 1 (critical — easy to miss this step) 5. **Create the Auto Scaling Group** from the launch template: - Network: lab VPC, **private subnets** (1 and 2) — application instances run in private subnets behind the ALB - Attach to the **existing load balancer** → select the target group created above - Enable **Elastic Load Balancing health checks** - Set capacity: Minimum = 2, Desired = 2, Maximum = 4 - Scaling policy: **target tracking**, metric = CPU Utilization, target = 50% - Add a tag: Key = `Name`, Value = e.g. `lab instance` 6. **Verify**: - After creation, check EC2 console — instance count should increase to match the ASG's desired capacity - Open the ALB's DNS name in a browser to confirm the app is reachable 7. **Load Testing**: - The lab's web app includes a \"load test\" button that artificially raises CPU utilization (observed reaching ~70%+) - In **CloudWatch → Alarms**, an alarm should trigger once CPU exceeds the 50% target, causing the ASG to launch additional instances (scale-out) - May take a few minutes for the alarm state to update — refresh periodically"
+      },
+      {
+        "heading": "Troubleshooting Notes from the Lab",
+        "slug": "troubleshooting-notes-from-the-lab",
+        "content": "- If no CloudWatch alarm appears after load testing, it may be related to the **service role for Auto Scaling** not being created correctly — recreating the ASG (delete and re-create) sometimes resolves it. ---"
+      },
+      {
+        "heading": "7. Useful Vim/Nano & CLI Commands",
+        "slug": "7-useful-vimnano-cli-commands",
+        "content": "| Command | Purpose | |---|---| | `vim -O <file>` or `vi <file>` | Open file for editing | | `:set number` | Show line numbers in vim | | `i` | Enter insert (edit) mode | | `Esc` | Exit insert mode back to normal mode | | `:wq` or `:wq!` | Save and quit | | `:q!` | Quit without saving | | `gg` / `G` | Go to beginning / end of file | | `nano <file>` | Alternative, simpler text editor | | `./<script>.sh` | Execute a bash script (Tab to autocomplete filenames) | | `nmap -Pn <ip>` | Scan all ports on a host (useful for verifying security group rules) | | `aws configure` | Set up AWS CLI credentials, region, and output format | | `aws ec2 describe-regions` | List all AWS regions | | `aws ssm get-parameters --names <ami-param>` | Retrieve latest AMI ID via SSM public parameters | | `aws ec2 run-instances ...` | Launch a new EC2 instance | | `aws ec2 wait instance-terminated ...` | Pause script execution until an instance is fully terminated | ---"
+      },
+      {
+        "heading": "8. CLF-C02 Exam Relevance",
+        "slug": "8-clf-c02-exam-relevance",
+        "content": "| Topic | CLF-C02 Domain | Relevance | |---|---|---| | **Elastic Load Balancing types (ALB/NLB/GWLB/CLB)** | Cloud Technology & Services | High — know which load balancer fits which scenario | | **Layer 4 vs Layer 7** | Cloud Technology & Services | Medium — NLB vs ALB OSI layer distinction | | **Auto Scaling Groups** | Cloud Technology & Services + Cost Optimization | High — min/desired/max, target tracking, scheduled scaling | | **Scaling for cost optimization** | Cloud Concepts (WAF) | High — Cost Optimization and Performance Efficiency pillars | | **Decoupled architecture / shared database (RDS)** | Cloud Technology + Reliability | High — statelessness and high availability best practices | | **Security Groups (stateful, instance-level)** | Security & Compliance | High — recurring exam distinction (SG vs NACL) | | **IAM Roles (service-linked roles for Auto Scaling)** | Security & Compliance | High — services often need IAM roles to interact with other services | | **AWS CLI & `aws configure`** | Cloud Technology & Services | Medium — familiarity with CLI's purpose | | **AMIs (Amazon Machine Images)** | Cloud Technology & Services | High — custom AMIs to launch consistent instances | | **CloudWatch Alarms** | Management & Governance | High — monitoring/observability | | **Route 53 in the scaling architecture** | Cloud Technology & Services | Medium — DNS routing as part of overall traffic flow | | **Public vs. private subnets** | Cloud Technology & Services | High — app servers in private subnets behind a public-facing load balancer | **Bottom line**: Today's lecture ties together several CLF-C02 \"Cloud Architecture\" pillars into one coherent picture — ELB + ASG + RDS + VPC subnetting — a very common pattern in exam scenario questions (e.g., \"A company needs a fault-tolerant, scalable web application...\"). --- *Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 11, 2026.*"
+      }
+    ],
+    "body": "Cohort 3 | Project CloudIgnite Topics: Elastic Load Balancing (deep dive), Auto Scaling Groups, Lab 173 (EC2 LAMP deployment troubleshooting script), Lab 174 (ALB + Auto Scaling Group build with load testing) Duration: ~3 hours ELB types: ALB (L7, HTTP/HTTPS, path-based routing), NLB (L4, TCP/UDP, extreme performance/low latency), GWLB (L3/4, third-party security appliances), CLB (legacy — avoid) Auto Scaling Group (ASG) maintains desired instance count and scales in/out based on demand; pairs with ELB for high availability ASG capacity: Minimum (floor), Desired (target), Maximum (ceiling) Shared database (RDS) is critical — ASG instances are ephemeral, so data must live in centralized storage to survive scale-in Decoupled architecture: ALB in public subnets, application servers in private subnets (not directly reachable) AMI → Launch Template → ASG: the custom AMI in the launch template makes new instances identical CloudWatch alarms (e.g., CPU > 50%) trigger ASG scaling actions Service-linked IAM role for Auto Scaling may be required for ASG + CloudWatch integration to work Elastic Load Balancing (ELB) — Deep Dive Auto Scaling Groups (ASG) Decoupled / Scalable Architecture Concepts Lab 173 — Troubleshooting the LAMP EC2 Deployment Script Annotated Walkthrough of Lab 174 — Building an Auto Scaling Group Behind an ALB Useful Vim/Nano & CLI Commands CLF-C02 Exam Relevance ELB distributes incoming application traffic across multiple targets (EC2 instances, containers, IP addresses) in one or more Availability Zones, increasing fault tolerance and availability. Path-based routing (e.g., → instance group 1, → instance group 2) Health checks: continuously monitors whether EC2 instances are healthy TLS termination: ALB decrypts incoming traffic so backend servers don't need to handle SSL/TLS overhead Active-active design across multiple EC2 instances/AZs Normal website → ALB Massive sudden traffic bursts / gaming / extreme low-latency → NLB Need to route traffic through a security appliance for packet inspection → GWLB Legacy systems only → CLB (avoid for new designs) ELB alone only distributes traffic across existing instances — it does not add or remove instances. Auto Scaling Groups maintain the desired number of EC2 instances and automatically scale in/out based on demand. If application data is stored locally on an individual EC2 instance, and the ASG terminates that instance during scale-in, the data is lost. Best practice: use a centralized RDS database so all EC2 instances share consistent data. Target tracking scaling policy – e.g., maintain CPU utilization at 50%; if CPU > 50%, ASG launches more instances Based on number of requests Based on a CloudWatch alarm Scheduled scaling – e.g., scale down overnight in regions with predictably low traffic Minimum capacity – the floor; ASG will never go below this number of instances Desired capacity – the target number of instances under normal conditions Maximum capacity – the ceiling; ASG will never exceed this number Lab 174 example values: Minimum = 2, Desired = 2, Maximum = 4, Target Tracking on CPU Utilization = 50% Decoupling: Client requests go to the Load Balancer first, not directly to application servers. Application servers can live in private subnets (not publicly reachable). Stateless application design: Because ASG can terminate instances at any time during scale-in, instances should not store unique/critical data locally — use a shared database (RDS) or external storage. Microservices: Different EC2 instances/target groups can handle different responsibilities, with the ALB routing based on URL path. Static/media content (video, images, audio) is generally better served via Amazon S3 + CDN rather than from application servers. Connect to a CLI host EC2 instance using EC2 Instance Connect. Configure AWS CLI with : - Access Key ID - Secret Access Key - Default region - Output format (JSON) Locate the provided script and create a backup copy before editing. Use (with to show line numbers) to review the script. The script contained a hardcoded region () that did not match the actual working region (). Fix: Edit the script in vim and replace the hardcoded region string with the variable that the script already derives dynamically, so the script becomes region-agnostic. After running the script successfully, the resulting website was unreachable. Used to scan open ports on the public IP: - - → scans all ports, showing port 22 and 8080 open, but port 80 closed Root cause: The script opened port 8080 instead of port 80 in the security group ingress rule. Two ways to fix: 1. Edit the security group inbound rule directly in the AWS console — change the rule type from \"Custom TCP / 8080\" to HTTP (port 80). 2. Edit the script itself (change → ) so the security group is created correctly the next time the script runs. Once port 80 is open, the LAMP \"Cafe\" web app becomes accessible at: HTTPS will not work simply by opening port 443 in the security group — an SSL/TLS certificate must also be installed/configured on the server. The outbound rule should remain \"All traffic\" (default) — no change needed. If an EC2 instance is terminated, it cannot be recovered (unlike \"stopped,\" which can be restarted). Key takeaways for understanding automation scripts: Most of the script's logic is dedicated to discovering required resource IDs dynamically via CLI queries rather than hardcoding them. Only the final command actually creates the resource — everything before it gathers the inputs needed. Scripts like this are idempotent-aware: they check for and optionally clean up pre-existing resources before re-running. Create an AMI from the existing configured EC2 instance (Actions → Image and templates → Create image). This \"Web Server AMI\" is later used to launch identical new instances. Create a service-linked IAM role for Auto Scaling (IAM → Roles → Create role → AWS service → use case = EC2 Auto Scaling). May be required for the ASG to function correctly with CloudWatch alarms. Create an Application Load Balancer: - Choose Application Load Balancer (not Network or Gateway) - Name it (e.g., ) - Network mapping: select the lab VPC (not default VPC), both Availability Zones, and public subnets - Security group: use the existing web security group (not default) - Create a new target group (target type = instances, protocol HTTP, port 80) - Note/copy the ALB's DNS name — this is the URL used to test the app Create a Launch Template: - Provide name/description - Instance type: - Do not include a key pair in the launch template - Select the web security group - Select the custom AMI created in step 1 (critical — easy to miss this step) Create the Auto Scaling Group from the launch template: - Network: lab VPC, private subnets (1 and 2) — application instances run in private subnets behind the ALB - Attach to the existing load balancer → select the target group created above - Enable Elastic Load Balancing health checks - Set capacity: Minimum = 2, Desired = 2, Maximum = 4 - Scaling policy: target tracking, metric = CPU Utilization, target = 50% - Add a tag: Key = , Value = e.g. Verify: - After creation, check EC2 console — instance count should increase to match the ASG's desired capacity - Open the ALB's DNS name in a browser to confirm the app is reachable Load Testing: - The lab's web app includes a \"load test\" button that artificially raises CPU utilization (observed reaching ~70%+) - In CloudWatch → Alarms, an alarm should trigger once CPU exceeds the 50% target, causing the ASG to launch additional instances (scale-out) - May take a few minutes for the alarm state to update — refresh periodically If no CloudWatch alarm appears after load testing, it may be related to the service role for Auto Scaling not being created correctly — recreating the ASG (delete and re-create) sometimes resolves it. Bottom line: Today's lecture ties together several CLF-C02 \"Cloud Architecture\" pillars into one coherent picture — ELB + ASG + RDS + VPC subnetting — a very common pattern in exam scenario questions (e.g., \"A company needs a fault-tolerant, scalable web application...\"). Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 11, 2026.",
+    "url": "/notes/week_11/2026-06-11"
+  },
+  {
+    "title": "June 12, 2026",
+    "week": "week_11",
+    "weekLabel": "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
+    "slug": "2026-06-12",
+    "date": "2026-06-12",
+    "day": "Friday",
+    "topics": [
+      "EC2 Auto Scaling (deep dive)",
+      "Amazon Route 53",
+      "Amazon CloudFront",
+      "Lab 175 (CLI-based Auto Scaling lab)"
+    ],
+    "headings": [
+      "Key Takeaways",
+      "Table of Contents",
+      "1. EC2 Auto Scaling — Continued Concepts",
+      "Steady-State Group",
+      "Avoiding \"Thrashing\" Repeated Scale In/Out",
+      "Termination Policies & Scaling Behavior",
+      "2. Amazon Route 53",
+      "Overview",
+      "Architecture Concept",
+      "Routing Policies",
+      "Practical Use Case: Blue-Green Deployment",
+      "Route 53 Targets",
+      "3. Amazon CloudFront CDN",
+      "Overview",
+      "Key Features",
+      "Use Cases",
+      "Architecture / Flow",
+      "Cost Factors",
+      "4. Lab 175 — CLI-Based Auto Scaling Lab",
+      "High-Level Steps",
+      "Common Troubleshooting Notes from the Lab",
+      "5. Checkpoint Questions Recap",
+      "6. CLF-C02 Exam Relevance"
+    ],
+    "sections": [
+      {
+        "heading": "Key Takeaways",
+        "slug": "key-takeaways",
+        "content": "- **ASG anti-thrashing guards:** cooldown period, warm-up period, alarm sustain period (default ~300s each) - **ASG termination policy \"Terminate Newest First\"** — useful when a new server config fails and must be removed quickly - **To force ASG to launch new instances** → increase the **minimum capacity** (ASG launches to meet the new floor) - **If all newly launched ASG instances are failing** → the issue is in the **Launch Template and/or AMI** (they define instance config/behavior) - **Route 53 = AWS DNS service**; can distribute traffic across **regions** (ALB only distributes **within** a region) - **Route 53 routing policies:** Simple, Weighted, Latency-based, Failover, **Geolocation** (user's location), **Geoproximity** (physical distance), Multi-value, IP-based - **Geolocation vs Geoproximity vs Latency** (commonly confused): Geolocation = where the user is; Geoproximity = physical distance; Latency = measured response time - **Amazon CloudFront = AWS CDN:** uses global edge locations + regional edge caches to deliver static/dynamic content faster and reduce origin load ---"
+      },
+      {
+        "heading": "Table of Contents",
+        "slug": "table-of-contents",
+        "content": "1. [EC2 Auto Scaling — Continued Concepts](#1-ec2-auto-scaling--continued-concepts) 2. [Amazon Route 53](#2-amazon-route-53) 3. [Amazon CloudFront (CDN)](#3-amazon-cloudfront-cdn) 4. [Lab 175 — CLI-Based Auto Scaling Lab](#4-lab-175--cli-based-auto-scaling-lab) 5. [Checkpoint Questions Recap](#5-checkpoint-questions-recap) 6. [CLF-C02 Exam Relevance](#6-clf-c02-exam-relevance) ---"
+      },
+      {
+        "heading": "1. EC2 Auto Scaling — Continued Concepts",
+        "slug": "1-ec2-auto-scaling-—-continued-concepts",
+        "content": ""
+      },
+      {
+        "heading": "Steady-State Group",
+        "slug": "steady-state-group",
+        "content": "- An Auto Scaling Group where **Minimum = Maximum = Desired** capacity. - If an instance becomes unhealthy, Auto Scaling **automatically replaces it** with a new instance — core self-healing benefit of ASG."
+      },
+      {
+        "heading": "Avoiding \"Thrashing\" Repeated Scale In/Out",
+        "slug": "avoiding-thrashing-repeated-scale-inout",
+        "content": "| Mechanism | Description | |---|---| | **Alarm Sustain Period** | CloudWatch alarm must remain in breach for a specified duration before triggering a scaling action — avoids reacting to short spikes | | **Cooldown Period** | After a scaling event completes, no new scaling action is triggered for a set time (e.g., 300 seconds) — even if scaling conditions are still met | | **Warm-Up Period** | After a new instance launches, it is given time to become fully ready/configured before it's counted as \"in service\" (default: 300 seconds) |"
+      },
+      {
+        "heading": "Termination Policies & Scaling Behavior",
+        "slug": "termination-policies-scaling-behavior",
+        "content": "- **\"Newest Instance First\"** termination policy: useful when a **new server configuration fails** and needs to be removed quickly from the ASG. - To **force new instances to launch**: increase the **minimum capacity** of the ASG — ASG will automatically launch instances to meet the new minimum. - If **all newly launched instances are failing**: the issue is likely in the **Launch Template** and/or the **AMI** — these define instance configuration/behavior and should be reviewed/updated. ---"
+      },
+      {
+        "heading": "2. Amazon Route 53",
+        "slug": "2-amazon-route-53",
+        "content": ""
+      },
+      {
+        "heading": "Overview",
+        "slug": "overview",
+        "content": "- Route 53 = **AWS's DNS (Domain Name System) service**. - Functions: - Register/purchase domain names - Resolve domain names to IP addresses - Connect infrastructure and **distribute traffic across Regions** (a key difference vs. ALB, which only distributes traffic *within* a single Region) - Supports high availability and low latency"
+      },
+      {
+        "heading": "Architecture Concept",
+        "slug": "architecture-concept",
+        "content": "- Users request a custom domain → request goes to Route 53 → Route 53 resolves to a target DNS name (commonly an **ELB DNS name**, but can also be an **EC2 instance DNS name** or **S3 bucket**)."
+      },
+      {
+        "heading": "Routing Policies",
+        "slug": "routing-policies",
+        "content": "| Policy | Description | |---|---| | **Simple** | Basic single-resource routing (no special logic) | | **Weighted** | Distribute traffic by percentage across multiple resources (e.g., 10% to Server A, 90% to Server B) — useful when servers have different capacities | | **Latency-based** | Routes traffic to the resource/region with the **lowest latency** for the user — not necessarily the geographically closest | | **Failover** | Primary/secondary setup — if primary fails, traffic automatically routes to secondary | | **Geolocation** | Routes based on the **user's geographic location** (e.g., users from Southeast Asia → Malaysia server) | | **Geoproximity** | Routes to the **physically closest** resource (based on distance) | | **Multi-value answer** | Returns up to 8 healthy records selected at random; includes health checking | | **IP-based** | Routes based on the **user's IP address** to a specific endpoint | > **Most emphasized for exam-style questions:** Weighted, Failover, Geolocation, and Geoproximity (esp. distinguishing Geolocation vs. Geoproximity vs. Latency-based — these are commonly confused). > > - **Geolocation** = based on *where the request originates* (user's location) > - **Geoproximity** = based on *physical distance* to resources > - **Latency-based** = based on *measured response time*, not physical distance"
+      },
+      {
+        "heading": "Practical Use Case: Blue-Green Deployment",
+        "slug": "practical-use-case-blue-green-deployment",
+        "content": "- Two environments exist (e.g., \"blue\" = current, \"green\" = new). - Route 53 (weighted routing) can **gradually shift traffic** from blue to green (e.g., 5% → 10% → 20% → 50% → 100%) instead of an instant cutover — reduces risk when rolling out new features."
+      },
+      {
+        "heading": "Route 53 Targets",
+        "slug": "route-53-targets",
+        "content": "- Route 53 can route/connect to: **Elastic Load Balancers (ALB)**, **EC2 instances**, and **S3 buckets**. ---"
+      },
+      {
+        "heading": "3. Amazon CloudFront CDN",
+        "slug": "3-amazon-cloudfront-cdn",
+        "content": ""
+      },
+      {
+        "heading": "Overview",
+        "slug": "overview-1",
+        "content": "- CloudFront = AWS **Content Delivery Network (CDN)** service that speeds up distribution of **static and dynamic** web content. - Delivers content via a global network of **Edge Locations** (data centers around the world) plus **Regional Edge Caches**."
+      },
+      {
+        "heading": "Key Features",
+        "slug": "key-features",
+        "content": "- Security - High availability / scalability - Real-time metrics and logging - Continuous deployment - Cost-effectiveness (at scale)"
+      },
+      {
+        "heading": "Use Cases",
+        "slug": "use-cases",
+        "content": "- Fast & secure website delivery - Accelerating dynamic content delivery / APIs - Live and on-demand video streaming - Distributing software patches and updates"
+      },
+      {
+        "heading": "Architecture / Flow",
+        "slug": "architecture-flow",
+        "content": "- Users **never connect directly to the origin server**. - Request flow: **User → Edge Location → Origin Server → Edge Location (cache) → User**. - For **live streaming**: the origin server maintains a connection only with the edge location (not with every individual viewer). The edge location then fans out the stream to all users. - Edge locations have **failover** — if content isn't available at the nearest edge, the request is served from another edge location."
+      },
+      {
+        "heading": "Cost Factors",
+        "slug": "cost-factors",
+        "content": "CloudFront pricing is based on: - Request type - Geographic location of the edge location - Amount of data transferred out of the AWS network > Cost-saving logic: fewer EC2 instances are needed to handle direct connections because CloudFront edge locations absorb most of the traffic. ---"
+      },
+      {
+        "heading": "4. Lab 175 — CLI-Based Auto Scaling Lab",
+        "slug": "4-lab-175-—-cli-based-auto-scaling-lab",
+        "content": "**Goal:** Recreate a scalable web server setup using the AWS CLI, then build an Auto Scaling Group with a Launch Template and Application Load Balancer."
+      },
+      {
+        "heading": "High-Level Steps",
+        "slug": "high-level-steps",
+        "content": "1. **Connect to the Command Host** instance via **EC2 Instance Connect**. - If connection fails: check that the **Security Group allows SSH**. 2. **Configure AWS CLI** (`aws configure`) — region was pre-set to **us-west-2**; access key/secret key fields could be left blank (already configured). 3. **Launch a new EC2 instance via CLI** using a prepared command including: - `--image-id` (AMI ID) - `--instance-type t3.micro` - `--key-name` - `--subnet-id` - `--security-group-ids` (HTTP Access security group) - `--region us-west-2` - **User data**: a bash script that runs automatically on launch - **Tip:** if the CLI command is on a single line, use `\\` (backslash) line continuations after each parameter, or write the whole command on one line. 4. **Save important IDs/values as shell variables** (e.g., `EC2ID=<instance-id>`, `AMIID=<ami-id>`). 5. **Retrieve the public DNS name** of the new instance via a CLI query using the instance ID; test the web server in a browser using `http://<public-dns>` (must use **HTTP**, not HTTPS; try **Incognito mode** if cached results interfere). 6. **Create an AMI** from the running \"web server\" instance (CLI step ~25) — save the resulting **AMI ID** as a variable for later use. 7. **Create an Application Load Balancer (ALB)**: - Internet-facing, IPv4 - VPC = Lab VPC - Subnets = Availability Zone 1 & 2 **public subnets** - Security Group = HTTP Access (not default) 8. **Create a Target Group**: - Target type = **Instance** - Protocol HTTP, Port 80 - **Health check path = `/index.php`** 9. **Create a Launch Template**: - Use the **custom AMI** created in step 6 - Instance type = **t3.micro** - Security Group = HTTP Access - Default storage settings (gp2) are fine 10. **Create an Auto Scaling Group from the Launch Template**: - VPC = Lab VPC, Subnets = **private subnet 1 & 2** - Attach the existing ALB and select the target group created above - Enable **ELB health checks** - **Desired capacity = 2, Minimum = 2, Maximum = 4** - Scaling policy = **Target Tracking**, metric = **CPU Utilization at 50%** - Instance warm-up = default **300 seconds** - Tag: Name = `web app` 11. **Test Auto Scaling**: use the load balancer's DNS name to access the \"Start Stress / Stop Stress\" test page. Generating CPU load triggers the **CloudWatch alarm** (CPU > 50%) → ASG launches **two additional EC2 instances**."
+      },
+      {
+        "heading": "Common Troubleshooting Notes from the Lab",
+        "slug": "common-troubleshooting-notes-from-the-lab",
+        "content": "- **\"502 Bad Gateway\"** errors typically trace back to a problem with the **original EC2 instance/AMI** — since the launch template and ASG instances are duplicated from it, errors propagate downstream. - CLI query errors are often caused by: missing backslashes for line continuation, missing spaces between parameters, or unintended line breaks. - Scaling actions are **not instantaneous** — there's a delay before new instances appear after an alarm triggers. ---"
+      },
+      {
+        "heading": "5. Checkpoint Questions Recap",
+        "slug": "5-checkpoint-questions-recap",
+        "content": "| Question | Answer / Concept | |---|---| | New server config might fail — which termination policy lets you quickly remove it? | **Terminate newest instance first** | | How to force a new EC2 instance to launch in an ASG? | **Increase the minimum capacity** | | All newly created ASG instances are failing — what should be checked? | **Launch Template and AMI** | | Three ways to avoid scaling \"thrashing\"? | **Cooldown period, Warm-up period, Alarm sustain period** | | Blue-green deployment, gradually shift traffic — which Route 53 policy? | **Weighted routing policy** | | Scaling policy that reacts based on the *size* of a CloudWatch alarm breach? | **Step scaling policy** | | Route users to the closest *region* — which Route 53 policy? | **Geolocation** | | Users complain of slow response after geolocation routing — which policy addresses this? | **Latency-based routing** | | AWS service that speeds up content delivery via edge locations (CDN)? | **Amazon CloudFront** | | ELB type to distribute requests to EC2 instances in a VPC? | **Application Load Balancer (ALB)** — CLB is legacy/deprecated | | ALB component that checks for incoming connection requests from clients? | **Listener** | ---"
+      },
+      {
+        "heading": "6. CLF-C02 Exam Relevance",
+        "slug": "6-clf-c02-exam-relevance",
+        "content": "| Topic | CLF-C02 Domain | Relevance | |---|---|---| | **EC2 Auto Scaling** (policies, cooldown/warm-up/alarm sustain, termination policies, launch templates, capacity settings) | Cloud Technology & Services | High — frequently tested for elasticity and HA | | **Amazon Route 53** (DNS, 8 routing policies) | Cloud Technology & Services | High — especially the differences between geolocation, geoproximity, and latency | | **Amazon CloudFront** (CDN, edge locations, static/dynamic content, streaming) | Cloud Technology & Services | High — global infrastructure benefits | | **Elastic Load Balancing (ALB)** (distinguishing from CLB, listeners, target groups, health checks) | Cloud Technology & Services | High — core exam topic | | **AWS CLI** (programmatic access) | Cloud Technology & Services | Medium — deployment and management methods | | **AWS Global Infrastructure** (Regions, AZs, Edge Locations) | Cloud Concepts | High — reinforced through Route 53 cross-region routing and CloudFront edge locations | **High-priority review items for CLF-C02:** - ASG cooldown vs. warm-up vs. alarm sustain period - Route 53 routing policy differences (esp. geolocation vs. geoproximity vs. latency) - CloudFront edge locations and why they reduce latency/improve availability - ALB vs. Classic Load Balancer (CLB is legacy) --- *Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 12, 2026.*"
+      }
+    ],
+    "body": "Cohort 3 | Project CloudIgnite Topics: EC2 Auto Scaling (deep dive), Amazon Route 53, Amazon CloudFront, Lab 175 (CLI-based Auto Scaling lab) Duration: ~3 hours ASG anti-thrashing guards: cooldown period, warm-up period, alarm sustain period (default ~300s each) ASG termination policy \"Terminate Newest First\" — useful when a new server config fails and must be removed quickly To force ASG to launch new instances → increase the minimum capacity (ASG launches to meet the new floor) If all newly launched ASG instances are failing → the issue is in the Launch Template and/or AMI (they define instance config/behavior) Route 53 = AWS DNS service; can distribute traffic across regions (ALB only distributes within a region) Route 53 routing policies: Simple, Weighted, Latency-based, Failover, Geolocation (user's location), Geoproximity (physical distance), Multi-value, IP-based Geolocation vs Geoproximity vs Latency (commonly confused): Geolocation = where the user is; Geoproximity = physical distance; Latency = measured response time Amazon CloudFront = AWS CDN: uses global edge locations + regional edge caches to deliver static/dynamic content faster and reduce origin load EC2 Auto Scaling — Continued Concepts Amazon Route 53 Amazon CloudFront (CDN) Lab 175 — CLI-Based Auto Scaling Lab Checkpoint Questions Recap CLF-C02 Exam Relevance An Auto Scaling Group where Minimum = Maximum = Desired capacity. If an instance becomes unhealthy, Auto Scaling automatically replaces it with a new instance — core self-healing benefit of ASG. \"Newest Instance First\" termination policy: useful when a new server configuration fails and needs to be removed quickly from the ASG. To force new instances to launch: increase the minimum capacity of the ASG — ASG will automatically launch instances to meet the new minimum. If all newly launched instances are failing: the issue is likely in the Launch Template and/or the AMI — these define instance configuration/behavior and should be reviewed/updated. Route 53 = AWS's DNS (Domain Name System) service. Functions: - Register/purchase domain names - Resolve domain names to IP addresses - Connect infrastructure and distribute traffic across Regions (a key difference vs. ALB, which only distributes traffic within a single Region) - Supports high availability and low latency Users request a custom domain → request goes to Route 53 → Route 53 resolves to a target DNS name (commonly an ELB DNS name, but can also be an EC2 instance DNS name or S3 bucket). Most emphasized for exam-style questions: Weighted, Failover, Geolocation, and Geoproximity (esp. distinguishing Geolocation vs. Geoproximity vs. Latency-based — these are commonly confused). - Geolocation = based on where the request originates (user's location) - Geoproximity = based on physical distance to resources - Latency-based = based on measured response time, not physical distance Two environments exist (e.g., \"blue\" = current, \"green\" = new). Route 53 (weighted routing) can gradually shift traffic from blue to green (e.g., 5% → 10% → 20% → 50% → 100%) instead of an instant cutover — reduces risk when rolling out new features. Route 53 can route/connect to: Elastic Load Balancers (ALB), EC2 instances, and S3 buckets. CloudFront = AWS Content Delivery Network (CDN) service that speeds up distribution of static and dynamic web content. Delivers content via a global network of Edge Locations (data centers around the world) plus Regional Edge Caches. Security High availability / scalability Real-time metrics and logging Continuous deployment Cost-effectiveness (at scale) Fast & secure website delivery Accelerating dynamic content delivery / APIs Live and on-demand video streaming Distributing software patches and updates Users never connect directly to the origin server. Request flow: User → Edge Location → Origin Server → Edge Location (cache) → User. For live streaming: the origin server maintains a connection only with the edge location (not with every individual viewer). The edge location then fans out the stream to all users. Edge locations have failover — if content isn't available at the nearest edge, the request is served from another edge location. CloudFront pricing is based on: Request type Geographic location of the edge location Amount of data transferred out of the AWS network Cost-saving logic: fewer EC2 instances are needed to handle direct connections because CloudFront edge locations absorb most of the traffic. Goal: Recreate a scalable web server setup using the AWS CLI, then build an Auto Scaling Group with a Launch Template and Application Load Balancer. Connect to the Command Host instance via EC2 Instance Connect. - If connection fails: check that the Security Group allows SSH. Configure AWS CLI () — region was pre-set to us-west-2; access key/secret key fields could be left blank (already configured). Launch a new EC2 instance via CLI using a prepared command including: - (AMI ID) - - - - (HTTP Access security group) - - User data: a bash script that runs automatically on launch - Tip: if the CLI command is on a single line, use (backslash) line continuations after each parameter, or write the whole command on one line. Save important IDs/values as shell variables (e.g., , ). Retrieve the public DNS name of the new instance via a CLI query using the instance ID; test the web server in a browser using (must use HTTP, not HTTPS; try Incognito mode if cached results interfere). Create an AMI from the running \"web server\" instance (CLI step ~25) — save the resulting AMI ID as a variable for later use. Create an Application Load Balancer (ALB): - Internet-facing, IPv4 - VPC = Lab VPC - Subnets = Availability Zone 1 & 2 public subnets - Security Group = HTTP Access (not default) Create a Target Group: - Target type = Instance - Protocol HTTP, Port 80 - Health check path = Create a Launch Template: - Use the custom AMI created in step 6 - Instance type = t3.micro - Security Group = HTTP Access - Default storage settings (gp2) are fine Create an Auto Scaling Group from the Launch Template: - VPC = Lab VPC, Subnets = private subnet 1 & 2 - Attach the existing ALB and select the target group created above - Enable ELB health checks - Desired capacity = 2, Minimum = 2, Maximum = 4 - Scaling policy = Target Tracking, metric = CPU Utilization at 50% - Instance warm-up = default 300 seconds - Tag: Name = Test Auto Scaling: use the load balancer's DNS name to access the \"Start Stress / Stop Stress\" test page. Generating CPU load triggers the CloudWatch alarm (CPU > 50%) → ASG launches two additional EC2 instances. \"502 Bad Gateway\" errors typically trace back to a problem with the original EC2 instance/AMI — since the launch template and ASG instances are duplicated from it, errors propagate downstream. CLI query errors are often caused by: missing backslashes for line continuation, missing spaces between parameters, or unintended line breaks. Scaling actions are not instantaneous — there's a delay before new instances appear after an alarm triggers. High-priority review items for CLF-C02: ASG cooldown vs. warm-up vs. alarm sustain period Route 53 routing policy differences (esp. geolocation vs. geoproximity vs. latency) CloudFront edge locations and why they reduce latency/improve availability ALB vs. Classic Load Balancer (CLB is legacy) Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 12, 2026.",
+    "url": "/notes/week_11/2026-06-12"
+  },
+  {
+    "title": "June 13, 2026",
+    "week": "week_11",
+    "weekLabel": "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
+    "slug": "2026-06-13",
+    "date": "2026-06-13",
+    "day": "Saturday",
+    "topics": [
+      "S3 Static Website Hosting",
+      "IAM Users & Policies",
+      "EC2 Provisioning via Scripts",
+      "Security Groups & Troubleshooting",
+      "Application Load Balancer (ALB)",
+      "Launch Templates & AMIs",
+      "Auto Scaling Groups",
+      "CloudWatch Alarms"
+    ],
+    "headings": [
+      "Key Takeaways",
+      "Table of Contents",
+      "1. IAM Users, Credentials & Policies",
+      "What was done",
+      "Key concepts",
+      "2. S3 Static Website Hosting",
+      "What was done in order",
+      "Improving the workflow",
+      "Key concepts",
+      "3. Working in the Terminal",
+      "vim / vi quick reference used to edit index.html",
+      "Connecting to EC2 & configuring the CLI",
+      "4. Lab 173 — Provisioning EC2 with a Script + Troubleshooting",
+      "What the script does, step by step:",
+      "The three planted issues & fixes",
+      "Troubleshooting tool: nmap",
+      "Key concepts",
+      "5. Lab 174 — Load Balancing & Auto Scaling",
+      "What was done the high-availability pattern",
+      "Testing auto scaling",
+      "Key concepts",
+      "6. Lab 175 — Building an AMI via CLI + Auto Scaling",
+      "What was done",
+      "Troubleshooting highlights",
+      "Key concepts",
+      "7. Command Cheat Sheet",
+      "vim survival kit",
+      "8. CLF-C02 Exam Relevance",
+      "One-line takeaway"
+    ],
+    "sections": [
+      {
+        "heading": "Key Takeaways",
+        "slug": "key-takeaways",
+        "content": "- **IAM user has NO access** until BOTH login credentials AND a policy are attached (creating the user alone is not enough) - **AWS access = Access Key ID + Secret Access Key**; the secret is shown **only once** at creation and cannot be retrieved later - **S3 buckets are private by default**; public access requires disabling Block Public Access + enabling ACLs + bucket policy - **S3 static website endpoint:** `http://<bucket>.s3-website-<region>.amazonaws.com` - **`aws s3 sync`** uploads only changed files (preferred for automation); `aws s3 cp --recursive` re-uploads everything - **AMIs are region-specific** — an AMI valid in one region will not work in another - **Security Group = instance-level stateful firewall**; common ports: SSH=22, HTTP=80, HTTPS=443 (default inbound = deny) - **IAM Roles / Instance Profiles** = preferred way to give EC2 AWS access (no stored credentials, temporary auto-rotated keys) ---"
+      },
+      {
+        "heading": "Table of Contents",
+        "slug": "table-of-contents",
+        "content": "1. [IAM Users, Credentials & Policies](#1-iam-users-credentials--policies) 2. [S3 Static Website Hosting](#2-s3-static-website-hosting) 3. [Working in the Terminal](#3-working-in-the-terminal) 4. [Lab 173 — Provisioning EC2 with a Script + Troubleshooting](#4-lab-173--provisioning-ec2-with-a-script--troubleshooting) 5. [Lab 174 — Load Balancing & Auto Scaling](#5-lab-174--load-balancing--auto-scaling) 6. [Lab 175 — Building an AMI via CLI + Auto Scaling](#6-lab-175--building-an-ami-via-cli--auto-scaling) 7. [Command Cheat Sheet](#7-command-cheat-sheet) 8. [CLF-C02 Exam Relevance](#8-clf-c02-exam-relevance) ---"
+      },
+      {
+        "heading": "1. IAM Users, Credentials & Policies",
+        "slug": "1-iam-users-credentials-policies",
+        "content": ""
+      },
+      {
+        "heading": "What was done",
+        "slug": "what-was-done",
+        "content": "- Created an **IAM user** from the CLI. Creating a user **does not** create login credentials — by itself the user cannot sign in. - Created a **login profile (console password)** for the user. - Logged in as the IAM user using an **Incognito window**, the **Account ID**, the username, and the password. - Initially the user could see **no S3 buckets** even though a bucket existed — because the user had **no permissions** yet. - Attached the AWS managed policy **`AmazonS3FullAccess`** to the user. After refreshing, the user could see and access the bucket."
+      },
+      {
+        "heading": "Key concepts",
+        "slug": "key-concepts",
+        "content": "- **IAM User** = an identity for a person/app. Has a **User ID** and a **User ARN** (Amazon Resource Name). - **Credentials are separate from the user:** console password (for sign-in) and access keys (for CLI/API) must be added explicitly. - **Policies grant permissions.** A user with no policy attached can do nothing. `AmazonS3FullAccess` is an AWS **managed policy**. - **Account ID** is required (along with username/password) to sign in as an IAM user. - Troubleshooting note: an \"is not authorized to perform...\" error means the identity lacks the required permission/policy. ---"
+      },
+      {
+        "heading": "2. S3 Static Website Hosting",
+        "slug": "2-s3-static-website-hosting",
+        "content": ""
+      },
+      {
+        "heading": "What was done in order",
+        "slug": "what-was-done-in-order",
+        "content": "1. **Created an S3 bucket** — bucket names must be **globally unique**. 2. **Made the bucket public:** - Went to **Permissions → Block Public Access → Edit → uncheck → Save**. - Set **Object Ownership → ACLs enabled**. - Edited the **bucket policy** (by default a bucket policy does not allow public access). 3. **Prepared website files:** extracted a provided archive (`tar -x`) containing `index.html`, CSS, and images. 4. **Enabled static website hosting** on the bucket via CLI. 5. **Uploaded the site** using `aws s3 cp <folder> s3://<bucket> --recursive --acl public-read`. - `--recursive` walks subfolders; `--acl public-read` makes files publicly readable. 6. **Verified upload** with `aws s3 ls s3://<bucket>`. 7. **Tested the site** at the S3 website endpoint: `http://<bucket-name>.s3-website-<region>.amazonaws.com` (region in lab was `us-west-2`)."
+      },
+      {
+        "heading": "Improving the workflow",
+        "slug": "improving-the-workflow",
+        "content": "- Wrapped the upload command in a **bash script** (e.g. `update-website.sh`) so the site can be re-deployed by running one script instead of retyping commands. - Script must start with the shebang `#!/bin/bash` on its own line, then the command. - Made it executable with `chmod +x` and ran it with `./update-website.sh`. - **Tip:** keep the deploy script **outside** the website folder (moved to home directory) so the script itself isn't uploaded to the bucket. - **`cp` vs `sync`:** switching from `aws s3 cp` to `aws s3 sync` only uploads **modified** files. Unchanged files are skipped → faster and avoids unnecessary uploads."
+      },
+      {
+        "heading": "Key concepts",
+        "slug": "key-concepts-1",
+        "content": "- S3 bucket names are **globally unique**. - **By default S3 buckets are private** — public access requires turning off Block Public Access, enabling ACLs, and/or a bucket policy. - S3 can host a **static website** (HTML/CSS/JS/images) — no server required. ---"
+      },
+      {
+        "heading": "3. Working in the Terminal",
+        "slug": "3-working-in-the-terminal",
+        "content": ""
+      },
+      {
+        "heading": "vim / vi quick reference used to edit index.html",
+        "slug": "vim-vi-quick-reference-used-to-edit-indexhtml",
+        "content": "- Open a file: `vi index.html` - Enter insert mode: press `i` - Find & replace **entire file**: `:%s/oldword/newword/g` - **Common mistake demonstrated:** without the leading `%`, `:s/.../.../g` only changes the **current line**. - Save & quit: `:wq` - `Ctrl-F` does **not** search in vim — use the `:%s` substitute command instead."
+      },
+      {
+        "heading": "Connecting to EC2 & configuring the CLI",
+        "slug": "connecting-to-ec2-configuring-the-cli",
+        "content": "- Connected to instances via **EC2 Instance Connect** (browser-based) and **SSM Session Manager**. - Configured the CLI with `aws configure`, supplying **Access Key**, **Secret Key**, **default region** (`us-west-2`), and **output format** (`json`). - **Important:** the **secret access key is only shown once** at creation time — it cannot be retrieved later. ---"
+      },
+      {
+        "heading": "4. Lab 173 — Provisioning EC2 with a Script + Troubleshooting",
+        "slug": "4-lab-173-—-provisioning-ec2-with-a-script-troubleshooting",
+        "content": ""
+      },
+      {
+        "heading": "What the script does, step by step:",
+        "slug": "what-the-script-does-step-by-step",
+        "content": "- Finds the current **region** and prints status. - Sets the **instance type** (default `t3.small`; can be changed to `t3.micro`). - Uses a **default instance profile**. - Discovers the **VPC ID** by querying existing running EC2 instances across regions. - Uses the VPC ID to find the **subnet** (filtered by name, e.g. `cafe public subnet 1`). - Finds the **key pair** (for SSH) and the **AMI ID** (image). - Checks for an **existing instance with the same name** and **terminates** it if found. - Checks for / deletes an existing **security group**, then creates a **new security group** with two inbound rules: - SSH on **port 22** - Web on **port 80** ← *(planted bug: was set to 8080)* - Creates the **EC2 instance**."
+      },
+      {
+        "heading": "The three planted issues & fixes",
+        "slug": "the-three-planted-issues-fixes",
+        "content": "| Issue | Symptom | Fix | |------|---------|-----| | **1. Invalid region** | Instance creation fails because the **AMI doesn't exist** in the hard-coded region | Replace the literal region with the script's `$region` variable | | **2. Wrong web port** | Website unreachable; `nmap` shows **8080 open, 80 closed** | Change the security-group inbound rule from **8080 → 80** | | **3. App test** | Verify by placing an order via the web app | Open the public URL `/cafe`, go to menu/order history, submit an order successfully |"
+      },
+      {
+        "heading": "Troubleshooting tool: nmap",
+        "slug": "troubleshooting-tool-nmap",
+        "content": "- Installed `nmap` and scanned the instance's **public IP** to see which ports were open: `nmap -Pn <public-ip>`. - Confirmed port 22 + 8080 open (and 80 closed) → diagnosed the security-group misconfiguration."
+      },
+      {
+        "heading": "Key concepts",
+        "slug": "key-concepts-2",
+        "content": "- **AMIs are region-specific** — an AMI ID valid in one region won't work in another. - **Security groups** act as virtual firewalls; inbound rules must open the correct ports (22 for SSH, 80 for HTTP). - **EC2 instance types** (e.g., `t3.micro`, `t3.small`) determine compute size. - **User data** scripts run at launch to bootstrap the instance. ---"
+      },
+      {
+        "heading": "5. Lab 174 — Load Balancing & Auto Scaling",
+        "slug": "5-lab-174-—-load-balancing-auto-scaling",
+        "content": ""
+      },
+      {
+        "heading": "What was done the high-availability pattern",
+        "slug": "what-was-done-the-high-availability-pattern",
+        "content": "1. **Create an AMI** from a configured EC2 instance (*Actions → Image and templates → Create image*). The AMI captures the same configuration/software — effectively duplicating the instance. 2. **Create an Application Load Balancer (ALB):** - Type: **Application Load Balancer**, scheme IPv4, placed in the **lab VPC** across **two Availability Zones**. - Attach the **Web security group** (not the default). - Create a **Target Group** (type: instance, **HTTP : 80**, with health checks). Note the **DNS name** of the ALB for later access. 3. **Create a Launch Template:** - Based on the **custom AMI** (e.g., `web server AMI`). - Instance type **t3.micro**, **Web security group**. 4. **Create an Auto Scaling Group (ASG):** - Uses the launch template; placed in the **VPC** across **private subnets 1 & 2**. - **Why private subnets?** End users should **not** talk directly to EC2 instances — only the **load balancer** communicates with them. - Attach to the **existing load balancer** + **target group**. - **Capacity:** minimum **2**, desired **2**, maximum **4** (max must be ≥ desired). - **Scaling policy:** **Target Tracking** on **CPU utilization 50%**, instance **warm-up 300s**. - Added a **tag** (e.g., name = `lab instance`)."
+      },
+      {
+        "heading": "Testing auto scaling",
+        "slug": "testing-auto-scaling",
+        "content": "- After creation, the ASG automatically launched **2 instances** in the private subnets; verified **2 healthy** targets in the target group. - Accessed the app via the **ALB DNS name**, then clicked **\"Load Test\"** to simulate CPU load (~70–80%). - Because CPU exceeded the 50% target, **CloudWatch alarms** fired, and after the warm-up period the ASG launched **2 more** instances (total **4 healthy**)."
+      },
+      {
+        "heading": "Key concepts",
+        "slug": "key-concepts-3",
+        "content": "- **Elastic Load Balancing (ALB)** distributes incoming traffic across multiple instances and is reached via a stable **DNS name**. - **Auto Scaling Group** automatically adds/removes instances based on demand (min/desired/max). - **Target Tracking scaling** keeps a metric (CPU 50%) at target. - **CloudWatch** monitors metrics and triggers **alarms** that drive scaling actions. - **Architecture best practice:** ALB in public-facing layer; EC2 instances in **private subnets** for security; multi-AZ for high availability. - **Launch Template + AMI** = repeatable, identical instance configuration. ---"
+      },
+      {
+        "heading": "6. Lab 175 — Building an AMI via CLI + Auto Scaling",
+        "slug": "6-lab-175-—-building-an-ami-via-cli-auto-scaling",
+        "content": ""
+      },
+      {
+        "heading": "What was done",
+        "slug": "what-was-done-1",
+        "content": "Same overall architecture as Lab 174, but the **AMI is created from the CLI** instead of the console. 1. Connected via **EC2 Instance Connect**; found the region from **instance metadata** (`us-west-2`). 2. Ran `aws configure` — **no access keys needed here** (the instance used an attached **role/instance profile**); just set region + output. 3. Used a **run-instances** CLI command, editing the query with the correct **key name, AMI ID, HTTP access (security group), and subnet ID** from the instance **Details** pane. 4. Saved the new instance ID into an **environment variable** (`EC2_ID=...`) for reuse. 5. Retrieved the instance's **DNS name** via CLI and confirmed the page loaded. 6. **Created an AMI from the CLI** using the instance ID variable. 7. Then repeated the **Lab 174 pattern**: ALB → Target Group → Launch Template (using the CLI-built AMI) → Auto Scaling Group (private subnets, target tracking 50% CPU). 8. Ran the **stress/load test** via the **ALB DNS name** and watched **CloudWatch** enter alarm, triggering more instances."
+      },
+      {
+        "heading": "Troubleshooting highlights",
+        "slug": "troubleshooting-highlights",
+        "content": "- \"Provided region name / session token does not support it\" and credential-validation errors came from **pasting the whole credential block** or **deleting user-data lines** — fixed by re-running `aws configure` correctly or **stopping/restarting** the lab (allow ~5 min). - Stress test must target the **ALB DNS name**, not an individual instance, for scaling to behave correctly."
+      },
+      {
+        "heading": "Key concepts",
+        "slug": "key-concepts-4",
+        "content": "- **Instance metadata** can supply info like the current region. - **IAM roles / instance profiles** let an EC2 instance call AWS APIs **without stored access keys** (more secure than embedding keys). - **AMIs can be created from the console *or* the CLI**. - Auto Scaling = **elasticity**: match capacity to demand automatically. ---"
+      },
+      {
+        "heading": "7. Command Cheat Sheet",
+        "slug": "7-command-cheat-sheet",
+        "content": "```bash # IAM (CLI) aws iam create-user --user-name <name> aws iam create-login-profile --user-name <name> --password '<pwd>' aws iam attach-user-policy --user-name <name> --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess # S3 static website aws s3 cp <local-folder> s3://<bucket> --recursive --acl public-read aws s3 sync <local-folder> s3://<bucket> # uploads only changed files aws s3 ls s3://<bucket> # list/verify # Website endpoint: http://<bucket>.s3-website-<region>.amazonaws.com # CLI config aws configure # access key, secret key, region, output(json) # Troubleshooting / networking nmap -Pn <public-ip> # check which ports are open # Deploy script pattern (update-website.sh) #!/bin/bash aws s3 sync <local-folder> s3://<bucket> --acl public-read # chmod +x update-website.sh && ./update-website.sh # Reuse an instance ID EC2_ID=<instance-id> ```"
+      },
+      {
+        "heading": "vim survival kit",
+        "slug": "vim-survival-kit",
+        "content": "| Action | Keys | |--------|------| | Insert mode | `i` | | Replace across whole file | `:%s/old/new/g` | | Replace current line only | `:s/old/new/g` | | Save & quit | `:wq` | | Show line numbers | `:set number` | ---"
+      },
+      {
+        "heading": "8. CLF-C02 Exam Relevance",
+        "slug": "8-clf-c02-exam-relevance",
+        "content": "| Topic from lecture | CLF-C02 Domain | Relevance | What to study | |---|---|---|---| | IAM users, policies, ARNs, managed policies | Security & Compliance | High | Identities get permissions only via policies; managed vs. customer policies; least privilege | | IAM roles / instance profiles for EC2 | Security & Compliance | High | Use **roles** instead of hard-coded access keys; secret key shown only once | | Amazon S3 (storage, static hosting, defaults) | Cloud Technology & Services | High | S3 is object storage; buckets **private by default**; global unique names; static website hosting | | S3 Block Public Access / bucket policies / ACLs | Security & Compliance | High | How public access is controlled; secure defaults | | EC2 instances, instance types, AMIs | Cloud Technology & Services | High | Compute basics; **AMIs are region-specific**; instance sizing | | Security groups (ports 22/80) | Security & Compliance | High | Instance-level virtual firewall; inbound/outbound rules | | VPC, subnets, public vs. private subnets | Cloud Technology & Services | High | Network isolation; keep app tier private, LB public | | Elastic Load Balancing (ALB) | Cloud Technology & Services | Very High | Distributes traffic; high availability across AZs | | EC2 Auto Scaling (min/desired/max, target tracking) | Cloud Technology + Cost/Reliability | Very High | **Elasticity** — scale to demand automatically; cost efficiency | | Amazon CloudWatch (metrics & alarms) | Cloud Technology & Services | High | Monitoring; alarms trigger scaling actions | | Availability Zones / High Availability design | Cloud Technology + Well-Architected | High | Multi-AZ for resilience; reliability pillar | | Launch templates | Cloud Technology & Services | Medium | Repeatable instance configuration | | vim / bash / nmap / aws configure syntax | — | Not tested | Operational skills only; no command memorization needed |"
+      },
+      {
+        "heading": "One-line takeaway",
+        "slug": "one-line-takeaway",
+        "content": "The session is essentially a **hands-on tour of a classic highly-available web architecture**: *IAM-secured access → S3 for static content → EC2 behind an Application Load Balancer → Auto Scaling driven by CloudWatch alarms, with app servers in private subnets.* Almost every building block is a named CLF-C02 service — learn the **concepts and security defaults**, and you'll be covering real exam content. --- *Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 13, 2026.*"
+      }
+    ],
+    "body": "Cohort 3 | Project CloudIgnite Topics: S3 Static Website Hosting, IAM Users & Policies, EC2 Provisioning via Scripts, Security Groups & Troubleshooting, Application Load Balancer (ALB), Launch Templates & AMIs, Auto Scaling Groups, CloudWatch Alarms Duration: ~3 hours IAM user has NO access until BOTH login credentials AND a policy are attached (creating the user alone is not enough) AWS access = Access Key ID + Secret Access Key; the secret is shown only once at creation and cannot be retrieved later S3 buckets are private by default; public access requires disabling Block Public Access + enabling ACLs + bucket policy S3 static website endpoint: uploads only changed files (preferred for automation); re-uploads everything AMIs are region-specific — an AMI valid in one region will not work in another Security Group = instance-level stateful firewall; common ports: SSH=22, HTTP=80, HTTPS=443 (default inbound = deny) IAM Roles / Instance Profiles = preferred way to give EC2 AWS access (no stored credentials, temporary auto-rotated keys) IAM Users, Credentials & Policies S3 Static Website Hosting Working in the Terminal Lab 173 — Provisioning EC2 with a Script + Troubleshooting Lab 174 — Load Balancing & Auto Scaling Lab 175 — Building an AMI via CLI + Auto Scaling Command Cheat Sheet CLF-C02 Exam Relevance Created an IAM user from the CLI. Creating a user does not create login credentials — by itself the user cannot sign in. Created a login profile (console password) for the user. Logged in as the IAM user using an Incognito window, the Account ID, the username, and the password. Initially the user could see no S3 buckets even though a bucket existed — because the user had no permissions yet. Attached the AWS managed policy to the user. After refreshing, the user could see and access the bucket. IAM User = an identity for a person/app. Has a User ID and a User ARN (Amazon Resource Name). Credentials are separate from the user: console password (for sign-in) and access keys (for CLI/API) must be added explicitly. Policies grant permissions. A user with no policy attached can do nothing. is an AWS managed policy. Account ID is required (along with username/password) to sign in as an IAM user. Troubleshooting note: an \"is not authorized to perform...\" error means the identity lacks the required permission/policy. Created an S3 bucket — bucket names must be globally unique. Made the bucket public: - Went to Permissions → Block Public Access → Edit → uncheck → Save. - Set Object Ownership → ACLs enabled. - Edited the bucket policy (by default a bucket policy does not allow public access). Prepared website files: extracted a provided archive () containing , CSS, and images. Enabled static website hosting on the bucket via CLI. Uploaded the site using . - walks subfolders; makes files publicly readable. Verified upload with . Tested the site at the S3 website endpoint: (region in lab was ). Wrapped the upload command in a bash script (e.g. ) so the site can be re-deployed by running one script instead of retyping commands. - Script must start with the shebang on its own line, then the command. - Made it executable with and ran it with . Tip: keep the deploy script outside the website folder (moved to home directory) so the script itself isn't uploaded to the bucket. vs : switching from to only uploads modified files. Unchanged files are skipped → faster and avoids unnecessary uploads. S3 bucket names are globally unique. By default S3 buckets are private — public access requires turning off Block Public Access, enabling ACLs, and/or a bucket policy. S3 can host a static website (HTML/CSS/JS/images) — no server required. Open a file: Enter insert mode: press Find & replace entire file: - Common mistake demonstrated: without the leading , only changes the current line. Save & quit: does not search in vim — use the substitute command instead. Connected to instances via EC2 Instance Connect (browser-based) and SSM Session Manager. Configured the CLI with , supplying Access Key, Secret Key, default region (), and output format (). - Important: the secret access key is only shown once at creation time — it cannot be retrieved later. Finds the current region and prints status. Sets the instance type (default ; can be changed to ). Uses a default instance profile. Discovers the VPC ID by querying existing running EC2 instances across regions. Uses the VPC ID to find the subnet (filtered by name, e.g. ). Finds the key pair (for SSH) and the AMI ID (image). Checks for an existing instance with the same name and terminates it if found. Checks for / deletes an existing security group, then creates a new security group with two inbound rules: - SSH on port 22 - Web on port 80 ← (planted bug: was set to 8080) Creates the EC2 instance. Installed and scanned the instance's public IP to see which ports were open: . Confirmed port 22 + 8080 open (and 80 closed) → diagnosed the security-group misconfiguration. AMIs are region-specific — an AMI ID valid in one region won't work in another. Security groups act as virtual firewalls; inbound rules must open the correct ports (22 for SSH, 80 for HTTP). EC2 instance types (e.g., , ) determine compute size. User data scripts run at launch to bootstrap the instance. Create an AMI from a configured EC2 instance (Actions → Image and templates → Create image). The AMI captures the same configuration/software — effectively duplicating the instance. Create an Application Load Balancer (ALB): - Type: Application Load Balancer, scheme IPv4, placed in the lab VPC across two Availability Zones. - Attach the Web security group (not the default). - Create a Target Group (type: instance, HTTP : 80, with health checks). Note the DNS name of the ALB for later access. Create a Launch Template: - Based on the custom AMI (e.g., ). - Instance type t3.micro, Web security group. Create an Auto Scaling Group (ASG): - Uses the launch template; placed in the VPC across private subnets 1 & 2. - Why private subnets? End users should not talk directly to EC2 instances — only the load balancer communicates with them. - Attach to the existing load balancer + target group. - Capacity: minimum 2, desired 2, maximum 4 (max must be ≥ desired). - Scaling policy: Target Tracking on CPU utilization 50%, instance warm-up 300s. - Added a tag (e.g., name = ). After creation, the ASG automatically launched 2 instances in the private subnets; verified 2 healthy targets in the target group. Accessed the app via the ALB DNS name, then clicked \"Load Test\" to simulate CPU load (~70–80%). Because CPU exceeded the 50% target, CloudWatch alarms fired, and after the warm-up period the ASG launched 2 more instances (total 4 healthy). Elastic Load Balancing (ALB) distributes incoming traffic across multiple instances and is reached via a stable DNS name. Auto Scaling Group automatically adds/removes instances based on demand (min/desired/max). Target Tracking scaling keeps a metric (CPU 50%) at target. CloudWatch monitors metrics and triggers alarms that drive scaling actions. Architecture best practice: ALB in public-facing layer; EC2 instances in private subnets for security; multi-AZ for high availability. Launch Template + AMI = repeatable, identical instance configuration. Same overall architecture as Lab 174, but the AMI is created from the CLI instead of the console. Connected via EC2 Instance Connect; found the region from instance metadata (). Ran — no access keys needed here (the instance used an attached role/instance profile); just set region + output. Used a run-instances CLI command, editing the query with the correct key name, AMI ID, HTTP access (security group), and subnet ID from the instance Details pane. Saved the new instance ID into an environment variable () for reuse. Retrieved the instance's DNS name via CLI and confirmed the page loaded. Created an AMI from the CLI using the instance ID variable. Then repeated the Lab 174 pattern: ALB → Target Group → Launch Template (using the CLI-built AMI) → Auto Scaling Group (private subnets, target tracking 50% CPU). Ran the stress/load test via the ALB DNS name and watched CloudWatch enter alarm, triggering more instances. \"Provided region name / session token does not support it\" and credential-validation errors came from pasting the whole credential block or deleting user-data lines — fixed by re-running correctly or stopping/restarting the lab (allow ~5 min). Stress test must target the ALB DNS name, not an individual instance, for scaling to behave correctly. Instance metadata can supply info like the current region. IAM roles / instance profiles let an EC2 instance call AWS APIs without stored access keys (more secure than embedding keys). AMIs can be created from the console or the CLI. Auto Scaling = elasticity: match capacity to demand automatically. The session is essentially a hands-on tour of a classic highly-available web architecture: IAM-secured access → S3 for static content → EC2 behind an Application Load Balancer → Auto Scaling driven by CloudWatch alarms, with app servers in private subnets. Almost every building block is a named CLF-C02 service — learn the concepts and security defaults, and you'll be covering real exam content. Notes compiled from Cohort 3 Project CloudIgnite lecture transcript — June 13, 2026.",
+    "url": "/notes/week_11/2026-06-13"
   }
 ]

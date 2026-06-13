@@ -13,7 +13,7 @@
 | **Week 8** | May 18–24 | Python Modules, File Handling, JSON, SysAdmin with Python, DevOps, CI/CD, Testing | [Week 8 Summary](./week_08/weekly_summary.md) |
 | **Week 9** | May 25–30 | Database Fundamentals, SQL (DDL, DML, DQL), NULL, Aggregate Functions, MySQL Labs | [Week 9 Summary](./week_09/weekly_summary.md) |
 | **Week 10** | Jun 3–6 | SQL Advanced, Amazon RDS, Aurora, DynamoDB, CAF, Well-Architected Framework, SQL JOINs, Database Normalization | [Week 10 Summary](./week_10/weekly_summary.md) |
-| **Week 11** | Jun 8–9 | SysOps, AWS CLI, AWS Systems Manager, IAM Recap, S3 Static Hosting, EC2 Deep Dive | [Week 11 Summary](./week_11/weekly_summary.md) |
+| **Week 11** | Jun 8–13 | SysOps, AWS CLI, Systems Manager, S3 Static Hosting, EC2 Deep Dive, Elastic Beanstalk, ELB, Auto Scaling, Route 53, CloudFront, IAM Users & Policies | [Week 11 Summary](./week_11/weekly_summary.md) |
 
 ---
 
@@ -28,5 +28,5 @@ Week 7:  Compliance & Python Introduction
 Week 8:  Python Programming & DevOps
 Week 9:  Database Fundamentals & SQL
 Week 10: Advanced SQL & Amazon RDS
-Week 11: SysOps, AWS CLI, S3 Hosting & EC2
+Week 11: SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle
 ```
