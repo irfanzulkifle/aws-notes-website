@@ -517,6 +517,34 @@ body {
   background: #f4f4f5;
 }
 
+/* ── Prose: Mermaid diagrams ── */
+
+.prose .mermaid {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #e4e4e7;
+  background: #ffffff;
+}
+
+.prose .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose .mermaid pre,
+.prose .mermaid code {
+  display: none;
+}
+
+.dark .prose .mermaid {
+  background: #09090b;
+  border-color: #27272a;
+}
+
 .dark ::selection {
   background: rgba(96, 165, 250, 0.15);
   color: #e4e4e7;

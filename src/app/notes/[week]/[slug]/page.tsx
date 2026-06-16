@@ -11,6 +11,7 @@ import TableOfContents from "@/components/TableOfContents";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import TrackView from "@/components/TrackView";
 import Callout, { CalloutType } from "@/components/Callout";
+import Mermaid from "@/components/Mermaid";
 import DocLayout from "@/components/DocLayout";
 import SearchHighlighter from "@/components/SearchHighlighter";
 
@@ -233,9 +234,15 @@ export default async function NotePage({ params }: Props) {
               const codeChild = React.Children.toArray(children).find(
                 (child) => React.isValidElement(child) && child.type === "code"
               ) as React.ReactElement<{ className?: string; children?: React.ReactNode }> | undefined;
+              const className = codeChild?.props?.className || "";
               const codeString = codeChild?.props?.children
                 ? String(codeChild.props.children).replace(/\n$/, "")
                 : "";
+
+              if (className.includes("language-mermaid") && codeString.trim()) {
+                return <Mermaid chart={codeString} />;
+              }
+
               return (
                 <div className="relative group">
                   <pre {...props}>{children}</pre>
