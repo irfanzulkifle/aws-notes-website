@@ -14,12 +14,12 @@ A polished notes website publishing my **AWS re/Start lecture notes** - a struct
 
 ## Content
 
-- **44 lecture notes** across 12 weeks of the AWS re/Start program
-- **12 weekly summaries** plus a weekly summary index
+- **51 lecture notes** across 14 weeks of the AWS re/Start program
+- **14 weekly summaries** plus a weekly summary index
 - **Cohort 3: Project CloudIgnite**
-- Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases · RDS · DynamoDB · Cloud Architecture · SysOps · CLI · Systems Manager · S3 · EC2 · ELB · ASG · Route 53 · CloudFront · IAM · Lambda · API Gateway · Step Functions · Containers · Docker · ECR · ECS · EKS · Fargate · VPC · EBS · EFS · Storage Gateway · Snow Family
+- Topics: Linux · Bash · Python · SQL · Networking · AWS Cloud · Security · Databases · RDS · DynamoDB · Aurora · Redshift · Cloud Architecture · SysOps · CLI · Systems Manager · S3 · S3 Glacier · EC2 · ELB · ASG · Route 53 · CloudFront · IAM · Lambda · API Gateway · Step Functions · Containers · Docker · ECR · ECS · EKS · Fargate · VPC · EBS · EFS · Storage Gateway · Snow Family · DataSync · Transfer Family · CloudWatch · CloudTrail · AWS Organizations · AWS Config · Tagging · SageMaker · Trusted Advisor · AWS Support Plans · AWS Budgets · Cost Explorer · AMIs · Launch Templates · CloudFormation · Spot Instances
 - Each note tagged with **AWS CLF-C02 exam relevance** flags
-- Last updated: 2026-06-22
+- Last updated: 2026-07-02
 
 > Source notes at [irfanzulkifle/aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
 
@@ -37,6 +37,8 @@ A polished notes website publishing my **AWS re/Start lecture notes** - a struct
 | Week 10 | SQL, RDS, DynamoDB, CAF & Well-Architected Framework | 4 |
 | Week 11 | SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle | 6 |
 | Week 12 | Lambda, API Gateway, Step Functions, Containers, Docker, ECR/ECS/EKS/Fargate, Managed RDS, Amazon VPC, EBS, EFS, S3 & Storage Classes, Storage Gateway & Snow Family | 5 |
+| Week 13 | S3 Glacier, Storage Gateway, DataSync, CloudWatch, CloudTrail, AWS Organizations, Tagging, Cost Management, SageMaker, Trusted Advisor & Support Plans | 4 |
+| Week 14 | AMIs, Launch Templates, IaC, CloudFormation, Troubleshooting, Drift, Database & Billing KCs, Spot Instances | 3 |
 
 ---
 
@@ -155,7 +157,9 @@ aws-notes-website/
 │       ├── ...
 │       ├── week_10/
 │       ├── week_11/
-│       └── week_12/
+│       ├── week_12/
+│       ├── week_13/
+│       └── week_14/
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout (dark theme, metadata, footer)

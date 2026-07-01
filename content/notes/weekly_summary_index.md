@@ -15,6 +15,8 @@
 | **Week 10** | Jun 3–6 | SQL Advanced, Amazon RDS, Aurora, DynamoDB, CAF, Well-Architected Framework, SQL JOINs, Database Normalization | [Week 10 Summary](./week_10/weekly_summary.md) |
 | **Week 11** | Jun 8–13 | SysOps, AWS CLI, Systems Manager, S3 Static Hosting, EC2 Deep Dive, Elastic Beanstalk, ELB, Auto Scaling, Route 53, CloudFront, IAM Users & Policies | [Week 11 Summary](./week_11/weekly_summary.md) |
 | **Week 12** | Jun 15–20 | AWS Lambda, Route 53 Failover, REST APIs, API Gateway, Step Functions, Containers, Docker, ECR/ECS/EKS/Fargate, Managed RDS, Amazon VPC (Subnets, Routing, Peering, Transit Gateway, Endpoints, VPN, Direct Connect), Security Groups vs. NACLs, Bastion Hosts, VPC Flow Logs, Amazon EBS & Snapshots/DLM, Instance Store, Amazon EFS, Amazon S3 & Storage Classes, Versioning/Object Lock, Storage Gateway, Snow Family | [Week 12 Summary](./week_12/weekly_summary.md) |
+| **Week 13** | Jun 22–25 | S3 Glacier Archive, Storage Gateway, Transfer Family, DataSync, Snow Family, CloudWatch, CloudTrail, AWS Organizations, AWS Config, Tagging, Cost Management, SageMaker ML, Trusted Advisor, AWS Support Plans, AWS Budgets, Pricing Calculator | [Week 13 Summary](./week_13/weekly_summary.md) |
+| **Week 14** | Jun 29–Jul 1 | AMIs, Launch Templates, Infrastructure as Code, CloudFormation, Troubleshooting Failed Stacks, Drift Detection, Database Services (DynamoDB, Aurora, Redshift), Billing & Support, Well-Architected Framework, Spot Instances | [Week 14 Summary](./week_14/weekly_summary.md) |
 
 ---
 
@@ -31,4 +33,6 @@ Week 9:  Database Fundamentals & SQL
 Week 10: Advanced SQL & Amazon RDS
 Week 11: SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle
 Week 12: AWS Lambda, Route 53 Failover, REST APIs, API Gateway, Step Functions, Containers, Docker, ECR/ECS/EKS/Fargate, Managed RDS, Amazon VPC, EBS/EFS/S3 & Storage Classes, Storage Gateway, Snow Family
+Week 13: S3 Glacier, Storage Gateway, DataSync, CloudWatch, CloudTrail, AWS Organizations, Tagging, Cost Management, SageMaker, Trusted Advisor & Support Plans
+Week 14: AMIs, Launch Templates, IaC, CloudFormation, Database & Billing KCs, Spot Instances
 ```

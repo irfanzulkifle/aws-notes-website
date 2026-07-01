@@ -9,4 +9,6 @@ export const WEEK_LABELS: Record<string, string> = {
   week_10: "Week 10 — SQL, RDS, DynamoDB, CAF & Well-Architected Framework",
    week_11: "Week 11 — SysOps, ELB, ASG, Route 53, CloudFront & EC2 Lifecycle",
    week_12: "Week 12 — Lambda, API Gateway, Step Functions, Containers, Docker, ECR/ECS/EKS/Fargate, Managed RDS, Amazon VPC, EBS, EFS, S3 & Storage Classes, Storage Gateway & Snow Family",
+  week_13: "Week 13 — S3 Glacier, Storage Gateway, DataSync, CloudWatch, CloudTrail, AWS Organizations, Tagging, Cost Management, SageMaker, Trusted Advisor & Support Plans",
+  week_14: "Week 14 — AMIs, Launch Templates, IaC, CloudFormation, Troubleshooting, Drift, Database & Billing KCs, Spot Instances",
 };
