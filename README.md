@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
 [![Live](https://img.shields.io/badge/Live-aws--notes--website.vercel.app-000?logo=vercel)](https://aws-notes-website.vercel.app)
 
-A polished notes website publishing my **AWS re/Start lecture notes** - a structured learning journal covering cloud computing fundamentals, Linux administration, Python programming, SQL databases, networking, security, and AWS services.
+A polished notes website publishing my **AWS re/Start lecture notes** - a structured learning journal covering cloud computing fundamentals, Linux administration, Python programming, SQL databases, networking, security and AWS services.
 
 **Live site → [aws-notes-website.vercel.app](https://aws-notes-website.vercel.app)**
 
@@ -42,20 +42,20 @@ A polished notes website publishing my **AWS re/Start lecture notes** - a struct
 
 ---
 
-## Features
+## What it does
 
 ### Reading Experience
 - **Light/dark theme** - clean technical reading interface with persisted theme preference
 - **Unified typography** - Inter for body text, Geist Mono for code blocks
-- **Syntax highlighting** - SQL, Python, Bash, and other code blocks via `rehype-highlight`
+- **Syntax highlighting** - SQL, Python, Bash and other code blocks via `rehype-highlight`
 - **Copy code button** - one-click copy for code blocks
 - **Reading time estimate** - shown on each note card and page
 - **Weekly summaries** - dedicated summary pages for each week and a learning-journey index
 
 ### Navigation & Discovery
-- **Homepage filter** - real-time filtering across titles, topics, week labels, and note bodies
+- **Homepage filter** - real time filtering across titles, topics, week labels and note bodies
 - **Global fuzzy search** - modal search powered by Fuse.js with keyboard shortcuts and result snippets
-- **Search index API** - generated from note metadata, headings, sections, topics, and body text
+- **Search index API** - generated from note metadata, headings, sections, topics and body text
 - **Document sidebar** - persistent desktop navigation and mobile slide-out navigation
 - **Desktop TOC** - sticky table of contents with scroll spy highlighting active section
 - **Week navigation** - previous/next navigation within and across weeks
@@ -64,11 +64,11 @@ A polished notes website publishing my **AWS re/Start lecture notes** - a struct
 
 ### Technical
 - **Static generation** - note pages and weekly summary pages are generated from Markdown content
-- **SEO optimized** - metadata, OpenGraph image generation, sitemap, and robots.txt
-- **Security headers** - CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy, and more via Vercel config
+- **SEO optimized** - metadata, OpenGraph image generation, sitemap and robots.txt
+- **Security headers** - CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy and more via Vercel config
 - **Vercel analytics** - includes Vercel Analytics and Speed Insights
 - **Fully responsive** - mobile-first design with touch-friendly interactions
-- **Accessibility** - skip-to-content link, ARIA labels, focus rings, and high-contrast theme support
+- **Accessibility** - skip-to-content link, ARIA labels, focus rings and high-contrast theme support
 
 ---
 
@@ -141,7 +141,7 @@ npm run lint       # Run ESLint
 
 1. Create or update `content/notes/week_XX/weekly_summary.md`
 2. Add the week to `content/notes/weekly_summary_index.md`
-3. The summary will be linked from the homepage week card, sidebar, and `/notes/weekly-summary`
+3. The summary will be linked from the homepage week card, sidebar and `/notes/weekly-summary`
 
 ---
 
@@ -211,7 +211,7 @@ The site implements security headers via `vercel.json`:
 
 ## Contributing
 
-This is a personal learning journal, but if you notice any errors or have suggestions:
+This is a personal learning journal but if you notice any errors or have suggestions:
 
 1. Open an issue describing the problem
 2. Fork the repo and create a branch
@@ -227,7 +227,7 @@ Please ensure:
 
 ## License
 
-This project is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — you may share and adapt with attribution.
+This project is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), you may share and adapt with attribution.
 
 Content © 2026 Irfan Zulkifle.
 
@@ -235,7 +235,7 @@ Content © 2026 Irfan Zulkifle.
 
 ## Links
 
-- **Live Site**: [aws-notes-website.vercel.app](https://aws-notes-website.vercel.app)
-- **Source Notes**: [aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
-- **AWS re/Start Program**: [AWS re/Start](https://aws.amazon.com/training/restart/)
-- **CLF-C02 Exam Guide**: [AWS Certified Cloud Practitioner](https://aws.amazon.com/certification/certified-cloud-practitioner/)
+- **Live Site** [aws-notes-website.vercel.app](https://aws-notes-website.vercel.app)
+- **Source Notes** [aws_restart_note](https://github.com/irfanzulkifle/aws_restart_note)
+- **AWS re/Start Program** [AWS re/Start](https://aws.amazon.com/training/restart/)
+- **CLF-C02 Exam Guide** [AWS Certified Cloud Practitioner](https://aws.amazon.com/certification/certified-cloud-practitioner/)
